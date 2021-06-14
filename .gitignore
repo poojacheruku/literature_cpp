@@ -3,3 +3,4 @@ Makefile
 bin/
 CMakeFiles/
 cmake_install.cmake
+desktop_literature
