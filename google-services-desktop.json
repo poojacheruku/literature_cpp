@@ -1,0 +1,36 @@
+{
+  "project_info": {
+    "project_number": "714220902287",
+    "project_id": "literature-316716",
+    "storage_bucket": "literature-316716.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714220902287:ios:461d225845d6ed3abe1dfa",
+        "android_client_info": {
+          "package_name": "com.cheruku.literature"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714220902287-2b0f2cukrqgah6nee3mmf4s6dagq7p3f.apps.googleusercontent.com"
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUXOzmU4TnK3HlRiURxk3_JyMyzHZ0XYY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 0
+        },
+        "appinvite_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
