@@ -63,4 +63,8 @@ void LiteratureAuth::signIn()
                    anonymous_user->metadata().creation_timestamp != 0);
       }
     }
+    cout << "\u2660" << "10" << endl;
+    cout << "\u2665" << "J" << endl;
+    cout << "\u2663" << "4" << endl;
+    cout << "\u2666" << "8" << endl;
 }

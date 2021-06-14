@@ -16,6 +16,7 @@
 #define LITERATURE_CPP_AUTH_UTILS_H_  // NOLINT
 
 #include <string>
+using ::firebase::auth::AuthError;
 
 bool WaitForSignInFuture(Future<User*> sign_in_future, const char* fn,
                                 AuthError expected_error, Auth* auth);              
