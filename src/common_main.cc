@@ -22,7 +22,7 @@
 #include "firebase/util.h"
 
 // Thin OS abstraction layer.
-#include "main.h"  // NOLINT
+#include "utils.h"  // NOLINT
 
 using ::firebase::App;
 using ::firebase::AppOptions;

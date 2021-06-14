@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "auth/LiteratureAuth.hpp"
-#include "utils.h"  // NOLINT
+#ifndef LITERATURE_CPP_AUTH_UTILS_H_  // NOLINT
+#define LITERATURE_CPP_AUTH_UTILS_H_  // NOLINT
 
-int main(int argc, const char* argv[]) {
-  LiteratureAuth::getInstance().signIn();
-  return 1;
-}
+#include <string>
+
+bool WaitForSignInFuture(Future<User*> sign_in_future, const char* fn,
+                                AuthError expected_error, Auth* auth);              
+
+#endif  // LITERATURE_CPP_AUTH_UTILS_H   // NOLINT

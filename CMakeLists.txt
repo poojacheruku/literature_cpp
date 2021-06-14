@@ -22,10 +22,10 @@ set(MSVC_RUNTIME_MODE MD)
 
 project(literature_cpp)
 
-# Sample source files.
-set(FIREBASE_SAMPLE_COMMON_SRCS
-  src/main.h
-  src/common_main.cc
+# Utilities source files.
+set(FIREBASE_UTILS_SRCS
+  src/utils.h
+  src/utils.cc
 )
 
 # The include directory for the literature app.
@@ -55,7 +55,7 @@ if(ANDROID)
   set(target_name "android_main")
   add_library(${target_name} SHARED
     ${FIREBASE_SAMPLE_ANDROID_SRCS}
-    ${FIREBASE_SAMPLE_COMMON_SRCS}
+    ${FIREBASE_UTILS_SRCS}
   )
 
   target_link_libraries(${target_name}
@@ -75,14 +75,16 @@ else()
   set(MSVC_RUNTIME_MODE MD)
 
   # Platform abstraction layer for the desktop sample.
-  set(FIREBASE_SAMPLE_DESKTOP_SRCS
+  set(FIREBASE_DESKTOP_SRCS
     src/desktop/desktop_main.cc
+    src/auth/LiteratureAuth.cpp
+    src/auth/auth_utils.cc
   )
 
   set(target_name "desktop_literature")
   add_executable(${target_name}
-    ${FIREBASE_SAMPLE_DESKTOP_SRCS}
-    ${FIREBASE_SAMPLE_COMMON_SRCS}
+    ${FIREBASE_DESKTOP_SRCS}
+    ${FIREBASE_UTILS_SRCS}
   )
 
   if(APPLE)
