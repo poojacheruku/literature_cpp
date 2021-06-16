@@ -22,7 +22,9 @@ static const char kFirebaseProviderId[] =
 /* constructor */
 LiteratureAuth::LiteratureAuth()
 {
-    firebase::App* app = firebase::App::Create(firebase::AppOptions());
+    firebase::AppOptions options;
+    options.set_database_url("literature-316716.firebaseapp.com");
+    app = firebase::App::Create(options);
     auth = firebase::auth::Auth::GetAuth(app);
 }
 
@@ -67,4 +69,9 @@ void LiteratureAuth::signIn()
     // cout << "\u2665" << "J" << endl;
     // cout << "\u2663" << "4" << endl;
     // cout << "\u2666" << "8" << endl;
+}
+
+App* LiteratureAuth::getFirebaseApp()
+{
+    return app;
 }

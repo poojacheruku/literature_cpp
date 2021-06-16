@@ -4,11 +4,15 @@
 #include "firebase/app.h"
 #include "firebase/auth.h"
 
+using ::firebase::App;
+using ::firebase::auth::Auth;
+
 class LiteratureAuth
 {
 private:
     /* data */
-    firebase::auth::Auth* auth;
+    App* app;
+    Auth* auth;
 
     /* constructor */
     LiteratureAuth();
@@ -18,6 +22,7 @@ private:
 public:
     static LiteratureAuth& getInstance();
     void signIn();
+    App* getFirebaseApp();
 };
 
 #endif  // LITERATURE_CPP_AUTH_H_  // NOLINT

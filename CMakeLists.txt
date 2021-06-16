@@ -49,7 +49,11 @@ if(ANDROID)
   # Export ANativeActivity_onCreate(),
   # Refer to: https://github.com/android-ndk/ndk/issues/381.
   set(CMAKE_SHARED_LINKER_FLAGS
-      "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
+    "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate \
+    -Wl,--exclude-libs,libfirebase_firestore.a \
+    -Wl,--exclude-libs,libfirebase_auth.a \
+    -Wl,--exclude-libs,libfirebase_app.a"
+  )
 
   # Define the target as a shared library, as that is what gradle expects.
   set(target_name "android_main")
@@ -95,6 +99,7 @@ else()
       "-framework Foundation"
       "-framework GSS"
       "-framework Security"
+      "-framework SystemConfiguration"
     )
   elseif(MSVC)
     set(ADDITIONAL_LIBS advapi32 ws2_32 crypt32)
@@ -123,5 +128,5 @@ endif()
 # Add the Firebase libraries to the target using the function from the SDK.
 add_subdirectory(${FIREBASE_CPP_SDK_DIR} bin/ EXCLUDE_FROM_ALL)
 # Note that firebase_app needs to be last in the list.
-set(firebase_libs firebase_auth firebase_app)
+set(firebase_libs firebase_firestore firebase_auth firebase_app)
 target_link_libraries(${target_name} "${firebase_libs}" ${ADDITIONAL_LIBS})
