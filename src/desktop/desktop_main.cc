@@ -14,8 +14,22 @@
 
 #include "auth/LiteratureAuth.hpp"
 #include "utils.h"  // NOLINT
+#include <iostream>
+using namespace std;
 
 int main(int argc, const char* argv[]) {
   LiteratureAuth::getInstance().signIn();
+  cout << "1. Start a new game" << endl;
+  cout << "2. Join a game" << endl ; 
+  cout << endl; 
+  
+  int choice; 
+  cout << "Choose your option (1 or 2): " << endl; 
+  cin >> choice; 
+
+  // if (choice == 1)
+  // {
+
+  // }
   return 1;
 }
