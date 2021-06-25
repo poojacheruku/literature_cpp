@@ -26,18 +26,22 @@ using ::firebase::Future;
 using ::firebase::firestore::FieldValue;
 using ::firebase::firestore::Error;
 using ::firebase::FutureHandleId;
+using ::firebase::firestore::Query; 
+using ::firebase::firestore::QuerySnapshot; 
+using ::firebase::firestore::DocumentSnapshot; 
+
 
 using namespace std;
-
-bool createGameReturned = false;
+bool requestReturned = false;
 bool gameCreated = false;
 string playerId;
 int gameCode;
 string displayName;
+enum gameStatus {waiting, inProgress}; 
 
-bool waitForGameCreation()
+bool waitForResponse()
 {
-  while(!createGameReturned) {
+  while(!requestReturned) {
     ProcessEvents(100);
   }
 } 
@@ -48,13 +52,13 @@ void createGame(int gameCode, string displayName, string playerId)
 
   firebase::InitResult result;
   Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
-
+  
   // Add a new document with a generated ID
   Future<DocumentReference> game_ref =
     db->Collection("games").Add({
             {"code", FieldValue::Integer(gameCode)},
-            {"status", FieldValue::String("Waiting for game be started...")},
-            {"playerId", FieldValue::String(playerId)}
+            {"status", FieldValue::Integer(waiting)},
+            {"players", FieldValue::Array({FieldValue::String(playerId)})}
     });
   
   game_ref.OnCompletion([](const Future<DocumentReference>& future) {
@@ -94,7 +98,7 @@ void createPlayer(int code, string name)
     } else {
       std::cout << "Error adding document: " << future.error_message() << '\n';
     }
-    createGameReturned = true;
+    requestReturned = true;
   });
 }
 
@@ -134,13 +138,34 @@ int main(int argc, const char* argv[]) {
     code.pop_back();
     cout << endl; 
     createPlayer(gameCode, displayName);
-    waitForGameCreation();
+    waitForResponse();
   }else if (choice == 2)
   {
     int code; 
     cout << "Enter a 5 digit game code: "; 
-    cin >> code; 
+    cin >> code;
 
+    cout << "Code: " << code << endl;
+    
+    Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
+    requestReturned = false;
+    db->Collection("games")
+    .WhereEqualTo("code", FieldValue::Integer(code))
+    .Get()
+    .OnCompletion([](const Future<QuerySnapshot>& future) {
+      if (future.error() == Error::kErrorOk) {
+        cout << "Got documents" << endl;
+        for (const DocumentSnapshot& document :
+             future.result()->documents()) {
+          std::cout << document << '\n';
+        }
+      } else {
+        std::cout << "Error getting documents: " << future.error_message()
+                  << '\n';
+      }
+      requestReturned = true;
+    });
+    waitForResponse();
   }
 
   return 1;
