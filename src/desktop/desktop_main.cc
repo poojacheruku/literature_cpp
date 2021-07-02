@@ -14,9 +14,12 @@
 
 #include "auth/LiteratureAuth.hpp"
 #include "utils.h"  // NOLINT
+#include "hooks.h"
+#include "actions.h"
+#include "uuid.h"
+
 #include <iostream>
-#include <vector>
-#include <random>
+
 #include "firebase/app.h"
 #include "firebase/firestore.h"
 using ::firebase::App;
@@ -30,78 +33,7 @@ using ::firebase::firestore::Query;
 using ::firebase::firestore::QuerySnapshot; 
 using ::firebase::firestore::DocumentSnapshot; 
 
-
 using namespace std;
-bool requestReturned = false;
-bool gameCreated = false;
-string playerId;
-int gameCode;
-string displayName;
-enum gameStatus {waiting, inProgress}; 
-
-bool waitForResponse()
-{
-  while(!requestReturned) {
-    ProcessEvents(100);
-  }
-} 
-
-void createGame(int gameCode, string displayName, string playerId)
-{
-  cout << "Creating game..." << endl;
-
-  firebase::InitResult result;
-  Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
-  
-  // Add a new document with a generated ID
-  Future<DocumentReference> game_ref =
-    db->Collection("games").Add({
-            {"code", FieldValue::Integer(gameCode)},
-            {"status", FieldValue::Integer(waiting)},
-            {"players", FieldValue::Array({FieldValue::String(playerId)})}
-    });
-  
-  game_ref.OnCompletion([](const Future<DocumentReference>& future) {
-    if (future.error() == Error::kErrorOk) {
-      std::cout << "DocumentSnapshot added with ID: " << future.result()->id()
-                << '\n';
-      gameCreated = true;
-    } else {
-      std::cout << "Error adding document: " << future.error_message() << '\n';
-    }
-  });
-}
-
-void createPlayer(int code, string name)
-{
-  cout << "Creating player..." << endl;
-  gameCode = code;
-  displayName = name;
-
-  firebase::InitResult result;
-  Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
-
-  // Add a new document with a generated ID
-  
-
-  Future<DocumentReference> player_ref = 
-    db->Collection("players").Add({{"displayName", FieldValue::String(displayName)}}); 
-                              
-
-  player_ref.OnCompletion([](const Future<DocumentReference>& future) {
-    if (future.error() == Error::kErrorOk) {
-      std::cout << "DocumentSnapshot added with ID: " << future.result()->id()
-                << '\n';
-      // gameCreated = true;
-      string playerId = future.result()->id();
-      createGame(gameCode, displayName, playerId);
-    } else {
-      std::cout << "Error adding document: " << future.error_message() << '\n';
-    }
-    requestReturned = true;
-  });
-}
-
 
 int main(int argc, const char* argv[]) {
   LiteratureAuth::getInstance();
@@ -133,7 +65,7 @@ int main(int argc, const char* argv[]) {
     std::iota(code.begin(), code.end(), 00000);
 
     shuffle(code.begin(), code.end(), rng);
-    int gameCode = code.back(); 
+    string gameCode = uuid::generate_game_code();
     cout << "Your game code is: " << gameCode; 
     code.pop_back();
     cout << endl; 
@@ -141,32 +73,42 @@ int main(int argc, const char* argv[]) {
     waitForResponse();
   }else if (choice == 2)
   {
-    int code; 
-    cout << "Enter a 5 digit game code: "; 
+    string code; 
+    cout << "Enter the game code: "; 
     cin >> code;
 
     cout << "Code: " << code << endl;
     
     Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
     requestReturned = false;
-    db->Collection("games")
-    .WhereEqualTo("code", FieldValue::Integer(code))
-    .Get()
-    .OnCompletion([](const Future<QuerySnapshot>& future) {
+    DocumentReference doc_ref = db->Collection("games").Document(code);
+    doc_ref.Get().OnCompletion([](const Future<DocumentSnapshot>& future) {
       if (future.error() == Error::kErrorOk) {
-        cout << "Got documents" << endl;
-        for (const DocumentSnapshot& document :
-             future.result()->documents()) {
-          std::cout << document << '\n';
+        const DocumentSnapshot& document = *future.result();
+        if (document.exists()) {
+          std::cout << "DocumentSnapshot id: " << document.id() << '\n';
+          docExists = true;
+          requestReturned = true;
+        } else {
+          std::cout << "no such document\n";
         }
       } else {
-        std::cout << "Error getting documents: " << future.error_message()
-                  << '\n';
+        std::cout << "Get failed with: " << future.error_message() << '\n';
       }
-      requestReturned = true;
     });
     waitForResponse();
+    if(docExists) {
+      requestReturned = false;
+      doc_ref.Update({{"capital", FieldValue::Boolean(true)}})
+        .OnCompletion([](const Future<void>& future) {
+          cout << "Added the field capital" << endl;
+          requestReturned = true;
+      });
+      waitForResponse();
+    }
   }
+
+  // while(true);
 
   return 1;
 }

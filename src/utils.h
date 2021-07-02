@@ -1,3 +1,6 @@
+#ifndef LITERATURE_CPP_UTILS_H  // NOLINT
+#define LITERATURE_CPP_UTILS_H  // NOLINT
+
 // Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LITERATURE_CPP_UTILS_H  // NOLINT
-#define LITERATURE_CPP_UTILS_H  // NOLINT
-
 #include <string>
+#include <random>
+#include <sstream>
+#include <iostream>
+
+using namespace std;
 
 // Cross platform logging method.
 // Implemented by android/android_main.cc or ios/ios_main.mm.

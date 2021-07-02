@@ -80,7 +80,12 @@ else()
 
   # Platform abstraction layer for the desktop sample.
   set(FIREBASE_DESKTOP_SRCS
+    src/desktop/PausedState.cpp
+    src/desktop/Player.cpp
+    src/desktop/PlayerState.cpp
     src/desktop/desktop_main.cc
+    src/desktop/PlayingState.cpp
+    src/desktop/StoppedState.cpp
     src/auth/LiteratureAuth.cpp
     src/auth/auth_utils.cc
   )
