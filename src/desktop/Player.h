@@ -7,9 +7,10 @@ class Player {
 public:
 	enum State
 	{
-		ST_STOPPED,
-		ST_PLAYING,
-		ST_PAUSED
+		ST_STOPPED_PLAYING,
+		ST_WAITING_FOR_PLAYERS,
+		ST_WAITING_FOR_TURN,
+		ST_PLAYING_MY_TURN
 	};
 
 	Player();

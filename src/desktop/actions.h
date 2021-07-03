@@ -38,6 +38,13 @@ void waitForResponse()
   }
 } 
 
+void waitForGameUpdates()
+{
+  while(!gameUpdated) {
+    ProcessEvents(100);
+  }
+} 
+
 void createGame(string gameCode, string displayName, string playerId)
 {
   cout << "Creating game..." << endl;

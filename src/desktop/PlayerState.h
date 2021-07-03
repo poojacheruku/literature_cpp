@@ -9,24 +9,16 @@ using namespace std;
 
 class PlayerState {
 public:
-	enum State
-	{
-		ST_STOPPED,
-		ST_PLAYING,
-		ST_PAUSED
-	};
-
-	PlayerState(string name);
+	PlayerState();
 	virtual ~PlayerState();
 
-	virtual void Play(Player * player);
-	virtual void Pause(Player * player);
-	virtual void Stop(Player * player);
+	virtual void Handle(Player * player);
 
 	string GetName() { return m_name; }
 
-private:
-	string   m_name;
+protected:
+	string  		m_name;
+	Player::State 	state;
 };
 
 #endif // PLAYER_STATE_H

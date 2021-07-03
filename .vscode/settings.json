@@ -5,6 +5,7 @@
         "__config": "cpp",
         "__locale": "cpp",
         "iosfwd": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "new": "cpp"
     }
 }
