@@ -25,6 +25,7 @@ using namespace std;
 bool requestReturned = false;
 bool gameCreated = false;
 bool docExists = false;
+bool exitGame = false;
 string playerId;
 string gameCode;
 string displayName;
@@ -33,6 +34,7 @@ enum gameStatus {waiting, inProgress};
 
 void waitForResponse()
 {
+  requestReturned = false;
   while(!requestReturned) {
     ProcessEvents(100);
   }
@@ -40,10 +42,20 @@ void waitForResponse()
 
 void waitForGameUpdates()
 {
+  gameUpdated = false;
   while(!gameUpdated) {
     ProcessEvents(100);
   }
 } 
+
+void waitForGameExit()
+{
+  exitGame = false;
+  while(!exitGame) {
+    ProcessEvents(100);
+  }
+} 
+
 
 void createGame(string gameCode, string displayName, string playerId)
 {

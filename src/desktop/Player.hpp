@@ -16,11 +16,9 @@ public:
 	Player();
 	virtual ~Player();
 
-	void Play();
-	void Pause();
-	void Stop();
+	void Handle();
 
-	void SetState(State state);
+	void SetState(PlayerState * state);
 
 private:
 	PlayerState * m_pState;

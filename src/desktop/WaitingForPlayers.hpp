@@ -1,8 +1,8 @@
 #ifndef WAITING_FOR_PLAYERS_H
 #define WAITING_FOR_PLAYERS_H
 
-#include "PlayerState.h"
-#include "Player.h"
+#include "PlayerState.hpp"
+#include "Player.hpp"
 
 class WaitingForPlayers : public PlayerState
 {

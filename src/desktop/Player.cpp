@@ -1,4 +1,4 @@
-#include "Player.h"
+#include "Player.hpp"
 
 #include <iostream>
 
@@ -13,6 +13,11 @@ Player::~Player() {
 	// delete m_pState;
 }
 
-void Player::SetState(State state)
+void Player::Handle() {
+
+}
+
+void Player::SetState(PlayerState * state)
 {
+	m_pState = state;
 }

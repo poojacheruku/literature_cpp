@@ -1,7 +1,7 @@
 #ifndef PLAYER_STATE_H
 #define PLAYER_STATE_H
 
-#include "Player.h"
+#include "Player.hpp"
 
 #include <string>
 

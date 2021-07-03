@@ -1,8 +1,8 @@
 #ifndef STOPPED_PLAYING_H
 #define STOPPED_PLAYING_H
 
-#include "PlayerState.h"
-#include "Player.h"
+#include "PlayerState.hpp"
+#include "Player.hpp"
 
 class StoppedPlaying : public PlayerState
 {
