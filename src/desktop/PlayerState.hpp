@@ -8,17 +8,15 @@
 using namespace std;
 
 class PlayerState {
+protected:
+	string  		m_name;
+	Player::State 	m_state;
+
 public:
 	PlayerState();
 	virtual ~PlayerState();
-
-	virtual void Handle(Player * player);
-
+	virtual void Handle();
 	string GetName() { return m_name; }
-
-protected:
-	string  		m_name;
-	Player::State 	state;
 };
 
 #endif // PLAYER_STATE_H

@@ -16,7 +16,7 @@ private:
 
 public:
     static WaitingForTurn& getInstance();
-	virtual void Handle(Player * player);
+	void Handle();
 };
 
 #endif  // WAITING_FOR_TURN_H  // NOLINT

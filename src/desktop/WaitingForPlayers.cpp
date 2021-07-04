@@ -1,9 +1,12 @@
 #include "WaitingForPlayers.hpp"
 
+#include <iostream>
+using namespace std;
+
 /* constructor */
 WaitingForPlayers::WaitingForPlayers()
 {
-	state = Player::ST_WAITING_FOR_PLAYERS;
+	m_state = Player::ST_WAITING_FOR_PLAYERS;
 }
 
 WaitingForPlayers& WaitingForPlayers::getInstance()
@@ -12,7 +15,7 @@ WaitingForPlayers& WaitingForPlayers::getInstance()
     return instance;
 }
 
-void WaitingForPlayers::Handle(Player * player)
+void WaitingForPlayers::Handle()
 {
-	// player->SetState(Player::ST_PAUSED);
+    cout << GetName() << endl;
 }

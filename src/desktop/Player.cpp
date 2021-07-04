@@ -1,20 +1,23 @@
 #include "Player.hpp"
+#include "PlayerState.hpp"
 
 #include <iostream>
 
 using namespace std;
 
+/* constructor */
 Player::Player()
-// : m_pState(new StoppedState()){
 {
 }
 
-Player::~Player() {
-	// delete m_pState;
+Player& Player::getInstance()
+{
+    static Player instance;       // Gets destroyed at the end
+    return instance;
 }
 
 void Player::Handle() {
-
+	m_pState->Handle();
 }
 
 void Player::SetState(PlayerState * state)

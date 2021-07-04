@@ -1,9 +1,13 @@
 #include "PlayingMyTurn.hpp"
 
+#include <iostream>
+using namespace std;
+
 /* constructor */
 PlayingMyTurn::PlayingMyTurn()
 {
-	state = Player::ST_WAITING_FOR_PLAYERS;
+	m_state = Player::ST_WAITING_FOR_PLAYERS;
+    m_name = "It is your turn";
 }
 
 PlayingMyTurn& PlayingMyTurn::getInstance()
@@ -12,7 +16,7 @@ PlayingMyTurn& PlayingMyTurn::getInstance()
     return instance;
 }
 
-void PlayingMyTurn::Handle(Player * player)
+void PlayingMyTurn::Handle()
 {
-	// player->SetState(Player::ST_PAUSED);
+    cout << GetName() << endl;
 }

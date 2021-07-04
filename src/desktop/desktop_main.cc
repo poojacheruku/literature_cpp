@@ -13,34 +13,23 @@
 // limitations under the License.
 
 #include "auth/LiteratureAuth.hpp"
-#include "utils.h"  // NOLINT
-#include "hooks.h"
-#include "actions.h"
-#include "uuid.h"
+#include "Actions.hpp"
+#include "PlayerState.hpp"
+#include "StoppedPlaying.hpp"
 
 #include <iostream>
-
-#include "firebase/app.h"
-#include "firebase/firestore.h"
-using ::firebase::App;
-using ::firebase::firestore::Firestore;
-using ::firebase::firestore::DocumentReference;
-using ::firebase::Future;
-using ::firebase::firestore::FieldValue;
-using ::firebase::firestore::Error;
-using ::firebase::FutureHandleId;
-using ::firebase::firestore::Query; 
-using ::firebase::firestore::QuerySnapshot; 
-using ::firebase::firestore::DocumentSnapshot; 
 
 using namespace std;
 
 int main(int argc, const char* argv[]) {
   LiteratureAuth::getInstance();
-  
-  cout << "1. Start a new game" << endl;
-  cout << "2. Join a game" << endl ; 
-  cout << endl; 
+
+  Player::getInstance().SetState(&StoppedPlaying::getInstance());
+  Player::getInstance().Handle();
+
+  // cout << "1. Start a new game" << endl;
+  // cout << "2. Join a game" << endl ; 
+  // cout << endl; 
 
   // int choice; 
   // cout << "Choose your option (1 or 2): "; 
@@ -109,7 +98,7 @@ int main(int argc, const char* argv[]) {
   //   }
   // }
 
-  waitForGameExit();
+  Actions::waitForGameExit();
 
   return 1;
 }

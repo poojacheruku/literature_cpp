@@ -1,22 +1,18 @@
-#ifndef HOOKS_H
-#define HOOKS_H
+#include "Hooks.hpp"
+#include "firebase/firestore.h"
 
-#include "auth/LiteratureAuth.hpp"
 #include <iostream>
 #include <string>
-#include "firebase/app.h"
-#include "firebase/firestore.h"
 
 using namespace std;
 
-using firebase::firestore::DocumentReference;
 using firebase::firestore::DocumentSnapshot;
 using firebase::firestore::Error;
 using firebase::firestore::FieldValue;
 
-bool gameUpdated = false;
+bool Hooks::gameUpdated = false;
 
-void listenToGameChanges(DocumentReference doc_ref) {
+void Hooks::listenToGameChanges(DocumentReference doc_ref) {
     doc_ref.AddSnapshotListener([](const DocumentSnapshot& snapshot,
                                  Error error, string test) {
         if (error == Error::kErrorOk) {
@@ -37,5 +33,3 @@ void listenToGameChanges(DocumentReference doc_ref) {
     });
     // [END listen_document_local]
 }
-
-#endif // HOOKS_H

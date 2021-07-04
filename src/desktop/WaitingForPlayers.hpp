@@ -16,7 +16,7 @@ private:
 
 public:
     static WaitingForPlayers& getInstance();
-	virtual void Handle(Player * player);
+	void Handle();
 };
 
 #endif  // WAITING_FOR_PLAYERS_H  // NOLINT

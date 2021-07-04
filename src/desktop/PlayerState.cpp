@@ -12,7 +12,7 @@ PlayerState::PlayerState() {
 PlayerState::~PlayerState() {
 }
 
-void PlayerState::Handle(Player *)
+void PlayerState::Handle()
 {
 	std::cout << "Illegal state transition from " << GetName() << " to Playing\n";
 }

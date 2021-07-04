@@ -1,38 +1,20 @@
-#ifndef ACTIONS_H
-#define ACTIONS_H
-
 #include "auth/LiteratureAuth.hpp"
+#include "Actions.hpp"
 #include "utils.h"  // NOLINT
-#include "hooks.h"
+#include "Hooks.hpp"
 
-#include <iostream>
-#include <vector>
-#include <random>
-#include "firebase/app.h"
-#include "firebase/firestore.h"
-using ::firebase::App;
 using ::firebase::firestore::Firestore;
-using ::firebase::firestore::DocumentReference;
 using ::firebase::Future;
+using ::firebase::firestore::DocumentReference;
 using ::firebase::firestore::FieldValue;
 using ::firebase::firestore::Error;
-using ::firebase::FutureHandleId;
-using ::firebase::firestore::Query; 
-using ::firebase::firestore::QuerySnapshot; 
-using ::firebase::firestore::DocumentSnapshot; 
 
-using namespace std;
-bool requestReturned = false;
-bool gameCreated = false;
-bool docExists = false;
-bool exitGame = false;
-string playerId;
-string gameCode;
-string displayName;
+bool Actions::requestReturned = false;
+bool Actions::gameCreated = false;
+bool Actions::docExists = false;
+bool Actions::exitGame = false;
 
-enum gameStatus {waiting, inProgress}; 
-
-void waitForResponse()
+void Actions::waitForResponse()
 {
   requestReturned = false;
   while(!requestReturned) {
@@ -40,15 +22,15 @@ void waitForResponse()
   }
 } 
 
-void waitForGameUpdates()
+void Actions::waitForGameUpdates()
 {
-  gameUpdated = false;
-  while(!gameUpdated) {
+  Hooks::setGameUpdated(false);
+  while(Hooks::isGameUpdated()) {
     ProcessEvents(100);
   }
 } 
 
-void waitForGameExit()
+void Actions::waitForGameExit()
 {
   exitGame = false;
   while(!exitGame) {
@@ -57,7 +39,7 @@ void waitForGameExit()
 } 
 
 
-void createGame(string gameCode, string displayName, string playerId)
+void Actions::createGame(string gameCode, string displayName, string playerId)
 {
   cout << "Creating game..." << endl;
 
@@ -68,20 +50,18 @@ void createGame(string gameCode, string displayName, string playerId)
   db->Collection("games")
       .Document(gameCode)
       .Set({
-          {"status", FieldValue::Integer(waiting)},
+          {"status", FieldValue::Integer(GS_WAITING)},
           {"players", FieldValue::Array({FieldValue::String(playerId)})}
   });
 
   DocumentReference game_ref = db->Collection("games").Document(gameCode);
   
-  listenToGameChanges(game_ref);
+  Hooks::listenToGameChanges(game_ref);
 }
 
-void createPlayer(string code, string name)
+void Actions::createPlayer(string gameCode, string displayName)
 {
   cout << "Creating player..." << endl;
-  gameCode = code;
-  displayName = name;
 
   firebase::InitResult result;
   Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
@@ -93,7 +73,7 @@ void createPlayer(string code, string name)
     db->Collection("players").Add({{"displayName", FieldValue::String(displayName)}}); 
                               
 
-  player_ref.OnCompletion([](const Future<DocumentReference>& future) {
+  player_ref.OnCompletion([gameCode, displayName](const Future<DocumentReference>& future) {
     if (future.error() == Error::kErrorOk) {
       std::cout << "DocumentSnapshot added with ID: " << future.result()->id()
                 << '\n';
@@ -106,5 +86,3 @@ void createPlayer(string code, string name)
     requestReturned = true;
   });
 }
-
-#endif // ACTIONS_H

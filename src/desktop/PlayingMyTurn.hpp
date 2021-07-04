@@ -16,7 +16,7 @@ private:
 
 public:
     static PlayingMyTurn& getInstance();
-	virtual void Handle(Player * player);
+	void Handle();
 };
 
 #endif  // PLAYING_MY_TURN_H  // NOLINT

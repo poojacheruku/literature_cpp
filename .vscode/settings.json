@@ -6,6 +6,7 @@
         "__locale": "cpp",
         "iosfwd": "cpp",
         "random": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "system_error": "cpp"
     }
 }

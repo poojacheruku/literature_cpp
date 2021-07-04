@@ -89,7 +89,8 @@ else()
     src/desktop/WaitingForPlayers.cpp
     src/desktop/WaitingForTurn.cpp
     src/desktop/PlayingMyTurn.cpp
-    
+    src/desktop/Actions.cpp
+    src/desktop/Hooks.cpp
   )
 
   set(target_name "desktop_literature")

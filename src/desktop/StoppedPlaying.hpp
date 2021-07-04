@@ -16,7 +16,7 @@ private:
 
 public:
     static StoppedPlaying& getInstance();
-	virtual void Handle(Player * player);
+	void Handle();
 };
 
 #endif  // STOPPED_PLAYING_H  // NOLINT
