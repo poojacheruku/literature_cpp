@@ -63,39 +63,12 @@ void startNewGame(string displayName) {
     cout << "Creating a new game" << endl;
     string gameCode = uuid::generate_game_code();
     cout << "Share this game code: " << gameCode << endl;
-    Actions::createPlayer(gameCode, displayName);
+    Actions::createPlayer(gameCode, displayName, true);
 }
 
 void joinGame(string displayName, string gameCode) {
-    Actions::setDocExists(false);
-
-    Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
-    DocumentReference doc_ref = db->Collection("games").Document(gameCode);
-    doc_ref.Get().OnCompletion([](const Future<DocumentSnapshot>& future) {
-      if (future.error() == Error::kErrorOk) {
-        const DocumentSnapshot& document = *future.result();
-        if (document.exists()) {
-          std::cout << "DocumentSnapshot id: " << document.id() << '\n';
-          Actions::setDocExists(true);
-          Actions::setRequestReturned(true);
-        } else {
-          std::cout << "no such document\n";
-        }
-      } else {
-        std::cout << "Get failed with: " << future.error_message() << '\n';
-      }
-    });
-
-    Actions::waitForResponse();
-
-    if(Actions::isDocExists()) {
-      doc_ref.Update({{"capital", FieldValue::Boolean(true)}})
-        .OnCompletion([](const Future<void>& future) {
-          cout << "Added the field capital" << endl;
-          Actions::setRequestReturned(true);
-      });
-      Actions::waitForResponse();
-    }
+    cout << "Joining a game" << endl;
+    Actions::createPlayer(gameCode, displayName, false);
 }
 
 void StoppedPlaying::Handle()

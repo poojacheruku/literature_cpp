@@ -1,5 +1,5 @@
-#ifndef STOPPED_PLAYING_H
-#define STOPPED_PLAYING_H
+#ifndef LITERATURE_STOPPED_PLAYING_H
+#define LITERATURE_STOPPED_PLAYING_H
 
 #include "PlayerState.hpp"
 #include "Player.hpp"
@@ -19,4 +19,4 @@ public:
 	void Handle();
 };
 
-#endif  // STOPPED_PLAYING_H  // NOLINT
+#endif  // LITERATURE_STOPPED_PLAYING_H  // NOLINT

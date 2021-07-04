@@ -1,5 +1,5 @@
-#ifndef LITERATURE_CPP_AUTH_H
-#define LITERATURE_CPP_AUTH_H
+#ifndef LITERATURE_AUTH_H
+#define LITERATURE_AUTH_H
 
 #include "firebase/app.h"
 #include "firebase/auth.h"
@@ -25,4 +25,4 @@ public:
     App* getFirebaseApp();
 };
 
-#endif  // LITERATURE_CPP_AUTH_H_  // NOLINT
+#endif  // LITERATURE_AUTH_H  // NOLINT

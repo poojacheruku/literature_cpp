@@ -16,8 +16,7 @@ public:
 	static void waitForResponse();
 	static void waitForGameUpdates();
 	static void waitForGameExit();
-	static void createGame(string gameCode, string displayName, string playerId);
-	static void createPlayer(string code, string name);
+	static void createPlayer(string code, string name, bool newGame);
 	static void setRequestReturned(bool returned) { requestReturned = returned; }
 	static void setGameCreated(bool created) { gameCreated = created; }
 	static void setDocExists(bool exists) { docExists = exists; }

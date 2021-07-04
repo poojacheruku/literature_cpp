@@ -1,5 +1,5 @@
-#ifndef PLAYER_STATE_H
-#define PLAYER_STATE_H
+#ifndef LITERATURE_PLAYER_STATE_H
+#define LITERATURE_PLAYER_STATE_H
 
 #include "Player.hpp"
 
@@ -19,4 +19,4 @@ public:
 	string GetName() { return m_name; }
 };
 
-#endif // PLAYER_STATE_H
+#endif // LITERATURE_PLAYER_STATE_H

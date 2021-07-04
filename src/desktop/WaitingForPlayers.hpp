@@ -1,5 +1,5 @@
-#ifndef WAITING_FOR_PLAYERS_H
-#define WAITING_FOR_PLAYERS_H
+#ifndef LITERATURE_WAITING_FOR_PLAYERS_H
+#define LITERATURE_WAITING_FOR_PLAYERS_H
 
 #include "PlayerState.hpp"
 #include "Player.hpp"
@@ -19,4 +19,4 @@ public:
 	void Handle();
 };
 
-#endif  // WAITING_FOR_PLAYERS_H  // NOLINT
+#endif  // LITERATURE_WAITING_FOR_PLAYERS_H  // NOLINT

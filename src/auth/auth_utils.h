@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LITERATURE_CPP_AUTH_UTILS_H_  // NOLINT
-#define LITERATURE_CPP_AUTH_UTILS_H_  // NOLINT
+#ifndef LITERATURE_AUTH_UTILS_H  // NOLINT
+#define LITERATURE_AUTH_UTILS_H  // NOLINT
 
 #include <string>
 using ::firebase::auth::AuthError;
@@ -21,4 +21,4 @@ using ::firebase::auth::AuthError;
 bool WaitForSignInFuture(Future<User*> sign_in_future, const char* fn,
                                 AuthError expected_error, Auth* auth);              
 
-#endif  // LITERATURE_CPP_AUTH_UTILS_H   // NOLINT
+#endif  // LITERATURE_AUTH_UTILS_H   // NOLINT

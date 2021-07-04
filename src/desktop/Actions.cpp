@@ -6,6 +6,7 @@
 using ::firebase::firestore::Firestore;
 using ::firebase::Future;
 using ::firebase::firestore::DocumentReference;
+using ::firebase::firestore::DocumentSnapshot;
 using ::firebase::firestore::FieldValue;
 using ::firebase::firestore::Error;
 
@@ -39,7 +40,7 @@ void Actions::waitForGameExit()
 } 
 
 
-void Actions::createGame(string gameCode, string displayName, string playerId)
+void createGame(string displayName, string gameCode, string playerId)
 {
   cout << "Creating game..." << endl;
 
@@ -50,7 +51,7 @@ void Actions::createGame(string gameCode, string displayName, string playerId)
   db->Collection("games")
       .Document(gameCode)
       .Set({
-          {"status", FieldValue::Integer(GS_WAITING)},
+          {"status", FieldValue::Integer(Actions::GS_WAITING)},
           {"players", FieldValue::Array({FieldValue::String(playerId)})}
   });
 
@@ -59,7 +60,39 @@ void Actions::createGame(string gameCode, string displayName, string playerId)
   Hooks::listenToGameChanges(game_ref);
 }
 
-void Actions::createPlayer(string gameCode, string displayName)
+void joinGame(string displayName, string gameCode, string playerId) {
+    Actions::setDocExists(false);
+
+    Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
+    DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+    doc_ref.Get().OnCompletion([](const Future<DocumentSnapshot>& future) {
+      if (future.error() == Error::kErrorOk) {
+        const DocumentSnapshot& document = *future.result();
+        if (document.exists()) {
+          std::cout << "DocumentSnapshot id: " << document.id() << '\n';
+          Actions::setDocExists(true);
+          Actions::setRequestReturned(true);
+        } else {
+          std::cout << "no such document\n";
+        }
+      } else {
+        std::cout << "Get failed with: " << future.error_message() << '\n';
+      }
+    });
+
+    Actions::waitForResponse();
+
+    if(Actions::isDocExists()) {
+      doc_ref.Update({{"capital", FieldValue::Boolean(true)}})
+        .OnCompletion([](const Future<void>& future) {
+          cout << "Added the field capital" << endl;
+          Actions::setRequestReturned(true);
+      });
+      Actions::waitForResponse();
+    }
+}
+
+void Actions::createPlayer(string gameCode, string displayName, bool newGame)
 {
   cout << "Creating player..." << endl;
 
@@ -73,13 +106,15 @@ void Actions::createPlayer(string gameCode, string displayName)
     db->Collection("players").Add({{"displayName", FieldValue::String(displayName)}}); 
                               
 
-  player_ref.OnCompletion([gameCode, displayName](const Future<DocumentReference>& future) {
+  player_ref.OnCompletion([gameCode, displayName, newGame](const Future<DocumentReference>& future) {
     if (future.error() == Error::kErrorOk) {
-      std::cout << "DocumentSnapshot added with ID: " << future.result()->id()
-                << '\n';
-      // gameCreated = true;
       string playerId = future.result()->id();
-      createGame(gameCode, displayName, playerId);
+
+      if(newGame) {
+        createGame(gameCode, displayName, playerId);
+      } else {
+        joinGame(gameCode, displayName, playerId);
+      }
     } else {
       std::cout << "Error adding document: " << future.error_message() << '\n';
     }

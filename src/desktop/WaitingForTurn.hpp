@@ -1,5 +1,5 @@
-#ifndef WAITING_FOR_TURN_H
-#define WAITING_FOR_TURN_H
+#ifndef LITERATURE_WAITING_FOR_TURN_H
+#define LITERATURE_WAITING_FOR_TURN_H
 
 #include "PlayerState.hpp"
 #include "Player.hpp"
@@ -19,4 +19,4 @@ public:
 	void Handle();
 };
 
-#endif  // WAITING_FOR_TURN_H  // NOLINT
+#endif  // LITERATURE_WAITING_FOR_TURN_H  // NOLINT

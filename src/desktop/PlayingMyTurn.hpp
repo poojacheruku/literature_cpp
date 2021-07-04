@@ -1,5 +1,5 @@
-#ifndef PLAYING_MY_TURN_H
-#define PLAYING_MY_TURN_H
+#ifndef LITERATURE_PLAYING_MY_TURN_H
+#define LITERATURE_PLAYING_MY_TURN_H
 
 #include "PlayerState.hpp"
 #include "Player.hpp"
@@ -19,4 +19,4 @@ public:
 	void Handle();
 };
 
-#endif  // PLAYING_MY_TURN_H  // NOLINT
+#endif  // LITERATURE_PLAYING_MY_TURN_H  // NOLINT

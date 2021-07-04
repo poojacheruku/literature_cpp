@@ -31,7 +31,6 @@ LiteratureAuth::LiteratureAuth()
 LiteratureAuth& LiteratureAuth::getInstance()
 {
     static LiteratureAuth instance;       // Gets destroyed at the end
-    cout << "Returning auth instance" << endl;
     return instance;
 }
 

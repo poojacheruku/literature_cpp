@@ -1,5 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef LITERATURE_PLAYER_H
+#define LITERATURE_PLAYER_H
 
 class PlayerState;
 
@@ -35,4 +35,4 @@ public:
 	};
 };
 
-#endif // PLAYER_H
+#endif // LITERATURE_PLAYER_H
