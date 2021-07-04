@@ -61,38 +61,40 @@ void createGame(string displayName, string gameCode, string playerId)
 }
 
 void joinGame(string displayName, string gameCode, string playerId) {
-    Actions::setDocExists(false);
+  cout << "Joining game..." << endl;
 
-    Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
-    DocumentReference doc_ref = db->Collection("games").Document(gameCode);
-    doc_ref.Get().OnCompletion([](const Future<DocumentSnapshot>& future) {
-      if (future.error() == Error::kErrorOk) {
-        const DocumentSnapshot& document = *future.result();
-        if (document.exists()) {
-          std::cout << "DocumentSnapshot id: " << document.id() << '\n';
-          Actions::setDocExists(true);
-          Actions::setRequestReturned(true);
-        } else {
-          std::cout << "no such document\n";
-        }
+  Actions::setDocExists(false);
+
+  Firestore* db = Firestore::GetInstance(LiteratureAuth::getInstance().getFirebaseApp());
+  DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+  doc_ref.Get().OnCompletion([](const Future<DocumentSnapshot>& future) {
+    if (future.error() == Error::kErrorOk) {
+      const DocumentSnapshot& document = *future.result();
+      if (document.exists()) {
+        std::cout << "DocumentSnapshot id: " << document.id() << '\n';
+        Actions::setDocExists(true);
+        Actions::setRequestReturned(true);
       } else {
-        std::cout << "Get failed with: " << future.error_message() << '\n';
+        std::cout << "no such document\n";
       }
-    });
-
-    Actions::waitForResponse();
-
-    if(Actions::isDocExists()) {
-      doc_ref.Update({{"capital", FieldValue::Boolean(true)}})
-        .OnCompletion([](const Future<void>& future) {
-          cout << "Added the field capital" << endl;
-          Actions::setRequestReturned(true);
-      });
-      Actions::waitForResponse();
+    } else {
+      std::cout << "Get failed with: " << future.error_message() << '\n';
     }
+  });
+
+  Actions::waitForResponse();
+
+  if(Actions::isDocExists()) {
+    doc_ref.Update({{"players", FieldValue::Array({FieldValue::String(playerId)})}})
+      .OnCompletion([](const Future<void>& future) {
+        cout << "Updated the players array" << endl;
+        Actions::setRequestReturned(true);
+    });
+    Actions::waitForResponse();
+  }
 }
 
-void Actions::createPlayer(string gameCode, string displayName, bool newGame)
+void Actions::createPlayer(string displayName, string gameCode, bool newGame)
 {
   cout << "Creating player..." << endl;
 
@@ -106,14 +108,14 @@ void Actions::createPlayer(string gameCode, string displayName, bool newGame)
     db->Collection("players").Add({{"displayName", FieldValue::String(displayName)}}); 
                               
 
-  player_ref.OnCompletion([gameCode, displayName, newGame](const Future<DocumentReference>& future) {
+  player_ref.OnCompletion([displayName, gameCode, newGame](const Future<DocumentReference>& future) {
     if (future.error() == Error::kErrorOk) {
       string playerId = future.result()->id();
 
       if(newGame) {
-        createGame(gameCode, displayName, playerId);
+        createGame(displayName, gameCode, playerId);
       } else {
-        joinGame(gameCode, displayName, playerId);
+        joinGame(displayName, gameCode, playerId);
       }
     } else {
       std::cout << "Error adding document: " << future.error_message() << '\n';

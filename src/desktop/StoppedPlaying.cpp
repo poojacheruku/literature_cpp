@@ -60,15 +60,13 @@ string getGameCodeFromUser() {
 }
 
 void startNewGame(string displayName) {
-    cout << "Creating a new game" << endl;
     string gameCode = uuid::generate_game_code();
     cout << "Share this game code: " << gameCode << endl;
-    Actions::createPlayer(gameCode, displayName, true);
+    Actions::createPlayer(displayName, gameCode, true);
 }
 
 void joinGame(string displayName, string gameCode) {
-    cout << "Joining a game" << endl;
-    Actions::createPlayer(gameCode, displayName, false);
+    Actions::createPlayer(displayName, gameCode, false);
 }
 
 void StoppedPlaying::Handle()
