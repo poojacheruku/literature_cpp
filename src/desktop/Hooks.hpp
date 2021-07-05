@@ -11,9 +11,11 @@ class Hooks {
 private:
     /* data */
 	static bool gameUpdated;
+	static bool playerUpdated;
 
 public:
 	static void listenToGameChanges(DocumentReference doc_ref);
+	static void listenToPlayerChanges(DocumentReference doc_ref);
     static void setGameUpdated(bool updated) { gameUpdated = updated; }
     static bool isGameUpdated() { return gameUpdated; }
 

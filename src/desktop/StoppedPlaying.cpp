@@ -76,9 +76,9 @@ void StoppedPlaying::Handle()
     string gameCode;
     string displayName = getDisplayNameFromUser();
     
-    do {
+    // do {
         choice = getChoice();
-    } while(choice != 1 && choice != 2);
+    // } while(choice != 1 && choice != 2);
 
     switch (choice)
     {

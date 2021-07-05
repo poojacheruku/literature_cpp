@@ -1,10 +1,12 @@
 #include <iostream>
 #include "firebase/app.h"
 #include "firebase/auth.h"
+#include "firebase/firestore.h"
 
 using namespace std;
 using ::firebase::Future;
 using ::firebase::auth::Auth;
+using ::firebase::firestore::Firestore;
 using ::firebase::auth::User;
 using ::firebase::auth::kAuthErrorNone;
 
@@ -26,6 +28,7 @@ LiteratureAuth::LiteratureAuth()
     options.set_database_url("literature-316716.firebaseapp.com");
     app = firebase::App::Create(options);
     auth = firebase::auth::Auth::GetAuth(app);
+    db = Firestore::GetInstance(app);
 }
 
 LiteratureAuth& LiteratureAuth::getInstance()
@@ -73,4 +76,9 @@ void LiteratureAuth::signIn()
 App* LiteratureAuth::getFirebaseApp()
 {
     return app;
+}
+
+Firestore* LiteratureAuth::getFirestoreDb()
+{
+    return db;
 }
