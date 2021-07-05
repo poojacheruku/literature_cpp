@@ -23,7 +23,8 @@ private:
     void operator=(LiteratureAuth const&);    // Don't implement
 
 public:
-    static LiteratureAuth& getInstance();
+    static LiteratureAuth& GetInstance();
+    void Initialize();
     void signIn();
     App* getFirebaseApp();
     Firestore* getFirestoreDb();

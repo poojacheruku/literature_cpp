@@ -1,6 +1,9 @@
 #ifndef LITERATURE_PLAYER_H
 #define LITERATURE_PLAYER_H
 
+#include "firebase/firestore.h"
+using firebase::firestore::DocumentSnapshot;
+
 class PlayerState;
 
 class Player {
@@ -15,8 +18,9 @@ private:
     void operator=(Player const&);    // Don't implement
 
 public:
-    static Player& getInstance();
-	void Handle();
+    static Player& GetInstance();
+	void Handle(const DocumentSnapshot& snapshot);
+	void Start();
 	void SetState(PlayerState * state);
 	void SetPlayerType(int type) { m_type = type; }
 

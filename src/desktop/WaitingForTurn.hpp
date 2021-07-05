@@ -15,8 +15,8 @@ private:
     void operator=(WaitingForTurn const&);    // Don't implement
 
 public:
-    static WaitingForTurn& getInstance();
-	void Handle();
+    static WaitingForTurn& GetInstance();
+	void Handle(const DocumentSnapshot& snapshot);
 };
 
 #endif  // LITERATURE_WAITING_FOR_TURN_H  // NOLINT

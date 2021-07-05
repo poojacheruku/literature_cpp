@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "Actions.hpp"
 #include "auth/LiteratureAuth.hpp"
+#include "LogIt.hpp"
 
 #include "firebase/app.h"
 #include "firebase/firestore.h"
@@ -26,7 +27,7 @@ StoppedPlaying::StoppedPlaying()
     m_name = "Ready for a new game";
 }
 
-StoppedPlaying &StoppedPlaying::getInstance()
+StoppedPlaying &StoppedPlaying::GetInstance()
 {
     static StoppedPlaying instance; // Gets destroyed at the end
     return instance;
@@ -36,7 +37,6 @@ int getChoice() {
     cout << "What would you like to do?" << endl;
     cout << "1. Start a new game" << endl;
     cout << "2. Join a game" << endl;
-    cout << endl;
 
     int choice;
     cout << "Choose your option (1 or 2): ";
@@ -61,7 +61,6 @@ string getGameCodeFromUser() {
 
 void startNewGame(string displayName) {
     string gameCode = uuid::generate_game_code();
-    cout << "Share this game code: " << gameCode << endl;
     Actions::createPlayer(displayName, gameCode, true);
 }
 
@@ -69,9 +68,9 @@ void joinGame(string displayName, string gameCode) {
     Actions::createPlayer(displayName, gameCode, false);
 }
 
-void StoppedPlaying::Handle()
+void StoppedPlaying::Start()
 {
-    cout << GetName() << endl;
+    log(logINFO) << GetName();
     int choice = 0;
     string gameCode;
     string displayName = getDisplayNameFromUser();
@@ -83,19 +82,25 @@ void StoppedPlaying::Handle()
     switch (choice)
     {
     case 1:
-        cout << "You chose to start a new game" << endl;
-        Player::getInstance().SetPlayerType(Player::OWNER);
+        log(logINFO) << "You chose to start a new game";
+
+        Player::GetInstance().SetPlayerType(Player::OWNER);
         startNewGame(displayName);
         break;
 
     case 2:
-        cout << "You chose to join a game" << endl;
-        Player::getInstance().SetPlayerType(Player::PLAYER);
+        log(logINFO) << "You chose to join a game";
+        Player::GetInstance().SetPlayerType(Player::PLAYER);
         gameCode = getGameCodeFromUser();
         joinGame(displayName, gameCode);
         break; 
    
     default:
-        cout << "Not sure how I came here" << endl;
+        log(logERROR) << "Not sure how I came here";
     }
+}
+
+void StoppedPlaying::Handle(const DocumentSnapshot& snapshot)
+{
+    log(logINFO) << GetName();
 }

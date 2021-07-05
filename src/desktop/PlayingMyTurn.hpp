@@ -15,8 +15,8 @@ private:
     void operator=(PlayingMyTurn const&);    // Don't implement
 
 public:
-    static PlayingMyTurn& getInstance();
-	void Handle();
+    static PlayingMyTurn& GetInstance();
+	void Handle(const DocumentSnapshot& snapshot);
 };
 
 #endif  // LITERATURE_PLAYING_MY_TURN_H  // NOLINT

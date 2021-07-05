@@ -3,8 +3,10 @@
 
 #include "Player.hpp"
 
-#include <string>
+#include "firebase/firestore.h"
+using firebase::firestore::DocumentSnapshot;
 
+#include <string>
 using namespace std;
 
 class PlayerState {
@@ -15,7 +17,8 @@ protected:
 public:
 	PlayerState();
 	virtual ~PlayerState();
-	virtual void Handle();
+	virtual void Handle(const DocumentSnapshot& snapshot);
+	virtual void Start();
 	string GetName() { return m_name; }
 };
 

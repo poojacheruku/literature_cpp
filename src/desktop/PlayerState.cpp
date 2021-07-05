@@ -1,4 +1,5 @@
 #include "PlayerState.hpp"
+#include "LogIt.hpp"
 
 #include <iostream>
 #include <string>
@@ -12,7 +13,12 @@ PlayerState::PlayerState() {
 PlayerState::~PlayerState() {
 }
 
-void PlayerState::Handle()
+void PlayerState::Handle(const DocumentSnapshot& snapshot)
 {
-	std::cout << "Illegal state transition from " << GetName() << " to Playing\n";
+	log(logERROR) << "Illegal state transition from " << GetName() << " to Playing";
+}
+
+void PlayerState::Start()
+{
+	log(logERROR) << "Illegal state transition from " << GetName() << " to Playing";
 }

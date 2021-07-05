@@ -15,8 +15,8 @@ private:
     void operator=(WaitingForPlayers const&);    // Don't implement
 
 public:
-    static WaitingForPlayers& getInstance();
-	void Handle();
+    static WaitingForPlayers& GetInstance();
+	void Handle(const DocumentSnapshot& snapshot);
 };
 
 #endif  // LITERATURE_WAITING_FOR_PLAYERS_H  // NOLINT

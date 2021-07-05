@@ -15,8 +15,9 @@ private:
     void operator=(StoppedPlaying const&);    // Don't implement
 
 public:
-    static StoppedPlaying& getInstance();
-	void Handle();
+    static StoppedPlaying& GetInstance();
+	void Start();
+	void Handle(const DocumentSnapshot& snapshot);
 };
 
 #endif  // LITERATURE_STOPPED_PLAYING_H  // NOLINT

@@ -24,17 +24,21 @@ static const char kFirebaseProviderId[] =
 /* constructor */
 LiteratureAuth::LiteratureAuth()
 {
+}
+
+LiteratureAuth& LiteratureAuth::GetInstance()
+{
+    static LiteratureAuth instance;       // Gets destroyed at the end
+    return instance;
+}
+
+void LiteratureAuth::Initialize()
+{
     firebase::AppOptions options;
     options.set_database_url("literature-316716.firebaseapp.com");
     app = firebase::App::Create(options);
     auth = firebase::auth::Auth::GetAuth(app);
     db = Firestore::GetInstance(app);
-}
-
-LiteratureAuth& LiteratureAuth::getInstance()
-{
-    static LiteratureAuth instance;       // Gets destroyed at the end
-    return instance;
 }
 
 void LiteratureAuth::signIn()

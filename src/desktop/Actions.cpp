@@ -2,6 +2,7 @@
 #include "Actions.hpp"
 #include "utils.h"  // NOLINT
 #include "Hooks.hpp"
+#include "LogIt.hpp"
 
 #include <vector>
 #include <iostream>
@@ -52,27 +53,31 @@ void Actions::waitForGameExit()
 
 void createGame(string displayName, string gameCode, string playerId)
 {
-  cout << "Creating game..." << endl;
+  log(logINFO) << "Creating game...";
 
   // firebase::InitResult result;
-  Firestore* db = LiteratureAuth::getInstance().getFirestoreDb();
+  Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   
   // Add a new document with a generated ID
   DocumentReference doc_ref = db->Collection("games").Document(gameCode);
   Hooks::listenToGameChanges(doc_ref);
-  doc_ref
-      .Set({
-          {"status", FieldValue::Integer(Actions::GS_WAITING)},
-          {"players", FieldValue::Array({FieldValue::String(playerId)})}
+  doc_ref.Set({
+      {"status", FieldValue::Integer(Actions::GS_WAITING)},
+      {"players", FieldValue::Array({FieldValue::String(playerId)})}
+  })
+  .OnCompletion([gameCode](const Future<void>& future) {
+    cout << "SHARE THIS GAME CODE: " << gameCode << endl;
+    cout << "Waiting for players..." << endl;
   });
 }
 
 void joinGame(string displayName, string gameCode, string playerId) {
-  cout << "Joining game..." << endl;
+  log(logINFO) << "Joining game...";
+
 
   Actions::setDocExists(false);
 
-  Firestore* db = LiteratureAuth::getInstance().getFirestoreDb();
+  Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
   // Start listening to game changes
@@ -83,72 +88,40 @@ void joinGame(string displayName, string gameCode, string playerId) {
   while(game_ref.status() != firebase::kFutureStatusComplete);
 
   if (game_ref.error() == 0) {
-    LogMessage("Got document");
+    log(logINFO) << "Got document";
     const DocumentSnapshot& document = *game_ref.result();
     if (document.exists()) {
-      std::cout << "DocumentSnapshot id: " << document.id() << '\n';
+      log(logDEBUG1) << "DocumentSnapshot id: ";
       Actions::setDocExists(true);
       Actions::setRequestReturned(true);
       FieldValue players = document.Get("players");
       if(players.is_array()) {
         vector<FieldValue> playerList = players.array_value();
         playerList.push_back(FieldValue::String(playerId));
-        for (auto & element : playerList) {
-            cout << element.ToString() << endl;;
+        for (FieldValue & element : playerList) {
+            log(logDEBUG1) << element.ToString();
         }
         doc_ref.Update({{"players", FieldValue::Array(playerList)}})
           .OnCompletion([](const Future<void>& future) {
-            cout << "Updated the players array" << endl;
+            log(logINFO)  << "Updated the players array";
             Actions::setRequestReturned(true);
         });        
       }
     } else {
-      std::cout << "no such document\n";
+      log(logERROR) << "no such document\n";
   }
   }
   else {
-    LogMessage("Error %d: %s", game_ref.error(), game_ref.error_message());
-  }
-
-  // doc_ref.Get().OnCompletion([playerId](const Future<DocumentSnapshot>& future) {
-  //   if (future.error() == Error::kErrorOk) {
-  //     const DocumentSnapshot& document = *future.result();
-  //     if (document.exists()) {
-  //       std::cout << "DocumentSnapshot id: " << document.id() << '\n';
-  //       Actions::setDocExists(true);
-  //       Actions::setRequestReturned(true);
-  //       FieldValue players = document.Get("players");
-  //       if(players.is_array()) {
-  //         vector<FieldValue> playerList = players.array_value();
-  //         playerList.push_back(FieldValue::String(playerId));
-  //         for (auto & element : playerList) {
-  //             cout << element.ToString() << endl;;
-  //         }
-  //       }
-  //     } else {
-  //       std::cout << "no such document\n";
-  //     }
-  //   } else {
-  //     std::cout << "Get failed with: " << future.error_message() << '\n';
-  //   }
-  // });
-
-  if(Actions::isDocExists()) {
-    // doc_ref.Update({{"players", FieldValue::Array({FieldValue::String(playerId)})}})
-    //   .OnCompletion([](const Future<void>& future) {
-    //     cout << "Updated the players array" << endl;
-    //     Actions::setRequestReturned(true);
-    // });
-    Actions::waitForResponse();
+    log(logERROR) << "Error " << game_ref.error() << ": " << game_ref.error_message();
   }
 }
 
 void Actions::createPlayer(string displayName, string gameCode, bool newGame)
 {
-  cout << "Creating player..." << endl;
+  log(logINFO) << "Creating player...";
 
   firebase::InitResult result;
-  Firestore* db = LiteratureAuth::getInstance().getFirestoreDb();
+  Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
 
   // Add a new document with a generated ID
   DocumentReference doc_ref = db->Collection("players").Document();
@@ -161,7 +134,7 @@ void Actions::createPlayer(string displayName, string gameCode, bool newGame)
   while(player_ref.status() != firebase::kFutureStatusComplete);
 
   if (player_ref.error() == 0) {
-    LogMessage("Created player");
+    log(logINFO) << "Created player";
     string playerId = player_ref.result()->id();
     if(newGame) {
       createGame(displayName, gameCode, playerId);
@@ -170,6 +143,6 @@ void Actions::createPlayer(string displayName, string gameCode, bool newGame)
     }
   }
   else {
-    LogMessage("Error %d: %s", player_ref.error(), player_ref.error_message());
+    log(logERROR) << "Error " << player_ref.error() << ": " << player_ref.error_message();
   }
 }

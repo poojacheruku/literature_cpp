@@ -1,5 +1,6 @@
 #include "Player.hpp"
 #include "PlayerState.hpp"
+#include "StoppedPlaying.hpp"
 
 #include <iostream>
 
@@ -10,14 +11,19 @@ Player::Player()
 {
 }
 
-Player& Player::getInstance()
+Player& Player::GetInstance()
 {
     static Player instance;       // Gets destroyed at the end
     return instance;
 }
 
-void Player::Handle() {
-	m_pState->Handle();
+void Player::Handle(const DocumentSnapshot& snapshot) {
+	m_pState->Handle(snapshot);
+}
+
+void Player::Start() {
+    SetState(&StoppedPlaying::GetInstance());
+	m_pState->Start();
 }
 
 void Player::SetState(PlayerState * state)
