@@ -1,50 +1,32 @@
-#include "Player.h"
-#include "StoppedState.h"
-#include "PlayingState.h"
-#include "PausedState.h"
+#include "Player.hpp"
+#include "PlayerState.hpp"
+#include "StoppedPlaying.hpp"
 
 #include <iostream>
 
 using namespace std;
 
+/* constructor */
 Player::Player()
-: m_pState(new StoppedState()){
-
-}
-
-Player::~Player() {
-	delete m_pState;
-}
-
-void Player::Play() {
-	m_pState->Play(this);
-}
-
-void Player::Pause() {
-	m_pState->Pause(this);
-}
-
-void Player::Stop() {
-	m_pState->Stop(this);
-}
-
-void Player::SetState(State state)
 {
-	cout << "changing from " << m_pState->GetName() << " to ";
-	delete m_pState;
+}
 
-	if(state == ST_STOPPED)
-	{
-		m_pState = new StoppedState();
-	}
-	else if(state == ST_PLAYING)
-	{
-		m_pState = new PlayingState();
-	}
-	else
-	{
-		m_pState = new PausedState();
-	}
+Player& Player::GetInstance()
+{
+    static Player instance;       // Gets destroyed at the end
+    return instance;
+}
 
-	cout << m_pState->GetName() << " state\n";
+void Player::Handle(const DocumentSnapshot& snapshot) {
+	m_pState->Handle(snapshot);
+}
+
+void Player::Start() {
+    SetState(&StoppedPlaying::GetInstance());
+	m_pState->Start();
+}
+
+void Player::SetState(PlayerState * state)
+{
+	m_pState = state;
 }

@@ -1,3 +1,6 @@
+#ifndef LITERATURE_UUID_H
+#define LITERATURE_UUID_H
+
 #include <vector>
 #include <random>
 #include <sstream>
@@ -46,3 +49,4 @@ namespace uuid {
 	}
 }
 
+#endif // LITERATURE_UUID_H

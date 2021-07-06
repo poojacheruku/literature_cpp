@@ -1,29 +1,24 @@
-#include "PlayerState.h"
+#include "PlayerState.hpp"
+#include "LogIt.hpp"
 
 #include <iostream>
 #include <string>
 
 using namespace std;
 
-PlayerState::PlayerState(std::string name)
-: m_name(name) {
+PlayerState::PlayerState() {
 
 }
 
 PlayerState::~PlayerState() {
 }
 
-void PlayerState::Play(Player *)
+void PlayerState::Handle(const DocumentSnapshot& snapshot)
 {
-	std::cout << "Illegal state transition from " << GetName() << " to Playing\n";
+	log(logERROR) << "Illegal state transition from " << GetName() << " to Playing";
 }
 
-void PlayerState::Pause(Player *)
+void PlayerState::Start()
 {
-	std::cout << "Illegal state transition from " << GetName() << " to Paused\n";
-}
-
-void PlayerState::Stop(Player *)
-{
-	std::cout << "Illegal state transition from " << GetName() << " to Stopped\n";
+	log(logERROR) << "Illegal state transition from " << GetName() << " to Playing";
 }
