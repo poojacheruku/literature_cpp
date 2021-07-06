@@ -24,11 +24,12 @@ void Hooks::listenToGameChanges(DocumentReference doc_ref) {
             string source =
                 snapshot.metadata().has_pending_writes() ? "Local" : "Server";
             if (snapshot.exists()) {
-                log(logDEBUG1) << source << " data: " << snapshot.Get("name").string_value();
+                cout << source << " data: " << snapshot.Get("changeReason").string_value() << endl; 
                 if(source == "Server") {
                     gameUpdated = true;
                     Player::GetInstance().Handle(snapshot);
                 }
+                // Player::GetInstance().Handle(snapshot); 
             } else {
                 log(logDEBUG1) << source << " data: null";
             }

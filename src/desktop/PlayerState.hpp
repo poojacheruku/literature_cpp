@@ -18,6 +18,7 @@ public:
 	PlayerState();
 	virtual ~PlayerState();
 	virtual void Handle(const DocumentSnapshot& snapshot);
+	virtual void WaitForPlayers();
 	virtual void Start();
 	string GetName() { return m_name; }
 };

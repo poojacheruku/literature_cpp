@@ -3,6 +3,8 @@
 #include "utils.h"  // NOLINT
 #include "Hooks.hpp"
 #include "LogIt.hpp"
+#include "Player.hpp"
+#include "WaitingForPlayers.hpp"
 
 #include <vector>
 #include <iostream>
@@ -67,7 +69,8 @@ void createGame(string displayName, string gameCode, string playerId)
   })
   .OnCompletion([gameCode](const Future<void>& future) {
     cout << "SHARE THIS GAME CODE: " << gameCode << endl;
-    cout << "Waiting for players..." << endl;
+    Player::GetInstance().SetState(&WaitingForPlayers::GetInstance()); 
+    Player::GetInstance().WaitForPlayers();
   });
 }
 
@@ -101,11 +104,15 @@ void joinGame(string displayName, string gameCode, string playerId) {
         for (FieldValue & element : playerList) {
             log(logDEBUG1) << element.ToString();
         }
-        doc_ref.Update({{"players", FieldValue::Array(playerList)}})
+        doc_ref.Update({
+          {"players", FieldValue::Array(playerList)},
+          {"changeReason", FieldValue::String("JOIN")}})
           .OnCompletion([](const Future<void>& future) {
             log(logINFO)  << "Updated the players array";
             Actions::setRequestReturned(true);
-        });        
+        }); 
+        Player::GetInstance().SetState(&WaitingForPlayers::GetInstance()); 
+        Player::GetInstance().WaitForPlayers();       
       }
     } else {
       log(logERROR) << "no such document\n";

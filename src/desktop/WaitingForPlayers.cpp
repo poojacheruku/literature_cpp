@@ -16,7 +16,15 @@ WaitingForPlayers& WaitingForPlayers::GetInstance()
     return instance;
 }
 
+void WaitingForPlayers::WaitForPlayers()
+{
+    cout << "Waiting for other players!" << endl;
+}
+
 void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
 {
-    log(logINFO) << GetName();
+    if (snapshot.Get("changeReason").string_value() == "JOIN")
+    {
+        cout << "New player joined."; 
+    }
 }

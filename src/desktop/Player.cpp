@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include "PlayerState.hpp"
 #include "StoppedPlaying.hpp"
+#include "LogIt.hpp"
 
 #include <iostream>
 
@@ -19,6 +20,11 @@ Player& Player::GetInstance()
 
 void Player::Handle(const DocumentSnapshot& snapshot) {
 	m_pState->Handle(snapshot);
+}
+
+void Player::WaitForPlayers() {
+    log(logINFO) << "WaitForPlayers called";
+    m_pState->WaitForPlayers();
 }
 
 void Player::Start() {
