@@ -16,6 +16,7 @@
 #include "Actions.hpp"
 #include "PlayerState.hpp"
 #include "LogIt.hpp"
+#include "PlayerSettings.hpp"
 
 #include <iostream>
 
@@ -25,6 +26,7 @@ using namespace std;
 loglevel_e loglevel = logERROR;
 
 int main(int argc, const char* argv[]) {
+  PlayerSettings::GetInstance().Initialize();
   LiteratureAuth::GetInstance().Initialize();
 
   Player::GetInstance().Start();

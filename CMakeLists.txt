@@ -89,16 +89,27 @@ else()
     src/desktop/WaitingForPlayers.cpp
     src/desktop/WaitingForTurn.cpp
     src/desktop/PlayingMyTurn.cpp
+    src/desktop/PlayerSettings.cpp
     src/desktop/Actions.cpp
     src/desktop/Hooks.cpp
   )
 
   set(target_name "desktop_literature")
-  add_executable(${target_name}
-    ${FIREBASE_DESKTOP_SRCS}
-    ${FIREBASE_UTILS_SRCS}
-  )
-
+  set(Boost_USE_STATIC_LIBS OFF) 
+  set(Boost_USE_MULTITHREADED ON)  
+  set(Boost_USE_STATIC_RUNTIME OFF) 
+  find_package(Boost 1.76.0 REQUIRED COMPONENTS filesystem) 
+  
+  if(Boost_FOUND)
+      include_directories(${Boost_INCLUDE_DIRS}) 
+      add_executable(
+        ${target_name}
+        ${FIREBASE_DESKTOP_SRCS}
+        ${FIREBASE_UTILS_SRCS}
+      ) 
+      target_link_libraries(${target_name} ${Boost_LIBRARIES})
+  endif()
+  
   if(APPLE)
     set(ADDITIONAL_LIBS
       gssapi_krb5
@@ -138,3 +149,4 @@ add_subdirectory(${FIREBASE_CPP_SDK_DIR} bin/ EXCLUDE_FROM_ALL)
 # Note that firebase_app needs to be last in the list.
 set(firebase_libs firebase_firestore firebase_auth firebase_app)
 target_link_libraries(${target_name} "${firebase_libs}" ${ADDITIONAL_LIBS})
+
