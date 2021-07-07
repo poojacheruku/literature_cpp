@@ -14,7 +14,7 @@
 
 #include "auth/LiteratureAuth.hpp"
 #include "Actions.hpp"
-#include "PlayerState.hpp"
+#include "Player.hpp"
 #include "LogIt.hpp"
 #include "PlayerSettings.hpp"
 
