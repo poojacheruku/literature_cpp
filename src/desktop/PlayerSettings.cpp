@@ -60,12 +60,13 @@ void PlayerSettings::LoadSettings()
     // Use the throwing version of get to find the debug filename.
     // If the path cannot be resolved, an exception is thrown.
     m_player_id = tree.get<std::string>("player.playerid");
+    m_display_name = tree.get<std::string>("player.displayname");
 
     cout << "Seems like you had previously logged in." << endl;
     cout << "Your display name is: " << m_display_name << endl;
 
     if(tree.size() > 0) {
-        cout << "Your are currently playing the followin games:" << endl;
+        cout << "Your are currently playing the following games:" << endl;
     } else {
         cout << "You currently have no games" << endl;
     }
