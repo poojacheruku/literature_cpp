@@ -3,6 +3,7 @@
 #include "utils.h"  // NOLINT
 #include "Hooks.hpp"
 #include "LogIt.hpp"
+#include "PlayerSettings.hpp"
 
 #include <vector>
 #include <iostream>
@@ -66,6 +67,7 @@ void createGame(string displayName, string gameCode, string playerId)
       {"players", FieldValue::Array({FieldValue::String(playerId)})}
   })
   .OnCompletion([gameCode](const Future<void>& future) {
+    PlayerSettings::GetInstance().AddNewGame(gameCode);
     cout << "SHARE THIS GAME CODE: " << gameCode << endl;
     cout << "Waiting for players..." << endl;
   });
@@ -136,6 +138,7 @@ void Actions::createPlayer(string displayName, string gameCode, bool newGame)
   if (player_ref.error() == 0) {
     log(logINFO) << "Created player";
     string playerId = player_ref.result()->id();
+    PlayerSettings::GetInstance().SetPlayer(playerId, displayName);
     if(newGame) {
       createGame(displayName, gameCode, playerId);
     } else {

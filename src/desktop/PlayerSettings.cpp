@@ -37,6 +37,7 @@ void PlayerSettings::SaveSettings()
     // converted to a string. Note that the "debug" node is automatically
     // created if it doesn't exist.
     tree.put("player.playerid", m_player_id);
+    tree.put("player.displayname", m_display_name);
 
     // Add all the modules. Unlike put, which overwrites existing nodes, add
     // adds a new node at the lowest level, so the "modules" node will have
@@ -60,12 +61,22 @@ void PlayerSettings::LoadSettings()
     // If the path cannot be resolved, an exception is thrown.
     m_player_id = tree.get<std::string>("player.playerid");
 
+    cout << "Seems like you had previously logged in." << endl;
+    cout << "Your display name is: " << m_display_name << endl;
+
+    if(tree.size() > 0) {
+        cout << "Your are currently playing the followin games:" << endl;
+    } else {
+        cout << "You currently have no games" << endl;
+    }
+
     // Use get_child to find the node containing the modules, and iterate over
     // its children. If the path cannot be resolved, get_child throws.
     // A C++11 for-range loop would also work.
     BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("player.games")) {
         // The data function is used to access the data stored in a node.
         m_games.insert(v.second.data());
+        cout << v.second.data() << endl;
     }
 
 }
