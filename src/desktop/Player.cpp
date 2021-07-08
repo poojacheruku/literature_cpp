@@ -19,6 +19,7 @@ Player& Player::GetInstance()
 }
 
 void Player::Handle(const DocumentSnapshot& snapshot) {
+    log(logINFO) << "Passing the handle to State";
 	m_pState->Handle(snapshot);
 }
 

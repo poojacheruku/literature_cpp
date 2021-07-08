@@ -27,11 +27,21 @@ bool Actions::requestReturned = false;
 bool Actions::gameCreated = false;
 bool Actions::docExists = false;
 bool Actions::exitGame = false;
+bool Actions::hookCallCompleted = false;
+DocumentSnapshot Actions::snapshot;
 
 void Actions::waitForResponse()
 {
   requestReturned = false;
   while(!requestReturned) {
+    ProcessEvents(100);
+  }
+} 
+
+void Actions::waitForHookComplete()
+{
+  hookCallCompleted = false;
+  while(!hookCallCompleted) {
     ProcessEvents(100);
   }
 } 
