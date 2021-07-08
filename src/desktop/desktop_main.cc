@@ -17,8 +17,12 @@
 #include "Player.hpp"
 #include "LogIt.hpp"
 #include "PlayerSettings.hpp"
+#include "Card.hpp"
+#include "Hand.hpp"
+
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -26,12 +30,27 @@ using namespace std;
 loglevel_e loglevel = logERROR;
 
 int main(int argc, const char* argv[]) {
-  PlayerSettings::GetInstance().Initialize();
-  LiteratureAuth::GetInstance().Initialize();
+  // PlayerSettings::GetInstance().Initialize();
+  // LiteratureAuth::GetInstance().Initialize();
 
-  Player::GetInstance().Start();
+  // Player::GetInstance().Start();
 
-  Actions::waitForGameExit();
+  // Actions::waitForGameExit();
 
+  vector<Card> cards;
+  cards.push_back(Card(1, 10));
+  cards.push_back(Card(3, 13));
+  cards.push_back(Card(0, 5));
+  // cards.push_back(Card(2, 11));
+
+  // Card card1(1, 10);
+  // Card card2 = card1;
+
+  // card2.PrettyPrint();
+
+  // Hand::GetInstance().Initialize(cards);
+  // Hand::GetInstance().AddCard(3, 8);
+  Hand::GetInstance().PrettyPrint();
+  
   return 1;
 }
