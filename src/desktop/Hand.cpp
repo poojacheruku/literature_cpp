@@ -8,10 +8,15 @@ using namespace std;
 #define RED     "\033[31m"
 #define BOLDRED "\033[1m\033[31m"
 #define RESET   "\033[0m"
-#define SPADE   "\u2660"
-#define CLUB    "\u2664"
-#define HEART   "\u2665"
-#define DIAMOND "\u2666"
+
+#define TOPLEFT     "\u2554"
+#define HORIZONTAL  "\u2550"
+#define TOPMIDDLE   "\u2566"
+#define TOPRIGHT    "\u2557"
+#define VERTICAL    "\u2551"
+#define BOTTOMLEFT  "\u255a"
+#define BOTTOMMIDDLE "\u2569"
+#define BOTTOMRIGHT "\u255d"
 
 /* constructor */
 Hand::Hand()
@@ -70,32 +75,32 @@ void Hand::AddCard(Card& card) {
 
 void Hand::PrintTop(vector<Card> suit) {
     int size = suit.size();
-    cout << "\u256d";
+    cout << TOPLEFT;
     for (int i = 0; i < size - 1; ++i) {
-        cout << "\u2500\u2500\u2500\u252c";
+        cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPMIDDLE;
     }
-    cout << "\u2500\u2500\u2500\u256e" << endl;
+    cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPRIGHT << endl;
 }
 
 void PrintSuit(Card& card) {
     if(card.GetCardSuit() == CardSuit::HEARTS || card.GetCardSuit() == CardSuit::DIAMONDS) {
-        cout << " " << BOLDRED << card.GetSuitIcon() << RESET << " \u2502";
+        cout << " " << BOLDRED << card.GetSuitIcon() << RESET << " " << VERTICAL;
     } else {
-        cout << " " << card.GetSuitIcon() << " \u2502";
+        cout << " " << card.GetSuitIcon() << " " << VERTICAL;
     }
 }
 
 void PrintValue(Card& card) {
-    cout << " " << card.GetFaceValue() << " \u2502";
+    cout << " " << card.GetFaceValue() << " " << VERTICAL;
 }
 
 void Hand::PrintBottom(vector<Card> suit) {
     int size = suit.size();
-    cout << "\u2570";
+    cout << BOTTOMLEFT;
     for (int i = 0; i < size - 1; ++i) {
-        cout << "\u2500\u2500\u2500\u2534";
+        cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMMIDDLE;
     }
-    cout << "\u2500\u2500\u2500\u256f" << endl;
+    cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMRIGHT << endl;
 }
 
 void Hand::PrettyPrint() {
@@ -117,9 +122,9 @@ void Hand::PrettyPrintSuit(vector<Card> suit) {
         return;
     }
     PrintTop(suit);
-    cout << "\u2502";
+    cout << VERTICAL;
     std::for_each(std::begin(suit), std::end(suit), PrintSuit);
-    cout << "\n\u2502";
+    cout << "\n" << VERTICAL;
     std::for_each(std::begin(suit), std::end(suit), PrintValue);
     cout << "\n";
     PrintBottom(suit);

@@ -13,9 +13,9 @@ class LiteratureAuth
 {
 private:
     /* data */
-    App* app;
-    Auth* auth;
-    Firestore* db;
+    App* m_app;
+    Auth* m_auth;
+    Firestore* m_db;
 
     /* constructor */
     LiteratureAuth();
@@ -26,8 +26,8 @@ public:
     static LiteratureAuth& GetInstance();
     void Initialize();
     void signIn();
-    App* getFirebaseApp();
-    Firestore* getFirestoreDb();
+    App* getFirebaseApp() { return m_app; }
+    Firestore* getFirestoreDb() { return m_db; }
 };
 
 #endif  // LITERATURE_AUTH_H  // NOLINT
