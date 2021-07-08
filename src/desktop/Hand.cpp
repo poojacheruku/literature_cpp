@@ -1,7 +1,7 @@
 #include "Hand.hpp"
 
 #include <iostream>
-#include <vector>
+#include <set>
 #include <stdexcept>
 using namespace std;
 
@@ -29,7 +29,7 @@ Hand& Hand::GetInstance()
     return instance;
 }
 
-vector<Card>& Hand::GetSuitVector(Card& card) {
+set<Card>& Hand::GetSuitVector(const Card& card) {
     switch (card.GetCardSuit())
     {
     case CardSuit::SPADES:
@@ -54,11 +54,11 @@ vector<Card>& Hand::GetSuitVector(Card& card) {
     }
 }
 
-void Hand::Initialize(vector<Card> hand)
+void Hand::Initialize(set<Card> hand)
 {
     m_hand = hand;
-    for (vector<Card>::iterator it = m_hand.begin() ; it != m_hand.end(); ++it) {
-        GetSuitVector(*it).push_back(*it);
+    for (set<Card>::iterator it = m_hand.begin() ; it != m_hand.end(); ++it) {
+        GetSuitVector(*it).insert(*it);
     }
 }
 
@@ -69,11 +69,11 @@ void Hand::AddCard(int suit, int value) {
 }
 
 void Hand::AddCard(Card& card) {
-    GetSuitVector(card).push_back(card);
-    m_hand.push_back(card);
+    GetSuitVector(card).insert(card);
+    m_hand.insert(card);
 }
 
-void Hand::PrintTop(vector<Card> suit) {
+void Hand::PrintTop(set<Card> suit) {
     int size = suit.size();
     cout << TOPLEFT;
     for (int i = 0; i < size - 1; ++i) {
@@ -82,7 +82,7 @@ void Hand::PrintTop(vector<Card> suit) {
     cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPRIGHT << endl;
 }
 
-void PrintSuit(Card& card) {
+void PrintSuit(const Card& card) {
     if(card.GetCardSuit() == CardSuit::HEARTS || card.GetCardSuit() == CardSuit::DIAMONDS) {
         cout << " " << BOLDRED << card.GetSuitIcon() << RESET << " " << VERTICAL;
     } else {
@@ -90,11 +90,11 @@ void PrintSuit(Card& card) {
     }
 }
 
-void PrintValue(Card& card) {
+void PrintValue(const Card& card) {
     cout << " " << card.GetFaceValue() << " " << VERTICAL;
 }
 
-void Hand::PrintBottom(vector<Card> suit) {
+void Hand::PrintBottom(set<Card> suit) {
     int size = suit.size();
     cout << BOTTOMLEFT;
     for (int i = 0; i < size - 1; ++i) {
@@ -117,7 +117,7 @@ void Hand::PrettyPrint() {
     PrettyPrintSuit(m_diamonds);
 }
 
-void Hand::PrettyPrintSuit(vector<Card> suit) {
+void Hand::PrettyPrintSuit(set<Card> suit) {
     if(suit.size() == 0) {
         return;
     }
