@@ -83,6 +83,8 @@ else()
     src/desktop/desktop_main.cc
     src/auth/auth_utils.cc
     src/auth/LiteratureAuth.cpp
+    src/desktop/Card.cpp
+    src/desktop/Hand.cpp
     src/desktop/Player.cpp
     src/desktop/PlayerState.cpp
     src/desktop/StoppedPlaying.cpp

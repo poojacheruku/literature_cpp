@@ -4,6 +4,7 @@
 #include "firebase/firestore.h"
 
 using namespace std;
+using ::firebase::App;
 using ::firebase::Future;
 using ::firebase::auth::Auth;
 using ::firebase::firestore::Firestore;
@@ -36,53 +37,20 @@ void LiteratureAuth::Initialize()
 {
     firebase::AppOptions options;
     options.set_database_url("literature-316716.firebaseapp.com");
-    app = firebase::App::Create(options);
-    auth = firebase::auth::Auth::GetAuth(app);
-    db = Firestore::GetInstance(app);
+    m_app = firebase::App::Create(options);
+    m_auth = firebase::auth::Auth::GetAuth(m_app);
+    m_db = Firestore::GetInstance(m_app);
 }
 
 void LiteratureAuth::signIn()
 {
-    Future<User*> anon_sign_in_for_user = auth->SignInAnonymously();
+    Future<User*> anon_sign_in_for_user = m_auth->SignInAnonymously();
     WaitForSignInFuture(anon_sign_in_for_user,
                         "Auth::SignInAnonymously() for User", kAuthErrorNone,
-                        auth);
+                        m_auth);
     if (anon_sign_in_for_user.status() == ::firebase::kFutureStatusComplete) {
       User* anonymous_user = anon_sign_in_for_user.result()
                                  ? *anon_sign_in_for_user.result()
                                  : nullptr;
-    //   if (anonymous_user != nullptr) {
-    //     LogMessage("Anonymous uid is %s", anonymous_user->uid().c_str());
-    //     ExpectStringsEqual("Anonymous user email", "",
-    //                        anonymous_user->email().c_str());
-    //     ExpectStringsEqual("Anonymous user display_name", "",
-    //                        anonymous_user->display_name().c_str());
-    //     ExpectStringsEqual("Anonymous user photo_url", "",
-    //                        anonymous_user->photo_url().c_str());
-    //     ExpectStringsEqual("Anonymous user provider_id", kFirebaseProviderId,
-    //                        anonymous_user->provider_id().c_str());
-    //     ExpectTrue("Anonymous user is_anonymous()",
-    //                anonymous_user->is_anonymous());
-    //     ExpectFalse("Anonymous user is_email_verified()",
-    //                 anonymous_user->is_email_verified());
-    //     ExpectTrue("Anonymous user metadata().last_sign_in_timestamp != 0",
-    //                anonymous_user->metadata().last_sign_in_timestamp != 0);
-    //     ExpectTrue("Anonymous user metadata().creation_timestamp != 0",
-    //                anonymous_user->metadata().creation_timestamp != 0);
-    //   }
     }
-    // cout << "\u2660" << "10" << endl;
-    // cout << "\u2665" << "J" << endl;
-    // cout << "\u2663" << "4" << endl;
-    // cout << "\u2666" << "8" << endl;
-}
-
-App* LiteratureAuth::getFirebaseApp()
-{
-    return app;
-}
-
-Firestore* LiteratureAuth::getFirestoreDb()
-{
-    return db;
 }

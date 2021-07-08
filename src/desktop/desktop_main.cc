@@ -17,8 +17,12 @@
 #include "Player.hpp"
 #include "LogIt.hpp"
 #include "PlayerSettings.hpp"
+#include "Card.hpp"
+#include "Hand.hpp"
+
 
 #include <iostream>
+#include <set>
 
 using namespace std;
 
@@ -26,12 +30,24 @@ using namespace std;
 loglevel_e loglevel = logERROR;
 
 int main(int argc, const char* argv[]) {
-  PlayerSettings::GetInstance().Initialize();
-  LiteratureAuth::GetInstance().Initialize();
+  // PlayerSettings::GetInstance().Initialize();
+  // LiteratureAuth::GetInstance().Initialize();
 
-  Player::GetInstance().Start();
+  // Player::GetInstance().Start();
 
-  Actions::waitForGameExit();
+  // Actions::waitForGameExit();
 
+  set<Card> cards;
+  cards.insert(Card(1, 10));
+  cards.insert(Card(3, 13));
+  cards.insert(Card(0, 5));
+  cards.insert(Card(2, 11));
+  cards.insert(Card(2, 1));
+  cards.insert(Card(2, 6));
+
+  Hand::GetInstance().Initialize(cards);
+  Hand::GetInstance().AddCard(3, 8);
+  Hand::GetInstance().PrettyPrint();
+  
   return 1;
 }
