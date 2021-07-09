@@ -22,15 +22,13 @@ void Hooks::listenToGameChanges(DocumentReference doc_ref) {
                                  Error error, string test) {
         if (error == Error::kErrorOk) {
             log(logINFO) << "Game added / updated";
-            string source =
-                snapshot.metadata().has_pending_writes() ? "Local" : "Server";
+            string source = snapshot.metadata().has_pending_writes() ? "Local" : "Server";
             if (snapshot.exists()) {
                 log(logINFO) << source << " data: " << snapshot.Get("changeReason").string_value(); 
                 if(source == "Server") {
                     gameUpdated = true;
                     log(logINFO) << "Passing the handle to Player";
-                    Actions::setDocumentSnapshot(snapshot);
-                    Actions::setHookCallCompleted(true);
+                    Player::GetInstance().Handle(snapshot);
                 }
                 // Player::GetInstance().Handle(snapshot); 
             } else {
@@ -40,9 +38,6 @@ void Hooks::listenToGameChanges(DocumentReference doc_ref) {
             log(logERROR) << "Listen failed: " << error;
         }
     });
-    Actions::waitForHookComplete();
-    cout << "Hook completed" << endl;
-    Player::GetInstance().Handle(Actions::getDocumentSnapshot());
 }
 
 void Hooks::listenToPlayerChanges(DocumentReference doc_ref) {
