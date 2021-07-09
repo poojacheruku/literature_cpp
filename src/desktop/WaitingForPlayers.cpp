@@ -61,8 +61,9 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
  
     if(changeReason == "JOIN")
     {
-        std::thread threadObj(joinNotification, playerID);
-        threadObj.detach();
+        // std::thread threadObj(joinNotification, playerID);
+        // threadObj.detach();
+        joinNotification(playerID);
     }
 
 }

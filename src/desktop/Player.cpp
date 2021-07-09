@@ -4,6 +4,8 @@
 #include "LogIt.hpp"
 
 #include <iostream>
+#include <future>
+#include <thread>
 
 using namespace std;
 
@@ -20,7 +22,9 @@ Player& Player::GetInstance()
 
 void Player::Handle(const DocumentSnapshot& snapshot) {
     log(logINFO) << "Passing the handle to State";
-	m_pState->Handle(snapshot);
+	// m_pState->Handle(snapshot);
+    std::thread threadObj(&PlayerState::Handle, m_pState, snapshot);
+    threadObj.detach();
 }
 
 void Player::WaitForPlayers() {
