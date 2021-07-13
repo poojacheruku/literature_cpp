@@ -1,6 +1,8 @@
 #ifndef LITERATURE_ACTIONS_H
 #define LITERATURE_ACTIONS_H
 
+#include "Card.hpp"
+
 #include <string>
 using namespace std;
 
@@ -32,6 +34,7 @@ public:
 	}
 	static DocumentSnapshot& getDocumentSnapshot() { return snapshot; }
 	static void setHookCallCompleted(bool callCompleted) { hookCallCompleted = callCompleted; }
+	static void AddPlayerHand(vector<Card> hand, string playerId);
 
 	enum gameStatus
 	{

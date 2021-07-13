@@ -5,6 +5,7 @@
 #include "LogIt.hpp"
 #include "Player.hpp"
 #include "WaitingForPlayers.hpp"
+#include "PlayerSettings.hpp"
 
 #include <vector>
 #include <iostream>
@@ -86,6 +87,7 @@ void createGame(string displayName, string gameCode, string playerId)
       {"players", FieldValue::Array({FieldValue::Map(playerMap)})}
   })
   .OnCompletion([gameCode](const Future<void>& future) {
+    PlayerSettings::GetInstance().AddNewGame(gameCode);
     cout << "SHARE THIS GAME CODE: " << gameCode << endl;
     Player::GetInstance().SetState(&WaitingForPlayers::GetInstance()); 
     Player::GetInstance().WaitForPlayers();
@@ -170,6 +172,7 @@ void Actions::createPlayer(string displayName, string gameCode, bool newGame)
   if (player_ref.error() == 0) {
     log(logINFO) << "Created player";
     string playerId = player_ref.result()->id();
+    PlayerSettings::GetInstance().SetPlayer(playerId, displayName);
     if(newGame) {
       createGame(displayName, gameCode, playerId);
     } else {
@@ -179,4 +182,8 @@ void Actions::createPlayer(string displayName, string gameCode, bool newGame)
   else {
     log(logERROR) << "Error " << player_ref.error() << ": " << player_ref.error_message();
   }
+}
+
+void Actions::AddPlayerHand(vector<Card> hand, string playerId) {
+  log(logINFO) << "AddPlayerHand called for playerId: " << playerId;
 }
