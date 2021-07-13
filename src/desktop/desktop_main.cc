@@ -27,7 +27,7 @@
 using namespace std;
 
 // define and turn off for the rest of the test suite
-loglevel_e loglevel = logERROR;
+loglevel_e loglevel = logINFO;
 
 int main(int argc, const char* argv[]) {
   // PlayerSettings::GetInstance().Initialize();

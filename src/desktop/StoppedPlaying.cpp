@@ -102,5 +102,5 @@ void StoppedPlaying::Start()
 
 void StoppedPlaying::Handle(const DocumentSnapshot& snapshot)
 {
-    log(logINFO) << GetName();
+    log(logINFO) << "game document changed"; 
 }
