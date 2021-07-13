@@ -17,6 +17,7 @@ using ::firebase::firestore::Firestore;
 using ::firebase::firestore::DocumentReference;
 using ::firebase::Future;
 using ::firebase::firestore::FieldValue;
+using ::firebase::firestore::MapFieldValue;
 using ::firebase::firestore::Error;
 using ::firebase::FutureHandleId;
 using ::firebase::firestore::Query; 
@@ -73,9 +74,16 @@ void createGame(string displayName, string gameCode, string playerId)
   // Add a new document with a generated ID
   DocumentReference doc_ref = db->Collection("games").Document(gameCode);
   Hooks::listenToGameChanges(doc_ref);
+  MapFieldValue playerMap;
+  playerMap["displayName"] = FieldValue::String(displayName);
+  playerMap["playerId"] = FieldValue::String(playerId);
+  for( const std::pair<std::string, FieldValue>& n : playerMap ) {
+    log(logINFO) << "Key:[" << n.first << "] Value:[" << n.second << "]\n";
+    break;
+  }
   doc_ref.Set({
       {"status", FieldValue::Integer(Actions::GS_WAITING)},
-      {"players", FieldValue::Array({FieldValue::String(playerId)})}
+      {"players", FieldValue::Array({FieldValue::Map(playerMap)})}
   })
   .OnCompletion([gameCode](const Future<void>& future) {
     cout << "SHARE THIS GAME CODE: " << gameCode << endl;
@@ -108,12 +116,21 @@ void joinGame(string displayName, string gameCode, string playerId) {
       Actions::setDocExists(true);
       Actions::setRequestReturned(true);
       FieldValue players = document.Get("players");
+
+      MapFieldValue playerMap;
+      playerMap["displayName"] = FieldValue::String(displayName);
+      playerMap["playerId"] = FieldValue::String(playerId);
+
+      vector<MapFieldValue> newPlayerList;
       if(players.is_array()) {
         vector<FieldValue> playerList = players.array_value();
-        playerList.push_back(FieldValue::String(playerId));
-        for (FieldValue & element : playerList) {
-            log(logDEBUG1) << element.ToString();
+        playerList.push_back(FieldValue::Map(playerMap));
+
+        for( const std::pair<std::string, FieldValue>& n : playerMap ) {
+          log(logINFO) << "Key:[" << n.first << "] Value:[" << n.second << "]\n";
+          break;
         }
+
         doc_ref.Update({
           {"players", FieldValue::Array(playerList)},
           {"changeReason", FieldValue::String("JOIN")}})
