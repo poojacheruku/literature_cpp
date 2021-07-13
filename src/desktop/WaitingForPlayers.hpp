@@ -17,6 +17,7 @@ private:
 public:
     static WaitingForPlayers& GetInstance();
 	void Handle(const DocumentSnapshot& snapshot);
+    void WaitForPlayers();
 };
 
 #endif  // LITERATURE_WAITING_FOR_PLAYERS_H  // NOLINT

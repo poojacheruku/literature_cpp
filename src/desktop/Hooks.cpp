@@ -3,6 +3,7 @@
 #include "firebase/firestore.h"
 #include "utils.h"
 #include "LogIt.hpp"
+#include "Actions.hpp"
 
 #include <iostream>
 #include <string>
@@ -21,14 +22,15 @@ void Hooks::listenToGameChanges(DocumentReference doc_ref) {
                                  Error error, string test) {
         if (error == Error::kErrorOk) {
             log(logINFO) << "Game added / updated";
-            string source =
-                snapshot.metadata().has_pending_writes() ? "Local" : "Server";
+            string source = snapshot.metadata().has_pending_writes() ? "Local" : "Server";
             if (snapshot.exists()) {
-                log(logDEBUG1) << source << " data: " << snapshot.Get("name").string_value();
+                log(logINFO) << source << " data: " << snapshot.Get("changeReason").string_value(); 
                 if(source == "Server") {
                     gameUpdated = true;
+                    log(logINFO) << "Passing the handle to Player";
                     Player::GetInstance().Handle(snapshot);
                 }
+                // Player::GetInstance().Handle(snapshot); 
             } else {
                 log(logDEBUG1) << source << " data: null";
             }
@@ -36,7 +38,6 @@ void Hooks::listenToGameChanges(DocumentReference doc_ref) {
             log(logERROR) << "Listen failed: " << error;
         }
     });
-    // [END listen_document_local]
 }
 
 void Hooks::listenToPlayerChanges(DocumentReference doc_ref) {

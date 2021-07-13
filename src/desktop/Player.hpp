@@ -20,6 +20,7 @@ private:
 public:
     static Player& GetInstance();
 	void Handle(const DocumentSnapshot& snapshot);
+	void WaitForPlayers();
 	void Start();
 	void SetState(PlayerState * state);
 	void SetPlayerType(int type) { m_type = type; }
