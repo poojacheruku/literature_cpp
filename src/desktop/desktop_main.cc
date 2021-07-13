@@ -31,11 +31,11 @@ loglevel_e loglevel = logERROR;
 
 int main(int argc, const char* argv[]) {
   // PlayerSettings::GetInstance().Initialize();
-  LiteratureAuth::GetInstance().Initialize();
+  // LiteratureAuth::GetInstance().Initialize();
 
-  Player::GetInstance().Start();
+  // Player::GetInstance().Start();
 
-  Actions::waitForGameExit();
+  // Actions::waitForGameExit();
 
   // set<Card> cards;
   // cards.insert(Card(1, 10));
@@ -48,6 +48,8 @@ int main(int argc, const char* argv[]) {
   // Hand::GetInstance().Initialize(cards);
   // Hand::GetInstance().AddCard(3, 8);
   // Hand::GetInstance().PrettyPrint();
+
+  Hand::GetInstance().Initialize(); 
   
   return 1;
 }
