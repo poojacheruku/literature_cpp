@@ -187,3 +187,19 @@ void Actions::createPlayer(string displayName, string gameCode, bool newGame)
 void Actions::AddPlayerHand(vector<Card> hand, string playerId) {
   log(logINFO) << "AddPlayerHand called for playerId: " << playerId;
 }
+
+void Actions::DealCards(vector<Card> cardDeck)
+{ 
+    for ( auto card = cardDeck.begin(); card < cardDeck.end(); ++card) 
+    { 
+        cout << *card << endl; 
+    } 
+    // int counter = 1;
+    // while (counter < 8)
+    // {  
+    //   m_hand.push_back(m_cardDeck.back());
+    //   m_cardDeck.pop_back();
+    //   counter++;  
+    // };
+}
+

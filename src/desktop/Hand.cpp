@@ -132,33 +132,6 @@ void Hand::PrettyPrintSuit(vector<Card> suit) {
 }
 
 
-void Hand::CreateDeck()
-{
-    for (int suit = 0; suit <= 3; suit++)
-    {
-        for (int value = 1; value <= 13; value++)
-        {
-            m_cardDeck.push_back(Card(suit, value)); 
-        }
-    }
-    cout << "Deck size: " << m_cardDeck.size() << endl;
-    std::random_device rd;
-    std::default_random_engine rng(rd());
-    shuffle(m_cardDeck.begin(), m_cardDeck.end(), rng);
-
-}
-
-void Hand::DealCards()
-{ 
-    int counter = 1;
-    while (counter < 8)
-    {  
-      m_hand.push_back(m_cardDeck.back());
-      m_cardDeck.pop_back();
-      counter++;  
-    };
-}
-
 void Hand::Initialize()
 {
     Hand::GetInstance().CreateDeck(); 

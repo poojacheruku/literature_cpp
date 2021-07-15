@@ -15,7 +15,6 @@ class Hand {
     vector<Card> m_hearts;
     vector<Card> m_diamonds;
     vector<Card> m_clubs;
-    std::vector<Card> m_cardDeck; 
 
 
     /* constructor */

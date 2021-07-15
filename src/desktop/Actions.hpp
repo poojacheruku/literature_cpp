@@ -35,6 +35,7 @@ public:
 	static DocumentSnapshot& getDocumentSnapshot() { return snapshot; }
 	static void setHookCallCompleted(bool callCompleted) { hookCallCompleted = callCompleted; }
 	static void AddPlayerHand(vector<Card> hand, string playerId);
+	static void DealCards(vector<Card> cardDeck);
 
 	enum gameStatus
 	{
