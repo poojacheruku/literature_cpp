@@ -77,14 +77,37 @@ void createGame(string displayName, string gameCode, string playerId)
       {"players", FieldValue::Array({FieldValue::Map(playerMap)})}
   })
   .OnCompletion([gameCode](const Future<void>& future) {
-    PlayerSettings::GetInstance().AddNewGame(gameCode);
+    // PlayerSettings::GetInstance().AddNewGame(gameCode);
     cout << "SHARE THIS GAME CODE: " << gameCode << endl;
     Player::GetInstance().SetState(&WaitingForPlayers::GetInstance()); 
     Player::GetInstance().WaitForPlayers();
   });
 }
 
-void joinGame(string displayName, string gameCode, string playerId) {
+const DocumentSnapshot& getGameSnapShot()
+{
+  string gameCode = Player::GetInstance().GetGameCode();
+  Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+  DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+
+  // Start listening to game changes
+  Hooks::listenToGameChanges(doc_ref);
+
+  Future<DocumentSnapshot> game_ref = doc_ref.Get();
+
+  while(game_ref.status() != firebase::kFutureStatusComplete);
+
+  if (game_ref.error() == 0) {
+    log(logINFO) << "Got document";
+    const DocumentSnapshot& document = *game_ref.result();
+    return document;
+  } else {
+    throw std::runtime_error("Game not found");
+  }
+}
+
+void joinGame(string displayName, string gameCode, string playerId)
+{
   log(logINFO) << "Joining game...";
 
 
@@ -113,7 +136,6 @@ void joinGame(string displayName, string gameCode, string playerId) {
       playerMap["displayName"] = FieldValue::String(displayName);
       playerMap["playerId"] = FieldValue::String(playerId);
 
-      vector<MapFieldValue> newPlayerList;
       if(players.is_array()) {
         vector<FieldValue> playerList = players.array_value();
         playerList.push_back(FieldValue::Map(playerMap));
@@ -162,7 +184,8 @@ void Actions::createPlayer(string displayName, string gameCode, bool newGame)
   if (player_ref.error() == 0) {
     log(logINFO) << "Created player";
     string playerId = player_ref.result()->id();
-    PlayerSettings::GetInstance().SetPlayer(playerId, displayName);
+    Player::GetInstance().SetPlayerId(playerId);
+    // PlayerSettings::GetInstance().SetPlayer(playerId, displayName);
     if(newGame) {
       createGame(displayName, gameCode, playerId);
     } else {
@@ -178,8 +201,40 @@ void Actions::AddPlayerHand(vector<Card> hand, string playerId) {
   log(logINFO) << "AddPlayerHand called for playerId: " << playerId;
 }
 
+vector<Card>& getHand(vector<Card>& cardDeck)
+{
+    vector<Card> hand;
+    for (size_t i = 0; i < cardDeck.size(); ++i) 
+    { 
+        hand.push_back(cardDeck[i]);
+    }
+
+    return hand;
+}
+
 void Actions::DealCards(vector<Card>& cardDeck)
-{ 
+{
+    const DocumentSnapshot document = getGameSnapShot();
+
+    FieldValue players = document.Get("players");
+    vector<FieldValue> playerList = players.array_value();
+    vector<Card> hand = getHand(cardDeck);
+    
+    vector<MapFieldValue> newPlayerList;
+
+    // for( const std::pair<std::string, FieldValue>& n : playerMap ) {
+    //   log(logINFO) << "Key:[" << n.first << "] Value:[" << n.second << "]\n";
+    //   break;
+    // }
+
+    for (size_t i = 0; i < playerList.size(); ++i) 
+    {
+        MapFieldValue playerMap = playerList[i].map_value();
+        if(playerMap["playerId"].string_value() == Player::GetInstance().GetPlayerId()) {
+            cout << "Found player: " << Player::GetInstance().GetPlayerId() << endl;
+        }
+    }
+
     for (size_t i = 0; i < cardDeck.size(); ++i) 
     { 
         cout << cardDeck[i].GetFaceValue() << endl; 

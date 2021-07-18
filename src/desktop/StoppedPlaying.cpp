@@ -4,6 +4,7 @@
 #include "Actions.hpp"
 #include "auth/LiteratureAuth.hpp"
 #include "LogIt.hpp"
+#include "Game.hpp"
 
 #include "firebase/app.h"
 #include "firebase/firestore.h"
@@ -86,6 +87,8 @@ void StoppedPlaying::Start()
 
         Player::GetInstance().SetPlayerType(Player::OWNER);
         startNewGame(displayName);
+        Game::GetInstance().CreateAndShuffleDeck();
+        Game::GetInstance().DealCards();
         break;
 
     case 2:
