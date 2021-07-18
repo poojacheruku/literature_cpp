@@ -20,6 +20,7 @@
 #include "Card.hpp"
 #include "Hand.hpp"
 
+#include <signal.h>
 
 #include <iostream>
 #include <set>
@@ -29,13 +30,30 @@ using namespace std;
 // define and turn off for the rest of the test suite
 loglevel_e loglevel = logINFO;
 
+void my_handler(int s) {
+    LiteratureAuth::GetInstance().SignOut();
+    exit(1); 
+}
+
+void subscribe_to_sigint() {
+  struct sigaction sigIntHandler;
+
+   sigIntHandler.sa_handler = my_handler;
+   sigemptyset(&sigIntHandler.sa_mask);
+   sigIntHandler.sa_flags = 0;
+
+   sigaction(SIGINT, &sigIntHandler, NULL);
+}
+
 int main(int argc, const char* argv[]) {
-  PlayerSettings::GetInstance().Initialize();
-  LiteratureAuth::GetInstance().Initialize();
+  subscribe_to_sigint();
+
+  // PlayerSettings::GetInstance().Initialize();
+  LiteratureAuth::GetInstance();
 
   Player::GetInstance().Start();
 
-  // Actions::waitForGameExit();
+  Actions::waitForGameExit();
 
   // set<Card> cards;
   // cards.insert(Card(1, 10));
@@ -48,8 +66,6 @@ int main(int argc, const char* argv[]) {
   // Hand::GetInstance().Initialize(cards);
   // Hand::GetInstance().AddCard(3, 8);
   // Hand::GetInstance().PrettyPrint();
-
-  // Hand::GetInstance().Initialize(); 
   
   return 1;
 }
