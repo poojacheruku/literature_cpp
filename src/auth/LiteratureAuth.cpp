@@ -25,6 +25,7 @@ static const char kFirebaseProviderId[] =
 /* constructor */
 LiteratureAuth::LiteratureAuth()
 {
+    Initialize();
 }
 
 LiteratureAuth& LiteratureAuth::GetInstance()
@@ -40,17 +41,33 @@ void LiteratureAuth::Initialize()
     m_app = firebase::App::Create(options);
     m_auth = firebase::auth::Auth::GetAuth(m_app);
     m_db = Firestore::GetInstance(m_app);
+
+    SignIn();
 }
 
-void LiteratureAuth::signIn()
+bool LiteratureAuth::SignIn()
 {
-    Future<User*> anon_sign_in_for_user = m_auth->SignInAnonymously();
-    WaitForSignInFuture(anon_sign_in_for_user,
-                        "Auth::SignInAnonymously() for User", kAuthErrorNone,
-                        m_auth);
-    if (anon_sign_in_for_user.status() == ::firebase::kFutureStatusComplete) {
-      User* anonymous_user = anon_sign_in_for_user.result()
-                                 ? *anon_sign_in_for_user.result()
-                                 : nullptr;
+    // Grab the result of the latest sign-in attempt.
+    Future<User *> future =
+        m_auth->SignInAnonymouslyLastResult();
+
+    // If we're in a state where we can try to sign in, do so.
+    if (future.status() == firebase::kFutureStatusInvalid ||
+        (future.status() == firebase::kFutureStatusComplete &&
+        future.error() != firebase::auth::kAuthErrorNone)) {
+        future = m_auth->SignInAnonymously();
     }
+
+    while(future.status() == firebase::kFutureStatusPending) {}
+
+    // We're signed in if the most recent result was successful.
+    return (future.status() == firebase::kFutureStatusComplete &&
+        future.error() == firebase::auth::kAuthErrorNone);
+}
+
+void LiteratureAuth::SignOut()
+{
+    Future<void> future = m_auth->current_user()->Delete();
+    while(future.status() == firebase::kFutureStatusPending) {}
+    m_auth->SignOut();
 }

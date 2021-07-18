@@ -22,12 +22,14 @@ private:
     LiteratureAuth(LiteratureAuth const&);              // Don't implement
     void operator=(LiteratureAuth const&);    // Don't implement
 
+    void Initialize();
+    bool SignIn();
+
 public:
     static LiteratureAuth& GetInstance();
-    void Initialize();
-    void signIn();
     App* getFirebaseApp() { return m_app; }
     Firestore* getFirestoreDb() { return m_db; }
+    void SignOut();
 };
 
 #endif  // LITERATURE_AUTH_H  // NOLINT
