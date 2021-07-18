@@ -30,10 +30,10 @@ using namespace std;
 loglevel_e loglevel = logINFO;
 
 int main(int argc, const char* argv[]) {
-  // PlayerSettings::GetInstance().Initialize();
-  // LiteratureAuth::GetInstance().Initialize();
+  PlayerSettings::GetInstance().Initialize();
+  LiteratureAuth::GetInstance().Initialize();
 
-  // Player::GetInstance().Start();
+  Player::GetInstance().Start();
 
   // Actions::waitForGameExit();
 
@@ -49,7 +49,7 @@ int main(int argc, const char* argv[]) {
   // Hand::GetInstance().AddCard(3, 8);
   // Hand::GetInstance().PrettyPrint();
 
-  Hand::GetInstance().Initialize(); 
+  // Hand::GetInstance().Initialize(); 
   
   return 1;
 }

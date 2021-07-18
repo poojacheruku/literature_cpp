@@ -180,9 +180,9 @@ void Actions::AddPlayerHand(vector<Card> hand, string playerId) {
 
 void Actions::DealCards(vector<Card> cardDeck)
 { 
-    for ( auto card = cardDeck.begin(); card < cardDeck.end(); ++card) 
+    for (size_t i = 0; i < cardDeck.size(); ++i) 
     { 
-        cout << *card << endl; 
+        cout << cardDeck[i].GetFaceValue() << endl; 
     } 
     // int counter = 1;
     // while (counter < 8)

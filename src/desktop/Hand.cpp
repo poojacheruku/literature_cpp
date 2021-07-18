@@ -134,9 +134,9 @@ void Hand::PrettyPrintSuit(vector<Card> suit) {
 
 void Hand::Initialize()
 {
-    Hand::GetInstance().CreateDeck(); 
-    Hand::GetInstance().DealCards();
-    Hand::GetInstance().SortCards();
-    Hand::GetInstance().PrettyPrint(); 
+    // Hand::GetInstance().CreateDeck(); 
+    // Hand::GetInstance().DealCards();
+    // Hand::GetInstance().SortCards();
+    // Hand::GetInstance().PrettyPrint(); 
 }
 

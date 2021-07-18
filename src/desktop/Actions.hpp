@@ -6,9 +6,6 @@
 #include <string>
 using namespace std;
 
-using ::firebase::firestore::DocumentSnapshot; 
-
-
 class Actions {
 private:
     /* data */
