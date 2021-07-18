@@ -68,8 +68,13 @@ void Actions::waitForGameExit()
 void createGame(string displayName, string gameCode, string playerId)
 {
   log(logINFO) << "Creating game...";
+  cout << endl; 
 
-  // firebase::InitResult result;
+  int numberOfPlayers; 
+  cout << "Enter number of players (6 or 8): ";
+  cin >> numberOfPlayers; 
+  
+  firebase::InitResult result;
   Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   
   // Add a new document with a generated ID
@@ -83,9 +88,11 @@ void createGame(string displayName, string gameCode, string playerId)
     break;
   }
   doc_ref.Set({
+      {"numberOfPlayers", FieldValue::Integer(numberOfPlayers)}, 
       {"status", FieldValue::Integer(Actions::GS_WAITING)},
       {"players", FieldValue::Array({FieldValue::Map(playerMap)})}
   })
+
   .OnCompletion([gameCode](const Future<void>& future) {
     PlayerSettings::GetInstance().AddNewGame(gameCode);
     cout << "SHARE THIS GAME CODE: " << gameCode << endl;
