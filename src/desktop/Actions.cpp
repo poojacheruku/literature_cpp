@@ -178,18 +178,11 @@ void Actions::AddPlayerHand(vector<Card> hand, string playerId) {
   log(logINFO) << "AddPlayerHand called for playerId: " << playerId;
 }
 
-void Actions::DealCards(vector<Card> cardDeck)
+void Actions::DealCards(vector<Card>& cardDeck)
 { 
     for (size_t i = 0; i < cardDeck.size(); ++i) 
     { 
         cout << cardDeck[i].GetFaceValue() << endl; 
     } 
-    // int counter = 1;
-    // while (counter < 8)
-    // {  
-    //   m_hand.push_back(m_cardDeck.back());
-    //   m_cardDeck.pop_back();
-    //   counter++;  
-    // };
 }
 

@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include "PlayerState.hpp"
 #include "StoppedPlaying.hpp"
+#include "PlayerSettings.hpp"
 #include "LogIt.hpp"
 
 #include <iostream>

@@ -41,8 +41,6 @@ void LiteratureAuth::Initialize()
     m_app = firebase::App::Create(options);
     m_auth = firebase::auth::Auth::GetAuth(m_app);
     m_db = Firestore::GetInstance(m_app);
-
-    SignIn();
 }
 
 bool LiteratureAuth::SignIn()

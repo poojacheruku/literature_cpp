@@ -24,7 +24,7 @@ public:
 	static void setDocExists(bool exists) { docExists = exists; }
 	static bool isDocExists() { return docExists; }
 	static void AddPlayerHand(vector<Card> hand, string playerId);
-	static void DealCards(vector<Card> cardDeck);
+	static void DealCards(vector<Card>& cardDeck);
 
 	enum gameStatus
 	{
