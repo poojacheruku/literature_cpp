@@ -68,8 +68,8 @@ void Actions::waitForGameExit()
 void createGame(string displayName, string gameCode, string playerId)
 {
   log(logINFO) << "Creating game...";
-
-  // firebase::InitResult result;
+  
+  firebase::InitResult result;
   Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   
   // Add a new document with a generated ID
