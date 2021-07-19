@@ -108,6 +108,14 @@ void createGame(string displayName, string gameCode, string playerId)
     Player::GetInstance().WaitForPlayers();
   });
 }
+
+int getTeam(int size) {
+    if(size % 2) {
+      return 2;
+    }
+    return 1;
+}
+
 void joinGame(string displayName, string gameCode, string playerId) {
   log(logINFO) << "Joining game...";
 
@@ -133,18 +141,9 @@ void joinGame(string displayName, string gameCode, string playerId) {
       Actions::setRequestReturned(true);
       FieldValue players = document.Get("players");
 
-  vector<FieldValue> playerList = players.array_value();
+      vector<FieldValue> playerList = players.array_value();
 
-  int team; 
-
-  if(playerList.size() % 2 == 1)
-  {
-    team = 1; 
-  }
-  else if(playerList.size() % 2 == 0)
-  {
-    team = 2;  
-  }
+      int team = getTeam(playerList.size());
 
       MapFieldValue playerMap;
       playerMap["displayName"] = FieldValue::String(displayName);
@@ -153,7 +152,6 @@ void joinGame(string displayName, string gameCode, string playerId) {
 
       vector<MapFieldValue> newPlayerList;
       if(players.is_array()) {
-        vector<FieldValue> playerList = players.array_value();
         playerList.push_back(FieldValue::Map(playerMap));
 
         for( const std::pair<std::string, FieldValue>& n : playerMap ) {
