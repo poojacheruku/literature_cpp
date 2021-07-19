@@ -63,6 +63,7 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
             cin >> choice;
             Game::GetInstance().CreateAndShuffleDeck();
             Game::GetInstance().DealCards();
+            Game::GetInstance().PrintGameInfo();
         }        
     }
     
