@@ -83,8 +83,15 @@ void Actions::CreateGame(string gameCode, string displayName, string playerId)
   int numberOfPlayers; 
   cout << "Enter number of players (6 or 8): ";
   cin >> numberOfPlayers; 
+  cout << endl; 
+
+  while(numberOfPlayers != 6 && numberOfPlayers != 8)
+  {
+    cout << "Error. Please enter a valid number of players (6 or 8): "; 
+    cin >> numberOfPlayers;
+    cout << endl; 
+  }
   
-  firebase::InitResult result;
   Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   
   // Add a new document with a generated ID
@@ -93,6 +100,7 @@ void Actions::CreateGame(string gameCode, string displayName, string playerId)
   MapFieldValue playerMap;
   playerMap["displayName"] = FieldValue::String(displayName);
   playerMap["playerId"] = FieldValue::String(playerId);
+  playerMap["team"] = FieldValue::Integer(1); 
   for( const std::pair<std::string, FieldValue>& n : playerMap ) {
     logIt(logINFO) << "Key:[" << n.first << "] Value:[" << n.second << "]\n";
     break;
@@ -110,10 +118,16 @@ void Actions::CreateGame(string gameCode, string displayName, string playerId)
   });
 }
 
+int getTeam(int size) {
+    if(size % 2) {
+      return 2;
+    }
+    return 1;
+}
+
 void Actions::JoinGame(string gameCode, string displayName, string playerId)
 {
   logIt(logINFO) << "Joining game...";
-
 
   Actions::setDocExists(false);
 
@@ -136,12 +150,16 @@ void Actions::JoinGame(string gameCode, string displayName, string playerId)
       Actions::setRequestReturned(true);
       FieldValue players = document.Get("players");
 
+      vector<FieldValue> playerList = players.array_value();
+
+      int team = getTeam(playerList.size());
+
       MapFieldValue playerMap;
       playerMap["displayName"] = FieldValue::String(displayName);
       playerMap["playerId"] = FieldValue::String(playerId);
+      playerMap["team"] = FieldValue::Integer(team); 
 
       if(players.is_array()) {
-        vector<FieldValue> playerList = players.array_value();
         playerList.push_back(FieldValue::Map(playerMap));
 
         for( const std::pair<std::string, FieldValue>& n : playerMap ) {
