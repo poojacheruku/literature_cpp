@@ -20,6 +20,8 @@ PlayerSettings::PlayerSettings()
     const string home = getenv("HOME");
     m_folder_path = home + "/.literature";
     m_file_path = m_folder_path + "/.settings";
+    m_exists = false;
+    Initialize();
 }
 
 PlayerSettings& PlayerSettings::GetInstance()
@@ -93,6 +95,7 @@ void PlayerSettings::Initialize() {
         // .literature is a directory
         if (fs::is_directory(settingsFolder)) { 
             if(fs::exists(settingsFile) && fs::is_regular_file(settingsFile)) {
+                m_exists = true;
                 LoadSettings();
             }
         }

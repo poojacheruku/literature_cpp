@@ -2,6 +2,7 @@
 #include "LogIt.hpp"
 #include "auth/LiteratureAuth.hpp"
 #include "Actions.hpp"
+#include "Game.hpp"
 
 #include "firebase/firestore.h"
 
@@ -47,8 +48,11 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         // string playerID = playerList.back().string_value();
         MapFieldValue playerMap = playerList.back().map_value();
         string displayName = playerMap["displayName"].string_value();
-        cout << displayName << " joined the game." << endl;
-        cout << endl; 
+        string playerId = playerMap["playerId"].string_value();
+        int team = playerMap["team"].integer_value();
+        cout << displayName << " joined the game in team " << team << endl;
+        cout << endl;
+        Game::GetInstance().AddPlayer(displayName, playerId, team);
 
         if (playerList.size() == numberOfPlayers)
         {
@@ -56,8 +60,11 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
             cout << "Do you want to start the game? Please select an option (1 or 2): " << endl;
             cout << "1. Start the game" << endl;
             cout << "2. End the game" << endl; 
-            cin >> choice; 
-        }
+            cin >> choice;
+            Game::GetInstance().CreateAndShuffleDeck();
+            Game::GetInstance().DealCards();
+            Game::GetInstance().PrintGameInfo();
+        }        
     }
     
 

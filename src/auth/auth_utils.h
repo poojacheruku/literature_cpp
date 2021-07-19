@@ -15,7 +15,10 @@
 #ifndef LITERATURE_AUTH_UTILS_H  // NOLINT
 #define LITERATURE_AUTH_UTILS_H  // NOLINT
 
-#include <string>
+#include "firebase/auth.h"
+#include "firebase/firestore.h"
+using ::firebase::Future;
+using ::firebase::auth::User;
 using ::firebase::auth::AuthError;
 
 bool WaitForSignInFuture(Future<User*> sign_in_future, const char* fn,

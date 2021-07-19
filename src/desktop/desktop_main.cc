@@ -48,8 +48,7 @@ void subscribe_to_sigint() {
 int main(int argc, const char* argv[]) {
   subscribe_to_sigint();
 
-  // PlayerSettings::GetInstance().Initialize();
-  LiteratureAuth::GetInstance();
+  LiteratureAuth::GetInstance().SignIn();
 
   Player::GetInstance().Start();
 

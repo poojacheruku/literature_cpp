@@ -61,6 +61,7 @@ class Card {
     string GetFaceValue() const { return m_face_values[m_value - 1]; }
     string GetSuitIcon() const { return m_suit_icons[m_suit]; }
     int GetCardSuit() const { return m_suit; }
+    int GetCardValue() const { return m_value; }
     void Print();
     void PrettyPrint();
 };

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <set>
 #include <stdexcept>
+#include <random>
+#include <vector>
 using namespace std;
 
 #define RED     "\033[31m"
@@ -29,7 +31,7 @@ Hand& Hand::GetInstance()
     return instance;
 }
 
-set<Card>& Hand::GetSuitVector(const Card& card) {
+vector<Card>& Hand::GetSuitVector(const Card& card) {
     switch (card.GetCardSuit())
     {
     case CardSuit::SPADES:
@@ -54,11 +56,10 @@ set<Card>& Hand::GetSuitVector(const Card& card) {
     }
 }
 
-void Hand::Initialize(set<Card> hand)
+void Hand::SortCards()
 {
-    m_hand = hand;
-    for (set<Card>::iterator it = m_hand.begin() ; it != m_hand.end(); ++it) {
-        GetSuitVector(*it).insert(*it);
+    for (vector<Card>::iterator it = m_hand.begin() ; it != m_hand.end(); ++it) {
+        GetSuitVector(*it).push_back(*it);
     }
 }
 
@@ -69,11 +70,11 @@ void Hand::AddCard(int suit, int value) {
 }
 
 void Hand::AddCard(Card& card) {
-    GetSuitVector(card).insert(card);
-    m_hand.insert(card);
+    GetSuitVector(card).push_back(card);
+    m_hand.push_back(card);
 }
 
-void Hand::PrintTop(set<Card> suit) {
+void Hand::PrintTop(vector<Card> suit) {
     int size = suit.size();
     cout << TOPLEFT;
     for (int i = 0; i < size - 1; ++i) {
@@ -94,7 +95,7 @@ void PrintValue(const Card& card) {
     cout << " " << card.GetFaceValue() << " " << VERTICAL;
 }
 
-void Hand::PrintBottom(set<Card> suit) {
+void Hand::PrintBottom(vector<Card> suit) {
     int size = suit.size();
     cout << BOTTOMLEFT;
     for (int i = 0; i < size - 1; ++i) {
@@ -117,7 +118,7 @@ void Hand::PrettyPrint() {
     PrettyPrintSuit(m_diamonds);
 }
 
-void Hand::PrettyPrintSuit(set<Card> suit) {
+void Hand::PrettyPrintSuit(vector<Card> suit) {
     if(suit.size() == 0) {
         return;
     }
@@ -129,3 +130,13 @@ void Hand::PrettyPrintSuit(set<Card> suit) {
     cout << "\n";
     PrintBottom(suit);
 }
+
+
+void Hand::Initialize()
+{
+    // Hand::GetInstance().CreateDeck(); 
+    // Hand::GetInstance().DealCards();
+    // Hand::GetInstance().SortCards();
+    // Hand::GetInstance().PrettyPrint(); 
+}
+
