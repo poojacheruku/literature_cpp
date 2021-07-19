@@ -56,6 +56,7 @@ class Game {
     static Game& GetInstance();
     void CreateAndShuffleDeck();
     void SetGameCode(string gameCode) { m_gameCode = gameCode; }
+    void AddPlayer();
     void DealCards();
 
     enum Team {

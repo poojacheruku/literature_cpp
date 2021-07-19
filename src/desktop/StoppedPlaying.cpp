@@ -83,7 +83,6 @@ void StoppedPlaying::Start()
         Player::GetInstance().SetPlayerType(Player::OWNER);
         gameCode = uuid::generate_game_code();
         Actions::CreateGame(gameCode, displayName, playerId);
-        Game::GetInstance().CreateAndShuffleDeck();
         break;
 
     case 2:
@@ -96,7 +95,8 @@ void StoppedPlaying::Start()
     default:
         logIt(logERROR) << "Not sure how I came here";
     }
-    Player::GetInstance().SetGameCode(gameCode);
+    Player::GetInstance().AddGame(gameCode);
+    Game::GetInstance().SetGameCode(gameCode);
     Player::GetInstance().SetState(&WaitingForPlayers::GetInstance()); 
     Player::GetInstance().WaitForPlayers();
 }

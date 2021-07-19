@@ -57,7 +57,8 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
             cout << "Do you want to start the game? Please select an option (1 or 2): " << endl;
             cout << "1. Start the game" << endl;
             cout << "2. End the game" << endl; 
-            cin >> choice; 
+            cin >> choice;
+            Game::GetInstance().CreateAndShuffleDeck();
             Game::GetInstance().DealCards();
         }        
     }
