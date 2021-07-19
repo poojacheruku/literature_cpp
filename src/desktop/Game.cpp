@@ -41,6 +41,22 @@ void Game::CreateAndShuffleDeck()
 
 void Game::DealCards()
 {
-    Actions::DealCards(m_cardDeck);
+    vector<Card> hand;
+    for (size_t i = 0; i < m_cardDeck.size(); ++i) 
+    {
+        int index = i % m_numberOfPlayers;
+        m_players[index].addCard(m_cardDeck[i]);
+    }
 }
 
+void Game::PrintGameInfo()
+{
+    cout << "Game code: " << m_gameCode << endl;
+    cout << "Number of players: " << m_numberOfPlayers << endl;
+    cout << "Hands:" << endl;
+    cout << endl;
+
+    for (size_t i = 0; i < m_players.size(); ++i) {
+        m_players[i].print(); 
+    }
+}

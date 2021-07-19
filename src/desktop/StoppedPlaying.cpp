@@ -65,6 +65,7 @@ void StoppedPlaying::Start()
 {
     logIt(logINFO) << GetName();
     int choice = 0;
+    int team = 0;
     string gameCode;
     string displayName = getDisplayNameFromUser();
     Player::GetInstance().SetDisplayName(displayName);
@@ -78,7 +79,6 @@ void StoppedPlaying::Start()
     {
     case 1:
         logIt(logINFO) << "You chose to start a new game";
-
         Player::GetInstance().SetPlayerType(Player::OWNER);
         gameCode = uuid::generate_game_code();
         Actions::CreateGame(gameCode, displayName, playerId);
@@ -89,12 +89,14 @@ void StoppedPlaying::Start()
         logIt(logINFO) << "You chose to join a game";
         Player::GetInstance().SetPlayerType(Player::PLAYER);
         gameCode = getGameCodeFromUser();
-        Actions::JoinGame(gameCode, displayName, playerId);
+        team = Actions::JoinGame(gameCode, displayName, playerId);
+        Game::GetInstance().AddPlayer(displayName, playerId, team);
         break; 
    
     default:
         logIt(logERROR) << "Not sure how I came here";
     }
+
     Player::GetInstance().AddGame(gameCode);
     Game::GetInstance().SetGameCode(gameCode);
     Player::GetInstance().SetState(&WaitingForPlayers::GetInstance()); 

@@ -50,8 +50,9 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         string displayName = playerMap["displayName"].string_value();
         string playerId = playerMap["playerId"].string_value();
         int team = playerMap["team"].integer_value();
-        cout << displayName << " joined the game in " << (Player::GetInstance().<< endl;
-        cout << endl; 
+        cout << displayName << " joined the game in team " << team << endl;
+        cout << endl;
+        Game::GetInstance().AddPlayer(displayName, playerId, team);
 
         if (playerList.size() == numberOfPlayers)
         {

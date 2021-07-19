@@ -20,7 +20,7 @@ public:
 	static void waitForGameExit();
 	static string CreatePlayer(string displayName);
 	static void CreateGame(string gameCode, string displayName, string playerId);
-	static void JoinGame(string gameCode, string displayName, string playerId);
+	static int JoinGame(string gameCode, string displayName, string playerId);
 	static void setRequestReturned(bool returned) { requestReturned = returned; }
 	static void setGameCreated(bool created) { gameCreated = created; }
 	static void setDocExists(bool exists) { docExists = exists; }

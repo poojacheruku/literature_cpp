@@ -5,6 +5,7 @@
 #include "LogIt.hpp"
 #include "Player.hpp"
 #include "PlayerSettings.hpp"
+#include "Game.hpp"
 
 #include <vector>
 #include <iostream>
@@ -111,8 +112,9 @@ void Actions::CreateGame(string gameCode, string displayName, string playerId)
       {"players", FieldValue::Array({FieldValue::Map(playerMap)})}
   })
 
-  .OnCompletion([gameCode](const Future<void>& future) {
+  .OnCompletion([gameCode, numberOfPlayers](const Future<void>& future) {
     logIt(logINFO) << "Done.";
+    Game::GetInstance().SetNumberOfPlayers(numberOfPlayers);
     // PlayerSettings::GetInstance().AddNewGame(gameCode);
     cout << "SHARE THIS GAME CODE WITH YOUR PLAYERS: " << gameCode << endl;
   });
@@ -125,11 +127,12 @@ int getTeam(int size) {
     return 1;
 }
 
-void Actions::JoinGame(string gameCode, string displayName, string playerId)
+int Actions::JoinGame(string gameCode, string displayName, string playerId)
 {
   logIt(logINFO) << "Joining game...";
 
   Actions::setDocExists(false);
+  int team = 0;
 
   Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   DocumentReference doc_ref = db->Collection("games").Document(gameCode);
@@ -152,7 +155,7 @@ void Actions::JoinGame(string gameCode, string displayName, string playerId)
 
       vector<FieldValue> playerList = players.array_value();
 
-      int team = getTeam(playerList.size());
+      team = getTeam(playerList.size());
 
       MapFieldValue playerMap;
       playerMap["displayName"] = FieldValue::String(displayName);
@@ -178,11 +181,12 @@ void Actions::JoinGame(string gameCode, string displayName, string playerId)
       }
     } else {
       logIt(logERROR) << "no such document\n";
-  }
+    }
   }
   else {
     logIt(logERROR) << "Error " << game_ref.error() << ": " << game_ref.error_message();
   }
+  return team;
 }
 
 string Actions::CreatePlayer(string displayName)
