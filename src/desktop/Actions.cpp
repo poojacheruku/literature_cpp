@@ -73,8 +73,15 @@ void createGame(string displayName, string gameCode, string playerId)
   int numberOfPlayers; 
   cout << "Enter number of players (6 or 8): ";
   cin >> numberOfPlayers; 
+  cout << endl; 
+
+  while(numberOfPlayers != 6 && numberOfPlayers != 8)
+  {
+    cout << "Error. Please enter a valid number of players (6 or 8): "; 
+    cin >> numberOfPlayers;
+    cout << endl; 
+  }
   
-  firebase::InitResult result;
   Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   
   // Add a new document with a generated ID
@@ -83,6 +90,7 @@ void createGame(string displayName, string gameCode, string playerId)
   MapFieldValue playerMap;
   playerMap["displayName"] = FieldValue::String(displayName);
   playerMap["playerId"] = FieldValue::String(playerId);
+  playerMap["team"] = FieldValue::Integer(1); 
   for( const std::pair<std::string, FieldValue>& n : playerMap ) {
     log(logINFO) << "Key:[" << n.first << "] Value:[" << n.second << "]\n";
     break;
@@ -100,7 +108,6 @@ void createGame(string displayName, string gameCode, string playerId)
     Player::GetInstance().WaitForPlayers();
   });
 }
-
 void joinGame(string displayName, string gameCode, string playerId) {
   log(logINFO) << "Joining game...";
 
@@ -126,9 +133,23 @@ void joinGame(string displayName, string gameCode, string playerId) {
       Actions::setRequestReturned(true);
       FieldValue players = document.Get("players");
 
+  vector<FieldValue> playerList = players.array_value();
+
+  int team; 
+
+  if(playerList.size() % 2 == 1)
+  {
+    team = 1; 
+  }
+  else if(playerList.size() % 2 == 0)
+  {
+    team = 2;  
+  }
+
       MapFieldValue playerMap;
       playerMap["displayName"] = FieldValue::String(displayName);
       playerMap["playerId"] = FieldValue::String(playerId);
+      playerMap["team"] = FieldValue::Integer(team); 
 
       vector<MapFieldValue> newPlayerList;
       if(players.is_array()) {
