@@ -22,14 +22,14 @@ Player& Player::GetInstance()
 }
 
 void Player::Handle(const DocumentSnapshot& snapshot) {
-    log(logINFO) << "Passing the handle to State";
+    logIt(logINFO) << "Passing the handle to State";
 	// m_pState->Handle(snapshot);
     std::thread threadObj(&PlayerState::Handle, m_pState, snapshot);
     threadObj.detach();
 }
 
 void Player::WaitForPlayers() {
-    log(logINFO) << "WaitForPlayers called";
+    logIt(logINFO) << "WaitForPlayers called";
     m_pState->WaitForPlayers();
 }
 

@@ -1,19 +1,19 @@
+#include "LiteratureAuth.hpp"
+#include "utils.h"
+#include "auth_utils.h"
+#include "LogIt.hpp"
+
 #include <iostream>
+using namespace std;
+
 #include "firebase/app.h"
 #include "firebase/auth.h"
 #include "firebase/firestore.h"
-
-using namespace std;
 using ::firebase::App;
 using ::firebase::Future;
 using ::firebase::auth::Auth;
 using ::firebase::firestore::Firestore;
-using ::firebase::auth::User;
 using ::firebase::auth::kAuthErrorNone;
-
-#include "LiteratureAuth.hpp"
-#include "utils.h"
-#include "auth_utils.h"
 
 static const char kFirebaseProviderId[] =
 #if defined(__ANDROID__)
@@ -57,6 +57,8 @@ bool LiteratureAuth::SignIn()
     }
 
     while(future.status() == firebase::kFutureStatusPending) {}
+
+    logIt(logINFO) << "Player signed in anonymously";
 
     // We're signed in if the most recent result was successful.
     return (future.status() == firebase::kFutureStatusComplete &&

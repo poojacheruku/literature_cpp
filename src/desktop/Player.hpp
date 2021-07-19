@@ -16,6 +16,7 @@ private:
 	int m_type;
 	string m_displayName;
 	string m_gameCode;
+	vector<string> m_games;
 	string m_playerId;
 
     /* constructor */
@@ -36,6 +37,7 @@ public:
 	string GetGameCode() { return m_gameCode; }
 	void SetPlayerId(string playerId) { m_playerId = playerId; }
 	string GetPlayerId() { return m_playerId; }
+	void AddGame(string gameCode) { m_games.push_back(gameCode); }
 
 	enum State
 	{

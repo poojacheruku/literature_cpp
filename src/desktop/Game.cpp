@@ -1,5 +1,7 @@
 #include "Game.hpp"
 #include "Actions.hpp"
+#include "LogIt.hpp"
+
 
 #include <iostream>
 #include <random>
@@ -26,7 +28,7 @@ void Game::CreateAndShuffleDeck()
             m_cardDeck.push_back(Card(suit, value)); 
         }
     }
-    cout << "Deck size: " << m_cardDeck.size() << endl;
+    logIt(logINFO) << "Deck size: " << m_cardDeck.size();
     std::random_device rd;
     std::default_random_engine rng(rd());
     shuffle(m_cardDeck.begin(), m_cardDeck.end(), rng);
