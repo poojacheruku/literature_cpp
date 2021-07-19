@@ -58,32 +58,6 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
             cout << "2. End the game" << endl; 
             cin >> choice; 
         }
-        
-        // if(playerList.size() == 2)
-        // {
-        //     int choice; 
-        //     cout << "Do you want to start the game? Please select an option (1 or 2): " << endl; 
-        //     cout << "1. Yes" << endl; 
-        //     cout << "2. Wait for more players" << endl; 
-        //     cin >> choice; 
-
-        //     if(choice == 1)
-        //     {
-        //         cout << "Starting game..." << endl; 
-        //     } else if(choice == 2)
-        //     {
-        //         cout << "Waiting for players..." << endl; 
-
-        //         if(playerList.size() == 3)
-        //         {
-        //             int choice; 
-        //             cout << "Do you want to start the game? Please select an option (1 or 2): ";
-        //             cout << "1. Yes";
-        //             cout << "2. End the game." << endl; 
-        //             cin >> choice; 
-        //         }
-        //     }
-        // }
     }
     
 
