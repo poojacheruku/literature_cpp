@@ -88,7 +88,6 @@ void StoppedPlaying::Start()
         Player::GetInstance().SetPlayerType(Player::OWNER);
         startNewGame(displayName);
         Game::GetInstance().CreateAndShuffleDeck();
-        Game::GetInstance().DealCards();
         break;
 
     case 2:

@@ -208,24 +208,17 @@ void Actions::AddPlayerHand(vector<Card> hand, string playerId) {
   log(logINFO) << "AddPlayerHand called for playerId: " << playerId;
 }
 
-vector<Card>& getHand(vector<Card>& cardDeck)
-{
-    vector<Card> hand;
-    for (size_t i = 0; i < cardDeck.size(); ++i) 
-    { 
-        hand.push_back(cardDeck[i]);
-    }
-
-    return hand;
-}
-
 void Actions::DealCards(vector<Card>& cardDeck)
 {
     const DocumentSnapshot document = getGameSnapShot();
 
     FieldValue players = document.Get("players");
     vector<FieldValue> playerList = players.array_value();
-    vector<Card> hand = getHand(cardDeck);
+    vector<Card> hand;
+    for (size_t i = 0; i < cardDeck.size(); ++i) 
+    { 
+        hand.push_back(cardDeck[i]);
+    }
     
     vector<MapFieldValue> newPlayerList;
 
@@ -237,14 +230,16 @@ void Actions::DealCards(vector<Card>& cardDeck)
     for (size_t i = 0; i < playerList.size(); ++i) 
     {
         MapFieldValue playerMap = playerList[i].map_value();
-        if(playerMap["playerId"].string_value() == Player::GetInstance().GetPlayerId()) {
-            cout << "Found player: " << Player::GetInstance().GetPlayerId() << endl;
-        }
+        string playerId = playerMap["playerId"].string_value();
+        cout << playerId << endl;
+        // if(playerMap["playerId"].string_value() == Player::GetInstance().GetPlayerId()) {
+        //     cout << "Found player: " << Player::GetInstance().GetPlayerId() << endl;
+        // }
     }
 
-    for (size_t i = 0; i < cardDeck.size(); ++i) 
-    { 
-        cout << cardDeck[i].GetFaceValue() << endl; 
-    } 
+    // for (size_t i = 0; i < cardDeck.size(); ++i) 
+    // { 
+    //     cout << cardDeck[i].GetFaceValue() << endl; 
+    // } 
 }
 
