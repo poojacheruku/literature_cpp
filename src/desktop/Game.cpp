@@ -19,6 +19,11 @@ Game& Game::GetInstance()
     return instance;
 }
 
+void Game::UpdatePlayers()
+{
+
+}
+
 void Game::CreateAndShuffleDeck()
 {
     for (int suit = 0; suit <= 3; suit++)

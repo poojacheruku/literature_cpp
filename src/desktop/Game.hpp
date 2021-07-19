@@ -17,10 +17,19 @@ struct CardStruct {
 };
 
 struct PlayerStruct {
-    string displayName;
-    string playerId;
-    int team;
-    vector<Card> hand;
+    string m_displayName;
+    string m_playerId;
+    int m_team;
+    vector<Card> m_hand;
+
+    PlayerStruct(string displayName, string playerId, int team) :
+        m_displayName(displayName),
+        m_playerId(playerId),
+        m_team(team)
+    {
+
+    }
+
     void build(FieldValue& playerField) {
         MapFieldValue player;
         player["displayName"] = FieldValue::String(displayName);
@@ -56,7 +65,12 @@ class Game {
     static Game& GetInstance();
     void CreateAndShuffleDeck();
     void SetGameCode(string gameCode) { m_gameCode = gameCode; }
-    void AddPlayer();
+    void AddPlayer(string displayName, string playerId, int team) {
+        PlayerStruct player(displayName, playerId, team);
+        m_players.push_back(player);
+    }
+    void UpdatePlayers();
+
     void DealCards();
 
     enum Team {

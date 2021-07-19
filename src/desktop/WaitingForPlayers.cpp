@@ -48,7 +48,9 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         // string playerID = playerList.back().string_value();
         MapFieldValue playerMap = playerList.back().map_value();
         string displayName = playerMap["displayName"].string_value();
-        cout << displayName << " joined the game." << endl;
+        string playerId = playerMap["playerId"].string_value();
+        int team = playerMap["team"].integer_value();
+        cout << displayName << " joined the game in " << (Player::GetInstance().<< endl;
         cout << endl; 
 
         if (playerList.size() == numberOfPlayers)

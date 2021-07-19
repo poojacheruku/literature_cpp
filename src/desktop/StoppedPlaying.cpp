@@ -70,7 +70,6 @@ void StoppedPlaying::Start()
     Player::GetInstance().SetDisplayName(displayName);
     string playerId = Actions::CreatePlayer(displayName);
     Player::GetInstance().SetPlayerId(playerId);
-    
     // do {
         choice = getChoice();
     // } while(choice != 1 && choice != 2);
@@ -83,6 +82,7 @@ void StoppedPlaying::Start()
         Player::GetInstance().SetPlayerType(Player::OWNER);
         gameCode = uuid::generate_game_code();
         Actions::CreateGame(gameCode, displayName, playerId);
+        Game::GetInstance().AddPlayer(displayName, playerId, Game::TEAM_A);
         break;
 
     case 2:
