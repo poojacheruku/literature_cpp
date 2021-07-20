@@ -38,7 +38,8 @@ public:
 	void SetPlayerId(string playerId) { m_playerId = playerId; }
 	string GetPlayerId() { return m_playerId; }
 	void AddGame(string gameCode) { m_games.push_back(gameCode); }
-
+	int GetPlayerType() { return m_type; }
+	
 	enum State
 	{
 		ST_STOPPED_PLAYING,

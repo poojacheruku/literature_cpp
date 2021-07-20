@@ -86,12 +86,12 @@ void Actions::CreateGame(string gameCode, string displayName, string playerId)
   cin >> numberOfPlayers; 
   cout << endl; 
 
-  while(numberOfPlayers != 6 && numberOfPlayers != 8)
-  {
-    cout << "Error. Please enter a valid number of players (6 or 8): "; 
-    cin >> numberOfPlayers;
-    cout << endl; 
-  }
+  // while(numberOfPlayers != 6 && numberOfPlayers != 8)
+  // {
+  //   cout << "Error. Please enter a valid number of players (6 or 8): "; 
+  //   cin >> numberOfPlayers;
+  //   cout << endl; 
+  // }
   
   Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   

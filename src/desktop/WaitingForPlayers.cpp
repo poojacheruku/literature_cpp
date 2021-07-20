@@ -54,16 +54,21 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         cout << endl;
         Game::GetInstance().AddPlayer(displayName, playerId, team);
 
-        if (playerList.size() == numberOfPlayers)
+        if (playerList.size() == numberOfPlayers && Player::GetInstance().GetPlayerType() == Player::OWNER)
         {
             int choice; 
             cout << "Do you want to start the game? Please select an option (1 or 2): " << endl;
             cout << "1. Start the game" << endl;
             cout << "2. End the game" << endl; 
             cin >> choice;
-            Game::GetInstance().CreateAndShuffleDeck();
-            Game::GetInstance().DealCards();
-            Game::GetInstance().PrintGameInfo();
+
+            if(choice == 1)
+            {
+                Game::GetInstance().CreateAndShuffleDeck();
+                Game::GetInstance().DealCards();
+                Game::GetInstance().PrintGameInfo();
+            }
+        
         }        
     }
 }
