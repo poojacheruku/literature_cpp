@@ -1,9 +1,11 @@
 #include "StoppedPlaying.hpp"
+#include "WaitingForPlayers.hpp"
 #include "uuid.h"
 #include "utils.h"
 #include "Actions.hpp"
 #include "auth/LiteratureAuth.hpp"
 #include "LogIt.hpp"
+#include "Game.hpp"
 
 #include "firebase/app.h"
 #include "firebase/firestore.h"
@@ -59,22 +61,16 @@ string getGameCodeFromUser() {
     return gameCode;
 }
 
-void startNewGame(string displayName) {
-    string gameCode = uuid::generate_game_code();
-    Actions::createPlayer(displayName, gameCode, true);
-}
-
-void joinGame(string displayName, string gameCode) {
-    Actions::createPlayer(displayName, gameCode, false);
-}
-
 void StoppedPlaying::Start()
 {
-    log(logINFO) << GetName();
+    logIt(logINFO) << GetName();
     int choice = 0;
+    int team = 0;
     string gameCode;
     string displayName = getDisplayNameFromUser();
-    
+    Player::GetInstance().SetDisplayName(displayName);
+    string playerId = Actions::CreatePlayer(displayName);
+    Player::GetInstance().SetPlayerId(playerId);
     // do {
         choice = getChoice();
     // } while(choice != 1 && choice != 2);
@@ -82,25 +78,32 @@ void StoppedPlaying::Start()
     switch (choice)
     {
     case 1:
-        log(logINFO) << "You chose to start a new game";
-
+        logIt(logINFO) << "You chose to start a new game";
         Player::GetInstance().SetPlayerType(Player::OWNER);
-        startNewGame(displayName);
+        gameCode = uuid::generate_game_code();
+        Actions::CreateGame(gameCode, displayName, playerId);
+        Game::GetInstance().AddPlayer(displayName, playerId, Game::TEAM_A);
         break;
 
     case 2:
-        log(logINFO) << "You chose to join a game";
+        logIt(logINFO) << "You chose to join a game";
         Player::GetInstance().SetPlayerType(Player::PLAYER);
         gameCode = getGameCodeFromUser();
-        joinGame(displayName, gameCode);
+        team = Actions::JoinGame(gameCode, displayName, playerId);
+        Game::GetInstance().AddPlayer(displayName, playerId, team);
         break; 
    
     default:
-        log(logERROR) << "Not sure how I came here";
+        logIt(logERROR) << "Not sure how I came here";
     }
+
+    Player::GetInstance().AddGame(gameCode);
+    Game::GetInstance().SetGameCode(gameCode);
+    Player::GetInstance().SetState(&WaitingForPlayers::GetInstance()); 
+    Player::GetInstance().WaitForPlayers();
 }
 
 void StoppedPlaying::Handle(const DocumentSnapshot& snapshot)
 {
-    log(logINFO) << "game document changed"; 
+    logIt(logINFO) << "Should not be here. Report issue!"; 
 }

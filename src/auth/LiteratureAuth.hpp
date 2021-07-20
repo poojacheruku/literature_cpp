@@ -23,12 +23,12 @@ private:
     void operator=(LiteratureAuth const&);    // Don't implement
 
     void Initialize();
-    bool SignIn();
 
 public:
     static LiteratureAuth& GetInstance();
     App* getFirebaseApp() { return m_app; }
     Firestore* getFirestoreDb() { return m_db; }
+    bool SignIn();
     void SignOut();
 };
 

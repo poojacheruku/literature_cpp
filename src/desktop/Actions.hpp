@@ -6,9 +6,6 @@
 #include <string>
 using namespace std;
 
-using ::firebase::firestore::DocumentSnapshot; 
-
-
 class Actions {
 private:
     /* data */
@@ -21,12 +18,15 @@ public:
 	static void waitForResponse();
 	static void waitForGameUpdates();
 	static void waitForGameExit();
-	static void createPlayer(string displayName, string gameCode, bool newGame);
+	static string CreatePlayer(string displayName);
+	static void CreateGame(string gameCode, string displayName, string playerId);
+	static int JoinGame(string gameCode, string displayName, string playerId);
 	static void setRequestReturned(bool returned) { requestReturned = returned; }
 	static void setGameCreated(bool created) { gameCreated = created; }
 	static void setDocExists(bool exists) { docExists = exists; }
 	static bool isDocExists() { return docExists; }
 	static void AddPlayerHand(vector<Card> hand, string playerId);
+	static void DealCards(vector<Card>& cardDeck);
 
 	enum gameStatus
 	{

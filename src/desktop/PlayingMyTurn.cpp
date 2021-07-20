@@ -19,5 +19,5 @@ PlayingMyTurn& PlayingMyTurn::GetInstance()
 
 void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 {
-    log(logINFO) << GetName();
+    logIt(logINFO) << GetName();
 }

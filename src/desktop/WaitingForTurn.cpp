@@ -18,5 +18,5 @@ WaitingForTurn& WaitingForTurn::GetInstance()
 
 void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 {
-    log(logINFO) << GetName();
+    logIt(logINFO) << GetName();
 }

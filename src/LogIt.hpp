@@ -1,5 +1,5 @@
-#ifndef _LOGGER_HPP_
-#define _LOGGER_HPP_
+#ifndef LITERATURE_LOGGER_HPP
+#define LITERATURE_LOGGER_HPP
 
 #include <iostream>
 #include <sstream>
@@ -47,8 +47,8 @@ private:
 
 extern loglevel_e loglevel;
 
-#define log(level) \
+#define logIt(level) \
 if (level > loglevel) ; \
 else LogIt(level)
 
-#endif
+#endif  // LITERATURE_LOGGER_HPP

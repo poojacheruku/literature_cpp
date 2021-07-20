@@ -1,6 +1,9 @@
 #ifndef LITERATURE_PLAYER_H
 #define LITERATURE_PLAYER_H
 
+#include <string>
+using namespace std;
+
 #include "firebase/firestore.h"
 using firebase::firestore::DocumentSnapshot;
 
@@ -11,6 +14,10 @@ private:
     /* data */
 	PlayerState * m_pState;
 	int m_type;
+	string m_displayName;
+	string m_gameCode;
+	vector<string> m_games;
+	string m_playerId;
 
     /* constructor */
     Player();
@@ -24,6 +31,13 @@ public:
 	void Start();
 	void SetState(PlayerState * state);
 	void SetPlayerType(int type) { m_type = type; }
+	void SetDisplayName(string displayName) { m_displayName = displayName; }
+	string GetDisplayName() { return m_displayName; }
+	void SetGameCode(string gameCode) { m_gameCode = gameCode; }
+	string GetGameCode() { return m_gameCode; }
+	void SetPlayerId(string playerId) { m_playerId = playerId; }
+	string GetPlayerId() { return m_playerId; }
+	void AddGame(string gameCode) { m_games.push_back(gameCode); }
 
 	enum State
 	{
