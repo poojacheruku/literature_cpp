@@ -267,3 +267,18 @@ void Actions::DealCards(vector<Card>& cardDeck)
     // } 
 }
 
+void Actions::UpdatePlayers(string gameCode, vector<FieldValue>& players, string reason)
+{
+  logIt(logINFO) << "Updating players...";
+
+  Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+  DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+
+  doc_ref.Update({
+    {"players", FieldValue::Array(players)},
+    {"changeReason", FieldValue::String(reason)}})
+    .OnCompletion([](const Future<void>& future) {
+      logIt(logINFO) << "Done.";
+      logIt(logINFO) << "Updated the players array";
+  }); 
+}

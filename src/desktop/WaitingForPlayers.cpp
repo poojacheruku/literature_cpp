@@ -66,6 +66,4 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
             Game::GetInstance().PrintGameInfo();
         }        
     }
-    
-
 }

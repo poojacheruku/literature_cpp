@@ -7,6 +7,9 @@
 #include <random>
 using namespace std;
 
+#include "firebase/firestore.h"
+using ::firebase::firestore::FieldValue;
+
 /* constructor */
 Game::Game()
 {
@@ -42,11 +45,21 @@ void Game::CreateAndShuffleDeck()
 void Game::DealCards()
 {
     vector<Card> hand;
-    for (size_t i = 0; i < m_cardDeck.size(); ++i) 
+    for(size_t i = 0; i < m_cardDeck.size(); ++i) 
     {
         int index = i % m_numberOfPlayers;
         m_players[index].addCard(m_cardDeck[i]);
     }
+
+    vector<FieldValue> players;
+
+    for(size_t i = 0; i < m_players.size(); ++i)
+    {
+        FieldValue playerField;
+        m_players[i].build(playerField);
+        players.push_back(playerField);
+    }
+    Actions::UpdatePlayers(m_gameCode, players, "DEAL");
 }
 
 void Game::PrintGameInfo()
