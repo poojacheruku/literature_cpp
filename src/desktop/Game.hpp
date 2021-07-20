@@ -21,7 +21,7 @@ struct PlayerStruct {
     string m_displayName;
     string m_playerId;
     int m_team;
-    vector<Card> m_hand;
+    vector<string> m_hand;
 
     PlayerStruct(string displayName, string playerId, int team) :
         m_displayName(displayName),
@@ -30,7 +30,8 @@ struct PlayerStruct {
     {}
 
     void addCard(Card& card) {
-        m_hand.push_back(card);
+        string cardFace = card.GetSuitIcon() + card.GetFaceValue();
+        m_hand.push_back(cardFace);
     }
 
     void print() {
@@ -38,7 +39,7 @@ struct PlayerStruct {
         cout << "Player id: " << m_playerId << endl;
         cout << "Team: " << m_team << endl;
         for (size_t i = 0; i < m_hand.size(); ++i) {
-            cout << m_hand[i].GetSuitIcon() << m_hand[i].GetFaceValue() << " ";
+            cout << m_hand[i] << " ";
         }
         cout << endl;
     }
@@ -51,10 +52,7 @@ struct PlayerStruct {
         vector<FieldValue> cards;
         for (size_t i = 0; i < m_hand.size(); ++i) 
         {
-            MapFieldValue cardMap;
-            cardMap["suit"] = FieldValue::Integer(m_hand[i].GetCardSuit());
-            cardMap["value"] = FieldValue::Integer(m_hand[i].GetCardValue());
-            cards.push_back(FieldValue::Map(cardMap));
+            cards.push_back(FieldValue::String(m_hand[i]));
         }
         player["hand"] = FieldValue::Array(cards);
         playerField = FieldValue::Map(player);

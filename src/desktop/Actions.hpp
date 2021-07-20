@@ -6,6 +6,9 @@
 #include <string>
 using namespace std;
 
+#include "firebase/firestore.h"
+using ::firebase::firestore::FieldValue;
+
 class Actions {
 private:
     /* data */
@@ -27,6 +30,7 @@ public:
 	static bool isDocExists() { return docExists; }
 	static void AddPlayerHand(vector<Card> hand, string playerId);
 	static void DealCards(vector<Card>& cardDeck);
+	static void UpdatePlayers(string gameCode, vector<FieldValue>& players, string reason);
 
 	enum gameStatus
 	{
