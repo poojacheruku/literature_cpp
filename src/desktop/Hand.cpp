@@ -134,13 +134,14 @@ Hand& Hand::GetInstance()
 
 void Hand::Initialize(vector<string> hand)
 {
-  m_hand = hand;   
+  m_hand = hand;  
 }
 
 void Hand::Print()
 {
+    cout << "Your hand:" << endl; 
     for(int i=0; i < m_hand.size(); i++)
-    cout << m_hand[i];  
+    cout << m_hand[i] << endl;   
   
 }
 

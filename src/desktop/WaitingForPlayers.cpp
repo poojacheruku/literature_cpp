@@ -17,6 +17,7 @@ using ::firebase::firestore::DocumentSnapshot;
 #include <iostream>
 #include <future>
 #include <thread>
+#include <string>
 using namespace std;
 
 /* constructor */
@@ -77,8 +78,16 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         vector<FieldValue> playerList = snapshot.Get("players").array_value();
         MapFieldValue playerMap = playerList.back().map_value();
         vector<FieldValue> hand = playerMap["hand"].array_value();
+        vector<string> hand_string; 
 
         for(int i=0; i < hand.size(); i++)
-        cout << hand[i] << endl; 
+        {
+            string card = hand[i].string_value(); 
+            hand_string.push_back(card); 
+        }
+        
+        Hand::GetInstance().Initialize(hand_string);
+        Hand::GetInstance().Print();
     }
+    
 }
