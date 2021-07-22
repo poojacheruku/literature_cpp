@@ -140,9 +140,12 @@ void Hand::Initialize(vector<string> hand)
 void Hand::Print()
 {
     cout << "Your hand:" << endl; 
+    
     for(int i=0; i < m_hand.size(); i++)
-    cout << m_hand[i] << endl;   
-  
+    {
+        cout << m_hand[i] << " "; 
+    }
+    cout << endl; 
 }
 
 

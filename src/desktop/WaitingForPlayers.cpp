@@ -76,9 +76,30 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
     if(changeReason == "DEAL")
     {
         vector<FieldValue> playerList = snapshot.Get("players").array_value();
-        MapFieldValue playerMap = playerList.back().map_value();
-        vector<FieldValue> hand = playerMap["hand"].array_value();
-        vector<string> hand_string; 
+        vector<string> hand_string;
+        vector<FieldValue> hand;  
+        MapFieldValue playerMap;
+        int i = 0;
+
+        for(i=0; i < playerList.size(); i++)
+        {
+            playerMap = playerList[i].map_value();
+            string playerId = playerMap["playerId"].string_value();
+            if(Player::GetInstance().GetPlayerId() == playerId)
+            {
+                break; 
+            }
+        }
+
+        if(i == playerList.size())
+        {
+            logIt(logERROR) << "Error. Unable to print hand."; 
+            return;
+        }else
+        {
+            logIt(logINFO) << "broke out of loop"; 
+            hand = playerMap["hand"].array_value(); 
+        }
 
         for(int i=0; i < hand.size(); i++)
         {
