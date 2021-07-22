@@ -2,6 +2,7 @@
 #define LITERATURE_HAND_H
 
 #include "Card.hpp"
+#include "Game.hpp"
 
 #include <string>
 #include <set>
@@ -10,12 +11,11 @@ using namespace std;
 
 class Hand {
   private:
-    vector<Card> m_hand;
     vector<Card> m_spades;
     vector<Card> m_hearts;
     vector<Card> m_diamonds;
     vector<Card> m_clubs;
-
+    vector<string> m_hand; 
 
     /* constructor */
     Hand();
@@ -39,7 +39,7 @@ class Hand {
     void PrettyPrint();
     void CreateDeck(); 
     void DealCards();
-    void Initialize(); 
+    void Initialize(vector<string> hand); 
 };
 
 #endif  // LITERATURE_HAND_H

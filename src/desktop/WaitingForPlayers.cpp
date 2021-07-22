@@ -3,6 +3,7 @@
 #include "auth/LiteratureAuth.hpp"
 #include "Actions.hpp"
 #include "Game.hpp"
+#include "Hand.hpp"
 
 #include "firebase/firestore.h"
 
@@ -16,6 +17,7 @@ using ::firebase::firestore::DocumentSnapshot;
 #include <iostream>
 #include <future>
 #include <thread>
+#include <string>
 using namespace std;
 
 /* constructor */
@@ -54,16 +56,59 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         cout << endl;
         Game::GetInstance().AddPlayer(displayName, playerId, team);
 
-        if (playerList.size() == numberOfPlayers)
+        if (playerList.size() == numberOfPlayers && Player::GetInstance().GetPlayerType() == Player::OWNER)
         {
             int choice; 
             cout << "Do you want to start the game? Please select an option (1 or 2): " << endl;
             cout << "1. Start the game" << endl;
             cout << "2. End the game" << endl; 
             cin >> choice;
-            Game::GetInstance().CreateAndShuffleDeck();
-            Game::GetInstance().DealCards();
-            Game::GetInstance().PrintGameInfo();
+
+            if(choice == 1)
+            {
+                Game::GetInstance().Initialize(); 
+                Hand::GetInstance().Print(); 
+            }
+        
         }        
     }
+
+    if(changeReason == "DEAL")
+    {
+        vector<FieldValue> playerList = snapshot.Get("players").array_value();
+        vector<string> hand_string;
+        vector<FieldValue> hand;  
+        MapFieldValue playerMap;
+        int i = 0;
+
+        for(i=0; i < playerList.size(); i++)
+        {
+            playerMap = playerList[i].map_value();
+            string playerId = playerMap["playerId"].string_value();
+            if(Player::GetInstance().GetPlayerId() == playerId)
+            {
+                break; 
+            }
+        }
+
+        if(i == playerList.size())
+        {
+            logIt(logERROR) << "Error. Unable to print hand."; 
+            return;
+        }else
+        {
+            logIt(logINFO) << "broke out of loop"; 
+            hand = playerMap["hand"].array_value(); 
+        }
+
+        for(int i=0; i < hand.size(); i++)
+        {
+            string card = hand[i].string_value(); 
+            hand_string.push_back(card); 
+        }
+        
+        Hand::GetInstance().Initialize(hand_string);
+        Hand::GetInstance().Print();
+    }
+    
 }
