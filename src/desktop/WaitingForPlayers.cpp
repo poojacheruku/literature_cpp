@@ -71,4 +71,14 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         
         }        
     }
+
+    if(changeReason == "DEAL")
+    {
+        vector<FieldValue> playerList = snapshot.Get("players").array_value();
+        MapFieldValue playerMap = playerList.back().map_value();
+        vector<FieldValue> hand = playerMap["hand"].array_value();
+
+        for(int i=0; i < hand.size(); i++)
+        cout << hand[i] << endl; 
+    }
 }
