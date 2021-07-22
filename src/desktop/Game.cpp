@@ -1,7 +1,7 @@
 #include "Game.hpp"
 #include "Actions.hpp"
 #include "LogIt.hpp"
-
+#include "Hand.hpp"
 
 #include <iostream>
 #include <random>
@@ -72,4 +72,11 @@ void Game::PrintGameInfo()
     for (size_t i = 0; i < m_players.size(); ++i) {
         m_players[i].print(); 
     }
+}
+
+void Game::Initialize()
+{
+    CreateAndShuffleDeck(); 
+    DealCards(); 
+    Hand::GetInstance().Initialize(m_players[0].getHand()); 
 }

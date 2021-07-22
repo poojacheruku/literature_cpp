@@ -1,5 +1,5 @@
 #include "Hand.hpp"
-
+#include "Game.hpp"
 #include <iostream>
 #include <set>
 #include <stdexcept>
@@ -31,112 +31,117 @@ Hand& Hand::GetInstance()
     return instance;
 }
 
-vector<Card>& Hand::GetSuitVector(const Card& card) {
-    switch (card.GetCardSuit())
-    {
-    case CardSuit::SPADES:
-        return m_spades;
-        break;
+// vector<Card>& Hand::GetSuitVector(const Card& card) {
+//     switch (card.GetCardSuit())
+//     {
+//     case CardSuit::SPADES:
+//         return m_spades;
+//         break;
     
-    case CardSuit::HEARTS:
-        return m_hearts;
-        break;
+//     case CardSuit::HEARTS:
+//         return m_hearts;
+//         break;
     
-    case CardSuit::DIAMONDS:
-        return m_diamonds;
-        break;
+//     case CardSuit::DIAMONDS:
+//         return m_diamonds;
+//         break;
     
-    case CardSuit::CLUBS:
-        return m_clubs;
-        break;
-    default:
-        cout << "UKNOWN SUIT FOR CARD!!" << endl;
-        throw std::invalid_argument( "No suitable suit found in card" );
-        break;
-    }
-}
+//     case CardSuit::CLUBS:
+//         return m_clubs;
+//         break;
+//     default:
+//         cout << "UKNOWN SUIT FOR CARD!!" << endl;
+//         throw std::invalid_argument( "No suitable suit found in card" );
+//         break;
+//     }
+// }
 
-void Hand::SortCards()
+// void Hand::SortCards()
+// {
+//     for (vector<Card>::iterator it = m_hand.begin() ; it != m_hand.end(); ++it) {
+//         GetSuitVector(*it).push_back(*it);
+//     }
+// }
+
+
+// void Hand::AddCard(int suit, int value) {
+//     Card card(suit, value);
+//     AddCard(card);
+// }
+
+// void Hand::AddCard(Card& card) {
+//     GetSuitVector(card).push_back(card);
+//     m_hand.push_back(card);
+// }
+
+// void Hand::PrintTop(vector<Card> suit) {
+//     int size = suit.size();
+//     cout << TOPLEFT;
+//     for (int i = 0; i < size - 1; ++i) {
+//         cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPMIDDLE;
+//     }
+//     cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPRIGHT << endl;
+// }
+
+// void PrintSuit(const Card& card) {
+//     if(card.GetCardSuit() == CardSuit::HEARTS || card.GetCardSuit() == CardSuit::DIAMONDS) {
+//         cout << " " << BOLDRED << card.GetSuitIcon() << RESET << " " << VERTICAL;
+//     } else {
+//         cout << " " << card.GetSuitIcon() << " " << VERTICAL;
+//     }
+// }
+
+// void PrintValue(const Card& card) {
+//     cout << " " << card.GetFaceValue() << " " << VERTICAL;
+// }
+
+// void Hand::PrintBottom(vector<Card> suit) {
+//     int size = suit.size();
+//     cout << BOTTOMLEFT;
+//     for (int i = 0; i < size - 1; ++i) {
+//         cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMMIDDLE;
+//     }
+//     cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMRIGHT << endl;
+// }
+
+// void Hand::PrettyPrint() {
+//     if(m_hand.size() == 0) {
+//         cout << "You have no cards in hand!" <<endl;
+//         return;
+//     } else {
+//         cout << "Your hand: " <<endl;
+//     }
+
+//     PrettyPrintSuit(m_spades);
+//     PrettyPrintSuit(m_hearts);
+//     PrettyPrintSuit(m_clubs);
+//     PrettyPrintSuit(m_diamonds);
+// }
+
+// void Hand::PrettyPrintSuit(vector<Card> suit) {
+//     if(suit.size() == 0) {
+//         return;
+//     }
+//     PrintTop(suit);
+//     cout << VERTICAL;
+//     std::for_each(std::begin(suit), std::end(suit), PrintSuit);
+//     cout << "\n" << VERTICAL;
+//     std::for_each(std::begin(suit), std::end(suit), PrintValue);
+//     cout << "\n";
+//     PrintBottom(suit);
+// }
+
+
+void Hand::Initialize(vector<string> hand)
 {
-    for (vector<Card>::iterator it = m_hand.begin() ; it != m_hand.end(); ++it) {
-        GetSuitVector(*it).push_back(*it);
-    }
+  m_hand = hand;   
 }
 
-
-void Hand::AddCard(int suit, int value) {
-    Card card(suit, value);
-    AddCard(card);
-}
-
-void Hand::AddCard(Card& card) {
-    GetSuitVector(card).push_back(card);
-    m_hand.push_back(card);
-}
-
-void Hand::PrintTop(vector<Card> suit) {
-    int size = suit.size();
-    cout << TOPLEFT;
-    for (int i = 0; i < size - 1; ++i) {
-        cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPMIDDLE;
-    }
-    cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPRIGHT << endl;
-}
-
-void PrintSuit(const Card& card) {
-    if(card.GetCardSuit() == CardSuit::HEARTS || card.GetCardSuit() == CardSuit::DIAMONDS) {
-        cout << " " << BOLDRED << card.GetSuitIcon() << RESET << " " << VERTICAL;
-    } else {
-        cout << " " << card.GetSuitIcon() << " " << VERTICAL;
-    }
-}
-
-void PrintValue(const Card& card) {
-    cout << " " << card.GetFaceValue() << " " << VERTICAL;
-}
-
-void Hand::PrintBottom(vector<Card> suit) {
-    int size = suit.size();
-    cout << BOTTOMLEFT;
-    for (int i = 0; i < size - 1; ++i) {
-        cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMMIDDLE;
-    }
-    cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMRIGHT << endl;
-}
-
-void Hand::PrettyPrint() {
-    if(m_hand.size() == 0) {
-        cout << "You have no cards in hand!" <<endl;
-        return;
-    } else {
-        cout << "Your hand: " <<endl;
-    }
-
-    PrettyPrintSuit(m_spades);
-    PrettyPrintSuit(m_hearts);
-    PrettyPrintSuit(m_clubs);
-    PrettyPrintSuit(m_diamonds);
-}
-
-void Hand::PrettyPrintSuit(vector<Card> suit) {
-    if(suit.size() == 0) {
-        return;
-    }
-    PrintTop(suit);
-    cout << VERTICAL;
-    std::for_each(std::begin(suit), std::end(suit), PrintSuit);
-    cout << "\n" << VERTICAL;
-    std::for_each(std::begin(suit), std::end(suit), PrintValue);
-    cout << "\n";
-    PrintBottom(suit);
-}
-
-
-void Hand::Initialize()
+void Hand::Print()
 {
-    // Hand::GetInstance().CreateDeck(); 
-    // Hand::GetInstance().DealCards();
-    // Hand::GetInstance().SortCards();
-    // Hand::GetInstance().PrettyPrint(); 
+    for(int i=0; i < m_hand.size(); i++)
+    cout << m_hand[i];  
+  
 }
+
 

@@ -34,6 +34,8 @@ struct PlayerStruct {
         m_hand.push_back(cardFace);
     }
 
+    vector<string> getHand() { return m_hand; }
+    
     void print() {
         cout << "Player name: " << m_displayName << endl;
         cout << "Player id: " << m_playerId << endl;
@@ -84,6 +86,7 @@ class Game {
     void UpdatePlayers();
     void DealCards();
     void PrintGameInfo();
+    void Initialize(); 
 
     enum Team {
         TEAM_A = 1,

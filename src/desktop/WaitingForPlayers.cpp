@@ -3,6 +3,7 @@
 #include "auth/LiteratureAuth.hpp"
 #include "Actions.hpp"
 #include "Game.hpp"
+#include "Hand.hpp"
 
 #include "firebase/firestore.h"
 
@@ -64,9 +65,8 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
 
             if(choice == 1)
             {
-                Game::GetInstance().CreateAndShuffleDeck();
-                Game::GetInstance().DealCards();
-                Game::GetInstance().PrintGameInfo();
+                Game::GetInstance().Initialize(); 
+                Hand::GetInstance().Print(); 
             }
         
         }        
