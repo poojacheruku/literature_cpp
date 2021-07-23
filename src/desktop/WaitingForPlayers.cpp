@@ -70,6 +70,21 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
             {
                 Game::GetInstance().Initialize(); 
                 Hand::GetInstance().Print();
+                playerMap = playerList[1].map_value();
+                cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl;
+
+                // Set the turn to the second player
+                playerMap = playerList[1].map_value();
+                string playerId = playerMap["playerId"].string_value();
+                string gameCode = Game::GetInstance().GetGameCode(); 
+                
+                Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+                DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+                doc_ref.Update({
+                    {"turn", FieldValue::String(playerId)},
+                    {"changeReason", FieldValue::String("TURN")}
+                });
+
                 Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
             }
         
@@ -98,7 +113,8 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         {
             logIt(logERROR) << "Error. Unable to print hand."; 
             return;
-        }else
+        }
+        else
         {
             logIt(logINFO) << "broke out of loop"; 
             hand = playerMap["hand"].array_value(); 
@@ -112,29 +128,7 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         
         Hand::GetInstance().Initialize(hand_string);
         Hand::GetInstance().Print();
-
-        playerMap = playerList[1].map_value();
-        string playerId = playerMap["playerId"].string_value();
-        string gameCode = Game::GetInstance().GetGameCode(); 
-        
-        Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
-        DocumentReference doc_ref = db->Collection("games").Document(gameCode);
-        doc_ref.Update({
-          {"turn", FieldValue::String(playerId)},
-          {"changeReason", FieldValue::String("TURN")}});
-    
-
-        if(Player::GetInstance().GetPlayerId() == playerId)
-        {
-            cout << "It's your turn to play!" << endl; 
-            Player::GetInstance().SetState(&PlayingMyTurn::GetInstance()); 
-
-        }
-        else 
-        {
-            cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl; 
-            Player::GetInstance().SetState(&WaitingForTurn::GetInstance()); 
-        }
+        Player::GetInstance().SetState(&WaitingForTurn::GetInstance());    
     }
 
 
