@@ -116,20 +116,23 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         playerMap = playerList[1].map_value();
         string playerId = playerMap["playerId"].string_value();
         string gameCode = Game::GetInstance().GetGameCode(); 
-
+        
         Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
         DocumentReference doc_ref = db->Collection("games").Document(gameCode);
         doc_ref.Update({
           {"turn", FieldValue::String(playerId)},
           {"changeReason", FieldValue::String("TURN")}});
+    
 
         if(Player::GetInstance().GetPlayerId() == playerId)
         {
+            cout << "It's your turn to play!" << endl; 
             Player::GetInstance().SetState(&PlayingMyTurn::GetInstance()); 
 
         }
         else 
         {
+            cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl; 
             Player::GetInstance().SetState(&WaitingForTurn::GetInstance()); 
         }
     }
