@@ -78,6 +78,7 @@ class Game {
     static Game& GetInstance();
     void CreateAndShuffleDeck();
     void SetGameCode(string gameCode) { m_gameCode = gameCode; }
+    string GetGameCode() { return m_gameCode; }
     void SetNumberOfPlayers(int numberOfPlayers) { m_numberOfPlayers = numberOfPlayers; }
     void AddPlayer(string displayName, string playerId, int team) {
         PlayerStruct player(displayName, playerId, team);

@@ -33,8 +33,6 @@ public:
 	void SetPlayerType(int type) { m_type = type; }
 	void SetDisplayName(string displayName) { m_displayName = displayName; }
 	string GetDisplayName() { return m_displayName; }
-	void SetGameCode(string gameCode) { m_gameCode = gameCode; }
-	string GetGameCode() { return m_gameCode; }
 	void SetPlayerId(string playerId) { m_playerId = playerId; }
 	string GetPlayerId() { return m_playerId; }
 	void AddGame(string gameCode) { m_games.push_back(gameCode); }

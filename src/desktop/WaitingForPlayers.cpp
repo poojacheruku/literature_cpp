@@ -115,7 +115,7 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
 
         playerMap = playerList[1].map_value();
         string playerId = playerMap["playerId"].string_value();
-        string gameCode = Player::GetInstance().GetGameCode(); 
+        string gameCode = Game::GetInstance().GetGameCode(); 
 
         Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
         DocumentReference doc_ref = db->Collection("games").Document(gameCode);
