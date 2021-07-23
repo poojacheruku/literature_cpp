@@ -1,6 +1,6 @@
 #include "PlayingMyTurn.hpp"
 #include "LogIt.hpp"
-
+#include "Game.hpp"
 #include <iostream>
 using namespace std;
 
@@ -20,10 +20,33 @@ PlayingMyTurn& PlayingMyTurn::GetInstance()
 void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 {
     logIt(logINFO) << GetName();
-    string changeReason = snapshot.Get("changeReason").string_value();
+}
 
-    if(changeReason == "TURN")
+void PlayingMyTurn::PlayTurn()
+{
+    int choice; 
+    cout << "What do you want to do? Choose an option (1 or 2)" << endl;
+    cout << "1. Ask for a card" << endl;
+    cout << "2. Make a set" << endl;
+    cin >> choice;
+
+    int i = 1; 
+    vector<string> playerNames = Game::GetInstance().GetPlayerNames();
+    
+    switch (choice)
     {
-        cout << "Choose a player to ask" << endl; 
+    case 1:
+        cout << "Who do you want to ask?" << endl;
+        
+        for(i = 1; i < playerNames.size(); i++)
+        {
+            cout << i << ". " << playerNames[i] << endl;
+        }
+        break;
+    
+    case 2:
+        cout << "make a set" << endl;
+
+        break;
     }
 }

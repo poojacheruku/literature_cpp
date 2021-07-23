@@ -17,6 +17,7 @@ private:
 public:
     static PlayingMyTurn& GetInstance();
 	void Handle(const DocumentSnapshot& snapshot);
+    void PlayTurn(); 
 };
 
 #endif  // LITERATURE_PLAYING_MY_TURN_H  // NOLINT

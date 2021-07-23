@@ -80,3 +80,16 @@ void Game::Initialize()
     DealCards(); 
     Hand::GetInstance().Initialize(m_players[0].getHand()); 
 }
+
+vector<string> Game::GetPlayerNames()
+{
+    vector<string> playerNames; 
+
+    for(int i = 0; i < m_players.size(); i++)
+    {
+        string playerName = m_players[i].getDisplayName(); 
+        playerNames.push_back(playerName);
+    }
+    return playerNames; 
+}
+
