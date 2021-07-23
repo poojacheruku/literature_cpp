@@ -2,7 +2,7 @@
 #include "LogIt.hpp"
 #include "PlayingMyTurn.hpp"
 using ::firebase::firestore::MapFieldValue;
-
+using ::firebase::firestore::FieldValue;
 
 #include <iostream>
 using namespace std;
@@ -24,6 +24,8 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
     logIt(logINFO) << GetName();
     string changeReason = snapshot.Get("changeReason").string_value(); 
     string playerId = snapshot.Get("turn").string_value();
+    vector<FieldValue> playerList = snapshot.Get("players").array_value();
+
 
     if(changeReason == "TURN")
     {
