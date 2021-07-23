@@ -33,6 +33,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         {
             cout << "It's your turn to play!" << endl; 
             Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+            PlayingMyTurn::GetInstance().PlayTurn();
         }
         else 
         {
