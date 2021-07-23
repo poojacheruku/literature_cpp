@@ -20,4 +20,10 @@ PlayingMyTurn& PlayingMyTurn::GetInstance()
 void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 {
     logIt(logINFO) << GetName();
+    string changeReason = snapshot.Get("changeReason").string_value();
+
+    if(changeReason == "TURN")
+    {
+        cout << "Choose a player to ask" << endl; 
+    }
 }

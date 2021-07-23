@@ -4,6 +4,8 @@
 #include "Actions.hpp"
 #include "Game.hpp"
 #include "Hand.hpp"
+#include "PlayingMyTurn.hpp"
+#include "WaitingForTurn.hpp"
 
 #include "firebase/firestore.h"
 
@@ -67,7 +69,8 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
             if(choice == 1)
             {
                 Game::GetInstance().Initialize(); 
-                Hand::GetInstance().Print(); 
+                Hand::GetInstance().Print();
+                Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
             }
         
         }        
@@ -116,8 +119,21 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
 
         Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
         DocumentReference doc_ref = db->Collection("games").Document(gameCode);
-        doc_ref.Set({{"turn", FieldValue::String(playerId)}}); 
+        doc_ref.Update({
+          {"turn", FieldValue::String(playerId)},
+          {"changeReason", FieldValue::String("TURN")}});
+
+        if(Player::GetInstance().GetPlayerId() == playerId)
+        {
+            Player::GetInstance().SetState(&PlayingMyTurn::GetInstance()); 
+
+        }
+        else 
+        {
+            Player::GetInstance().SetState(&WaitingForTurn::GetInstance()); 
+        }
     }
+
 
     
 
