@@ -32,11 +32,11 @@ void PlayingMyTurn::PlayTurn()
 
     int i = 1; 
     vector<string> playerNames = Game::GetInstance().GetPlayerNames();
-    
+    logIt(logINFO) << playerNames; 
     switch (choice)
     {
     case 1:
-        cout << "Who do you want to ask?" << endl;
+        cout << "Who do you want to ask?" << endl;  
         
         for(i = 1; i < playerNames.size(); i++)
         {
