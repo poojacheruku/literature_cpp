@@ -56,7 +56,7 @@ void Actions::waitForGameExit()
 
 DocumentReference getGameSnapShot(DocumentSnapshot& document)
 {
-  string gameCode = Player::GetInstance().GetGameCode();
+  string gameCode = Game::GetInstance().GetGameCode();
   cout << "Game code: " << gameCode << endl;
   Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   DocumentReference doc_ref = db->Collection("games").Document(gameCode);

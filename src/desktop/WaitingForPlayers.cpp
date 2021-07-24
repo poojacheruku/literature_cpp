@@ -4,6 +4,8 @@
 #include "Actions.hpp"
 #include "Game.hpp"
 #include "Hand.hpp"
+#include "PlayingMyTurn.hpp"
+#include "WaitingForTurn.hpp"
 
 #include "firebase/firestore.h"
 
@@ -67,7 +69,23 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
             if(choice == 1)
             {
                 Game::GetInstance().Initialize(); 
-                Hand::GetInstance().Print(); 
+                Hand::GetInstance().Print();
+                playerMap = playerList[1].map_value();
+                cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl;
+
+                // Set the turn to the second player
+                playerMap = playerList[1].map_value();
+                string playerId = playerMap["playerId"].string_value();
+                string gameCode = Game::GetInstance().GetGameCode(); 
+                
+                Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+                DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+                doc_ref.Update({
+                    {"turn", FieldValue::String(playerId)},
+                    {"changeReason", FieldValue::String("TURN")}
+                });
+
+                Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
             }
         
         }        
@@ -95,7 +113,8 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         {
             logIt(logERROR) << "Error. Unable to print hand."; 
             return;
-        }else
+        }
+        else
         {
             logIt(logINFO) << "broke out of loop"; 
             hand = playerMap["hand"].array_value(); 
@@ -109,6 +128,11 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         
         Hand::GetInstance().Initialize(hand_string);
         Hand::GetInstance().Print();
+        Player::GetInstance().SetState(&WaitingForTurn::GetInstance());    
     }
+
+
+    
+
     
 }
