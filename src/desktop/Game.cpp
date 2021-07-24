@@ -83,13 +83,16 @@ void Game::Initialize()
 
 vector<string> Game::GetPlayerNames()
 {
+    logIt(logINFO) << "In GetPlayerNames..."; 
     vector<string> playerNames; 
-
+    logIt(logINFO) << m_players.size(); 
     for(int i = 0; i < m_players.size(); i++)
     {
         string playerName = m_players[i].getDisplayName(); 
+        logIt(logINFO) << playerName; 
         playerNames.push_back(playerName);
     }
     return playerNames; 
+
 }
 

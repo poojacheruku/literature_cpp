@@ -32,7 +32,7 @@ void PlayingMyTurn::PlayTurn()
 
     int i = 1; 
     vector<string> playerNames = Game::GetInstance().GetPlayerNames();
-    logIt(logINFO) << playerNames; 
+    logIt(logINFO) << playerNames.size();
     switch (choice)
     {
     case 1:
