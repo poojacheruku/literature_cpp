@@ -45,15 +45,13 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
             cout << number << ". " << displayName << endl; 
         }
         
-        
         // for(int i = 1; i < playerNames.size(); i++)
         // {
         //     cout << i << ". " << playerNames[i] << endl;
         // }
-        // break;
+        break; 
     
     case 2:
-        cout << "make a set" << endl;
 
         break;
     }
