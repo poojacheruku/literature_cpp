@@ -65,11 +65,27 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         char value = input.at(2);   
 
         string card; 
-        if(suit == 'H')
+        if(suit == 'S')
         {
             card = "\u2660"; 
             card.push_back(value); 
         }
+        else if(suit == 'C')
+        {
+            card = "\u2664"; 
+            card.push_back(value);
+        }
+        else if(suit == 'H')
+        {
+            card = "\u2665"; 
+            card.push_back(value);
+        }
+        else if(suit == 'D')
+        {
+            card = "\u2666"; 
+            card.push_back(value);
+        }
+
         int playerNumber = choice -1; 
         MapFieldValue playerMap = playerList[playerNumber].map_value();
         string askName = playerMap["displayName"].string_value(); 
@@ -80,7 +96,8 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         DocumentReference doc_ref = db->Collection("games").Document(gameCode);
         doc_ref.Update({
             {"playerBeingAsked", FieldValue::String(askPlayerId)},
-            {"changeReason", FieldValue::String("ASK")}
+            {"changeReason", FieldValue::String("ASK")},
+            {"card", FieldValue::String(card)},
         });
 
         cout << "You are asking " << askName << " for " << card << endl; 
