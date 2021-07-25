@@ -1,6 +1,7 @@
 #include "WaitingForTurn.hpp"
 #include "LogIt.hpp"
 #include "PlayingMyTurn.hpp"
+#include "Player.hpp"
 using ::firebase::firestore::MapFieldValue;
 using ::firebase::firestore::FieldValue;
 
@@ -52,16 +53,29 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         }
     }
 
-    if(changeReason == "ASK")
+    if (changeReason == "ASK" && Player::GetInstance().GetPlayerId() == snapshot.Get("playerBeingAsked").string_value())
     {
-        string playerId = snapshot.Get("playerBeingAsked").string_value();
+        string playerId = snapshot.Get("turn").string_value();
         for(int i=0; i < playerList.size(); i++)
             {
                 MapFieldValue playerMap = playerList[i].map_value();
-
                 if(playerMap["playerId"].string_value() == playerId)
                 {
-                    cout << "They are asking " << playerMap["displayName"].string_value() << " for a card..." << endl; 
+                    cout << playerMap["displayName"].string_value() << " is asking you for a card..." << endl; 
+                }
+            }
+    }
+    else if(changeReason == "ASK")
+    {
+        string beingAskedId = snapshot.Get("playerBeingAsked").string_value();
+        string turnId = snapshot.Get("turn").string_value(); 
+        for(int i=0; i < playerList.size(); i++)
+            {
+                MapFieldValue askPlayerMap = playerList[i].map_value();
+                MapFieldValue turnPlayerMap = playerList[i].map_value();
+                if(turnPlayerMap["playerId"].string_value() == turnId && askPlayerMap["playerId"].string_value() == beingAskedId)
+                {
+                    cout << turnPlayerMap["displayName"].string_value() << " is asking " << askPlayerMap["displayName"].string_value() << " for a card..." << endl; 
                 }
             }
     }

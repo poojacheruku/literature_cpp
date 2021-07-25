@@ -2,6 +2,7 @@
 #include "LogIt.hpp"
 #include "Game.hpp"
 #include "auth/LiteratureAuth.hpp"
+#include "Card.hpp"
 #include <iostream>
 using namespace std;
 
@@ -53,6 +54,22 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         cout << "Enter a number: ";
         cin >> choice; 
 
+        string input;  
+        cout << "What card do you want to ask for?" << endl; 
+        cout << "Please enter in this format:" << endl; 
+        cout << "H-K (king of hearts)" << endl; 
+        cout << "D-1 (one of diamonds)" << endl; 
+        cin >> input; 
+
+        char suit = input.at(0);
+        char value = input.at(2);   
+
+        string card; 
+        if(suit == 'H')
+        {
+            card = "\u2660"; 
+            card.push_back(value); 
+        }
         int playerNumber = choice -1; 
         MapFieldValue playerMap = playerList[playerNumber].map_value();
         string askName = playerMap["displayName"].string_value(); 
@@ -66,7 +83,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
             {"changeReason", FieldValue::String("ASK")}
         });
 
-        cout << "You are asking " << askName << " for a card..." << endl; 
+        cout << "You are asking " << askName << " for " << card << endl; 
         // for(int i = 1; i < playerNames.size(); i++)
         // {
         //     cout << i << ". " << playerNames[i] << endl;
