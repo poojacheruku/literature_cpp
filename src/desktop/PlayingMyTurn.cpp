@@ -1,8 +1,12 @@
 #include "PlayingMyTurn.hpp"
 #include "LogIt.hpp"
 #include "Game.hpp"
+#include "auth/LiteratureAuth.hpp"
 #include <iostream>
 using namespace std;
+
+using ::firebase::firestore::DocumentReference;
+using ::firebase::firestore::Firestore;
 
 /* constructor */
 PlayingMyTurn::PlayingMyTurn()
@@ -35,6 +39,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
     switch (choice)
     {
     case 1:
+    {
         cout << "Who do you want to ask?" << endl;  
 
         for(int i = 0; i < playerList.size(); i++)
@@ -44,15 +49,33 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
             int number = i + 1; 
             cout << number << ". " << displayName << endl; 
         }
-        
+        int choice; 
+        cout << "Enter a number: ";
+        cin >> choice; 
+
+        int playerNumber = choice -1; 
+        MapFieldValue playerMap = playerList[playerNumber].map_value();
+        string askName = playerMap["displayName"].string_value(); 
+        string askPlayerId = playerMap["playerId"].string_value();
+        string gameCode = Game::GetInstance().GetGameCode();
+
+        Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+        DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+        doc_ref.Update({
+            {"playerBeingAsked", FieldValue::String(askPlayerId)},
+            {"changeReason", FieldValue::String("ASK")}
+        });
+
+        cout << "You are asking " << askName << " for a card..." << endl; 
         // for(int i = 1; i < playerNames.size(); i++)
         // {
         //     cout << i << ". " << playerNames[i] << endl;
         // }
         break; 
-    
+    }
     case 2:
-
+    {
         break;
+    }
     }
 }

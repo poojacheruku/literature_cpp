@@ -46,8 +46,23 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
                     cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl;  
                     break;
                 }
+            
             }
             
         }
+    }
+
+    if(changeReason == "ASK")
+    {
+        string playerId = snapshot.Get("playerBeingAsked").string_value();
+        for(int i=0; i < playerList.size(); i++)
+            {
+                MapFieldValue playerMap = playerList[i].map_value();
+
+                if(playerMap["playerId"].string_value() == playerId)
+                {
+                    cout << "They are asking" << playerMap["displayName"].string_value() << " for a card..." << endl; 
+                }
+            }
     }
 }
