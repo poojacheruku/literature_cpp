@@ -62,9 +62,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         string playerId = snapshot.Get("turn").string_value();
         string card = snapshot.Get("card").string_value(); 
         string gameCode = snapshot.Get("gameCode").string_value(); 
-        Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
-        DocumentReference doc_ref = db->Collection("games").Document(gameCode);
-
+    
         for(int i=0; i < playerList.size(); i++)
             {
                 MapFieldValue playerMap = playerList[i].map_value();
@@ -89,6 +87,9 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
     //     }
     //     case 2: 
     //     {
+                // Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+                // DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+
     //         doc_ref.Update({
     //                 {"turn", FieldValue::String(Player::GetInstance().GetPlayerId())},
     //                 {"changeReason", FieldValue::String("TURN")}
