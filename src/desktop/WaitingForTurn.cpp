@@ -87,11 +87,11 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         }
         case 2: 
         {
-            string playerId = Player::GetInstance().GetPlayerId();
+            string nextTurnPlayerId = Player::GetInstance().GetPlayerId();
             Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
             DocumentReference doc_ref = db->Collection("games").Document(gameCode); 
             doc_ref.Update({
-                {"turn", FieldValue::String(playerId)},
+                {"turn", FieldValue::String(nextTurnPlayerId)},
                 {"changeReason", FieldValue::String("TURN")}
                 });
             
@@ -99,20 +99,20 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         }
         }
     }
-    // else if(changeReason == "ASK")
-    // {
-    //     string beingAskedId = snapshot.Get("playerBeingAsked").string_value();
-    //     string turnId = snapshot.Get("turn").string_value(); 
-    //     string card = snapshot.Get("card").string_value(); 
+    else if(changeReason == "ASK")
+    {
+        string beingAskedId = snapshot.Get("playerBeingAsked").string_value();
+        string turnId = snapshot.Get("turn").string_value(); 
+        string card = snapshot.Get("card").string_value(); 
 
-    //     for(int i=0; i < playerList.size(); i++)
-    //         {
-    //             MapFieldValue askPlayerMap = playerList[i].map_value();
-    //             MapFieldValue turnPlayerMap = playerList[i].map_value();
-    //             if(turnPlayerMap["playerId"].string_value() == turnId && askPlayerMap["playerId"].string_value() == beingAskedId)
-    //             {
-    //                 cout << turnPlayerMap["displayName"].string_value() << " is asking " << askPlayerMap["displayName"].string_value() << " for " << card << endl; 
-    //             }
-    //         }
-    // }
+        for(int i=0; i < playerList.size(); i++)
+            {
+                MapFieldValue askPlayerMap = playerList[i].map_value();
+                MapFieldValue turnPlayerMap = playerList[i].map_value();
+                if(turnPlayerMap["playerId"].string_value() == turnId && askPlayerMap["playerId"].string_value() == beingAskedId)
+                {
+                    cout << turnPlayerMap["displayName"].string_value() << " is asking " << askPlayerMap["displayName"].string_value() << " for " << card << endl; 
+                }
+            }
+    }
 }
