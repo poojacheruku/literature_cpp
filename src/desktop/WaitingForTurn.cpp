@@ -87,13 +87,14 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         }
         case 2: 
         {
-                Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
-                DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+            cout << Player::GetInstance().GetPlayerId() << endl; 
+            //     Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+            //     DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
-            doc_ref.Update({
-                    {"turn", FieldValue::String(Player::GetInstance().GetPlayerId())},
-                    {"changeReason", FieldValue::String("TURN")}
-                });
+            // doc_ref.Update({
+            //         {"turn", FieldValue::String(Player::GetInstance().GetPlayerId())},
+            //         {"changeReason", FieldValue::String("TURN")}
+            //     });
             
             break; 
         }
