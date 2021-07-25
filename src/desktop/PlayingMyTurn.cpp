@@ -98,8 +98,8 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         DocumentReference doc_ref = db->Collection("games").Document(gameCode);
         doc_ref.Update({
             {"playerBeingAsked", FieldValue::String(askPlayerId)},
-            {"changeReason", FieldValue::String("ASK")},
             {"card", FieldValue::String(card)},
+            {"changeReason", FieldValue::String("ASK")},
         });
         // for(int i = 1; i < playerNames.size(); i++)
         // {
