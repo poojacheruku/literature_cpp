@@ -61,7 +61,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 
                 if(playerMap["playerId"].string_value() == playerId)
                 {
-                    cout << "They are asking" << playerMap["displayName"].string_value() << " for a card..." << endl; 
+                    cout << "They are asking " << playerMap["displayName"].string_value() << " for a card..." << endl; 
                 }
             }
     }

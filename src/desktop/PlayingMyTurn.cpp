@@ -36,8 +36,9 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     // vector<string> playerNames = Game::GetInstance().GetPlayerNames();
     // logIt(logINFO) << playerNames.size();
-
-    if(choice == 1)
+    switch (choice)
+    {
+    case 1:
     {
         cout << "Who do you want to ask?" << endl;  
 
@@ -70,10 +71,11 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         // {
         //     cout << i << ". " << playerNames[i] << endl;
         // }
+        break; 
     }
-    // else if(choice == 2)
-    // {
-    //     break;
-    // }
-   
+    case 2:
+    {
+        break;
+    }
+    }
 }
