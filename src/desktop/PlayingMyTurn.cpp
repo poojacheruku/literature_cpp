@@ -92,6 +92,8 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         string askPlayerId = playerMap["playerId"].string_value();
         string gameCode = Game::GetInstance().GetGameCode();
 
+        cout << "You are asking " << askName << " for " << card << endl; 
+
         Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
         DocumentReference doc_ref = db->Collection("games").Document(gameCode);
         doc_ref.Update({
@@ -99,8 +101,6 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
             {"changeReason", FieldValue::String("ASK")},
             {"card", FieldValue::String(card)},
         });
-
-        cout << "You are asking " << askName << " for " << card << endl; 
         // for(int i = 1; i < playerNames.size(); i++)
         // {
         //     cout << i << ". " << playerNames[i] << endl;
