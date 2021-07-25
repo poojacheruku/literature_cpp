@@ -73,45 +73,45 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
                     cout << playerMap["displayName"].string_value() << " is asking you for " << card << endl; 
                 }
             }
-        int choice; 
-        cout << "Do you have this card?" << endl;
-        cout << "1. Yes" << endl; 
-        cout << "2. No" << endl; 
-        cout << "Please select an option (1 or 2): "; 
-        cin >> choice; 
+    //     int choice; 
+    //     cout << "Do you have this card?" << endl;
+    //     cout << "1. Yes" << endl; 
+    //     cout << "2. No" << endl; 
+    //     cout << "Please select an option (1 or 2): "; 
+    //     cin >> choice; 
 
-        switch (choice)
-        {
-        case 1:
-        {
-            cout << "you have the card!" << endl; 
-            break; 
-        }
-        case 2: 
-        {
-            doc_ref.Update({
-                    {"turn", FieldValue::String(Player::GetInstance().GetPlayerId())},
-                    {"changeReason", FieldValue::String("TURN")}
-                });
+    //     switch (choice)
+    //     {
+    //     case 1:
+    //     {
+    //         cout << "you have the card!" << endl; 
+    //         break; 
+    //     }
+    //     case 2: 
+    //     {
+    //         doc_ref.Update({
+    //                 {"turn", FieldValue::String(Player::GetInstance().GetPlayerId())},
+    //                 {"changeReason", FieldValue::String("TURN")}
+    //             });
             
-            break; 
-        }
-        }
-    }
-    else if(changeReason == "ASK")
-    {
-        string beingAskedId = snapshot.Get("playerBeingAsked").string_value();
-        string turnId = snapshot.Get("turn").string_value(); 
-        string card = snapshot.Get("card").string_value(); 
+    //         break; 
+    //     }
+    //     }
+    // }
+    // else if(changeReason == "ASK")
+    // {
+    //     string beingAskedId = snapshot.Get("playerBeingAsked").string_value();
+    //     string turnId = snapshot.Get("turn").string_value(); 
+    //     string card = snapshot.Get("card").string_value(); 
 
-        for(int i=0; i < playerList.size(); i++)
-            {
-                MapFieldValue askPlayerMap = playerList[i].map_value();
-                MapFieldValue turnPlayerMap = playerList[i].map_value();
-                if(turnPlayerMap["playerId"].string_value() == turnId && askPlayerMap["playerId"].string_value() == beingAskedId)
-                {
-                    cout << turnPlayerMap["displayName"].string_value() << " is asking " << askPlayerMap["displayName"].string_value() << " for " << card << endl; 
-                }
-            }
+    //     for(int i=0; i < playerList.size(); i++)
+    //         {
+    //             MapFieldValue askPlayerMap = playerList[i].map_value();
+    //             MapFieldValue turnPlayerMap = playerList[i].map_value();
+    //             if(turnPlayerMap["playerId"].string_value() == turnId && askPlayerMap["playerId"].string_value() == beingAskedId)
+    //             {
+    //                 cout << turnPlayerMap["displayName"].string_value() << " is asking " << askPlayerMap["displayName"].string_value() << " for " << card << endl; 
+    //             }
+    //         }
     }
 }
