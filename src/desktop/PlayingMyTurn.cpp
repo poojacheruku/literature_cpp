@@ -114,6 +114,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
     }
     }
 
+    cout << "got here" << endl; 
     string changeReason = snapshot.Get("changeReason").string_value();
 
     if(changeReason == "NOCARD")
