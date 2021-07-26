@@ -25,7 +25,25 @@ PlayingMyTurn& PlayingMyTurn::GetInstance()
 
 void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 {
-    logIt(logINFO) << GetName();
+    string changeReason = snapshot.Get("changeReason").string_value();
+
+    if(changeReason == "NOCARD")
+    {
+        cout << "got here too" << endl; 
+        vector<FieldValue> playerList = snapshot.Get("players").array_value();
+        string card = snapshot.Get("card").string_value();
+        for(int i = 0; i < playerList.size(); i++)
+        {
+            MapFieldValue playerMap = playerList[i].map_value();
+            if(playerMap["playerId"].string_value() == snapshot.Get("turn").string_value())
+            {
+                    cout << playerMap["displayName"].string_value() << " does not have " << card << endl; 
+                    cout << endl; 
+                    cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl; 
+            }
+        }
+        Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
+    }
 }
 
 void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
@@ -118,25 +136,5 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
     }
     }
 
-    }
-    
-    cout << "got here" << endl; 
-
-    if(changeReason == "NOCARD")
-    {
-        cout << "got here too" << endl; 
-        vector<FieldValue> playerList = snapshot.Get("players").array_value();
-        string card = snapshot.Get("card").string_value();
-        for(int i = 0; i < playerList.size(); i++)
-        {
-            MapFieldValue playerMap = playerList[i].map_value();
-            if(playerMap["playerId"].string_value() == snapshot.Get("turn").string_value())
-            {
-                    cout << playerMap["displayName"].string_value() << " does not have " << card << endl; 
-                    cout << endl; 
-                    cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl; 
-            }
-        }
-        Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
     }
 }
