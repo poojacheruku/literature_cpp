@@ -30,7 +30,11 @@ void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 
 void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 {
-    int choice; 
+    string changeReason = snapshot.Get("changeReason").string_value();
+
+    if(changeReason == "TURN")
+    {
+        int choice; 
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
     cout << "1. Ask for a card" << endl;
     cout << "2. Make a set" << endl;
@@ -114,9 +118,9 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
     }
     }
 
+    }
+    
     cout << "got here" << endl; 
-    string changeReason = snapshot.Get("changeReason").string_value();
-    cout << changeReason << endl; 
 
     if(changeReason == "NOCARD")
     {
