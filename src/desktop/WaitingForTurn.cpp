@@ -94,9 +94,12 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             
             doc_ref.Update({
                 {"turn", FieldValue::String(nextTurnPlayerId)},
-                {"changeReason", FieldValue::String("TURN")}
+                {"changeReason", FieldValue::String("NOCARD")}
                 });
-            
+
+            cout << "It's your turn to play!" << endl;
+            Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+            PlayingMyTurn::GetInstance().PlayTurn(snapshot);
             break; 
         }
         }
@@ -116,5 +119,22 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
                     cout << turnPlayerMap["displayName"].string_value() << " is asking " << askPlayerMap["displayName"].string_value() << " for " << card << endl; 
                 }
             }
+    }
+
+    if(changeReason == "NOCARD")
+    {
+        string card = snapshot.Get("card").string_value();
+
+        for(int i = 0; i < playerList.size(); i++)
+        {
+            MapFieldValue playerMap = playerList[i].map_value();
+            if(playerMap["playerId"].string_value() == snapshot.Get("turn").string_value())
+            {
+                    cout << playerMap["displayName"].string_value() << " does not have " << card << endl; 
+                    cout << endl; 
+                    cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!"; 
+            }
+        }
+
     }
 }

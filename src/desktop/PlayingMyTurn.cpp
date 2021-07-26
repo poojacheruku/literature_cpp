@@ -1,4 +1,5 @@
 #include "PlayingMyTurn.hpp"
+#include "WaitingForTurn.hpp"
 #include "LogIt.hpp"
 #include "Game.hpp"
 #include "auth/LiteratureAuth.hpp"
@@ -111,5 +112,23 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
     {
         break;
     }
+    }
+
+    string changeReason = snapshot.Get("changeReason").string_value();
+
+    if(changeReason == "NOCARD")
+    {
+        string card = snapshot.Get("card").string_value();
+        for(int i = 0; i < playerList.size(); i++)
+        {
+            MapFieldValue playerMap = playerList[i].map_value();
+            if(playerMap["playerId"].string_value() == snapshot.Get("turn").string_value())
+            {
+                    cout << playerMap["displayName"].string_value() << " does not have " << card << endl; 
+                    cout << endl; 
+                    cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!"; 
+            }
+        }
+        Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
     }
 }
