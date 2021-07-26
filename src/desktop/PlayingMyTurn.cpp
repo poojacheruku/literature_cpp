@@ -126,7 +126,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
             {
                     cout << playerMap["displayName"].string_value() << " does not have " << card << endl; 
                     cout << endl; 
-                    cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!"; 
+                    cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl; 
             }
         }
         Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
