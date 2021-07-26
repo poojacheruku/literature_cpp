@@ -119,9 +119,11 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 
     if(changeReason == "NOCARD")
     {
+        vector<FieldValue> playerList = snapshot.Get("players").array_value();
         string card = snapshot.Get("card").string_value();
         for(int i = 0; i < playerList.size(); i++)
         {
+            cout << "got here too" << endl; 
             MapFieldValue playerMap = playerList[i].map_value();
             if(playerMap["playerId"].string_value() == snapshot.Get("turn").string_value())
             {
