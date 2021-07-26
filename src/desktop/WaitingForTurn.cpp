@@ -2,6 +2,7 @@
 #include "LogIt.hpp"
 #include "PlayingMyTurn.hpp"
 #include "Player.hpp"
+#include "Game.hpp"
 #include "auth/LiteratureAuth.hpp"
 
 using ::firebase::firestore::MapFieldValue;
@@ -61,7 +62,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
     {
         string playerId = snapshot.Get("turn").string_value();
         string card = snapshot.Get("card").string_value(); 
-        string gameCode = snapshot.Get("gameCode").string_value(); 
+        string gameCode = Game::GetInstance().GetGameCode(); 
     
         for(int i=0; i < playerList.size(); i++)
             {
@@ -87,20 +88,14 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         }
         case 2: 
         {
+            string nextTurnPlayerId = Player::GetInstance().GetPlayerId();
             Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
             DocumentReference doc_ref = db->Collection("games").Document(gameCode); 
-            for(int i = 0; i < playerList.size(); i++)
-            {
-                MapFieldValue playerMap = playerList[i].map_value();
-                string playerId = playerMap["playerId"].string_value();
-                if(playerId == snapshot.Get("playerBeingAsked").string_value())
-                {
-                    doc_ref.Update({
-                        {"turn", FieldValue::String(playerMap["displayName"].string_value())},
-                        {"changeReason", FieldValue::String("TURN")}
-                        });
-                }
-            }
+            
+            doc_ref.Update({
+                {"turn", FieldValue::String(nextTurnPlayerId)},
+                {"changeReason", FieldValue::String("TURN")}
+                });
             
             break; 
         }
