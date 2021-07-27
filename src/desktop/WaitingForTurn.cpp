@@ -86,16 +86,16 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         {
         case 1:
         {
-            int i; 
-            MapFieldValue playerMap = playerList[i].map_value();
+            MapFieldValue playerMap; 
             vector<FieldValue> hand; 
             vector<string> hand_string;
 
-            for(i=0; i < playerList.size(); i++)
+            for(int i =0; i < playerList.size(); i++)
             {
                 if(playerMap["playerId"].string_value() == snapshot.Get("playerBeingAsked").string_value())
                 {
-                     hand = playerMap["hand"].array_value(); 
+                    playerMap = playerList[i].map_value();
+                    hand = playerMap["hand"].array_value(); 
                 }
             }
 
