@@ -10,6 +10,8 @@ using ::firebase::firestore::FieldValue;
 using ::firebase::firestore::DocumentReference;
 using ::firebase::firestore::Firestore;
 
+#include <algorithm>
+#include <vector>
 #include <iostream>
 using namespace std;
 
@@ -65,28 +67,52 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         string gameCode = Game::GetInstance().GetGameCode(); 
     
         for(int i=0; i < playerList.size(); i++)
+        {
+            MapFieldValue playerMap = playerList[i].map_value();
+            if(playerMap["playerId"].string_value() == playerId)
             {
-                MapFieldValue playerMap = playerList[i].map_value();
-                if(playerMap["playerId"].string_value() == playerId)
-                {
-                    cout << playerMap["displayName"].string_value() << " is asking you for " << card << endl; 
-                }
+                cout << playerMap["displayName"].string_value() << " is asking you for " << card << endl; 
             }
+        }
         int choice; 
         cout << "Do you have this card?" << endl;
         cout << "1. Yes" << endl; 
         cout << "2. No" << endl; 
         cout << "Please select an option (1 or 2): "; 
         cin >> choice; 
+        cout << endl; 
 
         switch (choice)
         {
         case 1:
         {
+            MapFieldValue playerMap;
             cout << "you have the card!" << endl; 
+            vector<FieldValue> hand = playerMap["hand"].array_value(); 
+            vector<string> hand_string; 
+
+            cout << "HAND SIZE BEFORE: " << hand.size() << endl; 
+
+            for(int i=0; i < hand.size(); i++)
+            {
+                string card = hand[i].string_value(); 
+                hand_string.push_back(card); 
+            }
+
+            hand_string.erase(remove(hand_string.begin(), hand_string.end(), card), hand_string.end());
+
+            for(int i=0; i < hand_string.size(); i++)
+            {
+                hand.push_back(FieldValue::String(hand_string[i]));
+            }
+            
+            cout << "HAND SIZE AFTER: " << hand.size() << endl; 
+
+            playerMap["hand"] = FieldValue::Array(hand);
+
             break; 
         }
-        case 2: 
+        case 2:
         {
             string nextTurnPlayerId = Player::GetInstance().GetPlayerId();
             Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
@@ -135,6 +161,28 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
                     cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!"; 
             }
         }
+
+    }
+
+    if(changeReason == "HASCARD")
+    {
+        string beingAskedId = snapshot.Get("playerBeingAsked").string_value();
+        string turnId = snapshot.Get("turn").string_value(); 
+        string card = snapshot.Get("card").string_value(); 
+
+        for(int i=0; i < playerList.size(); i++)
+            {
+                MapFieldValue askPlayerMap = playerList[i].map_value();
+                MapFieldValue turnPlayerMap = playerList[i].map_value();
+                if(turnPlayerMap["playerId"].string_value() == turnId && askPlayerMap["playerId"].string_value() == beingAskedId)
+                {
+                    cout << askPlayerMap["displayName"].string_value() << " has " << card << endl; 
+                    cout << endl; 
+                    cout << askPlayerMap["displayName"].string_value() << " is giving " << turnPlayerMap["displayName"].string_value() << card << endl; 
+                    cout << endl; 
+                    cout << "It's " << turnPlayerMap["displayName"].string_value() << "'s turn to play again!" << endl; 
+                }
+            }
 
     }
 }

@@ -28,7 +28,6 @@ void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
     string changeReason = snapshot.Get("changeReason").string_value();
     if(changeReason == "NOCARD")
     {
-        cout << "got here too" << endl; 
         vector<FieldValue> playerList = snapshot.Get("players").array_value();
         string card = snapshot.Get("card").string_value();
         for(int i = 0; i < playerList.size(); i++)
@@ -73,13 +72,17 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         int choice; 
         cout << "Enter a number: ";
         cin >> choice; 
+        cout << endl; 
 
         string input;  
         cout << "What card do you want to ask for?" << endl; 
+        cout << endl; 
         cout << "Please enter in this format:" << endl; 
         cout << "H-K (king of hearts)" << endl; 
         cout << "D-1 (one of diamonds)" << endl; 
+        cout << endl; 
         cin >> input; 
+        cout << endl; 
 
         char suit = input.at(0);
         char value = input.at(2);   
@@ -112,7 +115,8 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         string askPlayerId = playerMap["playerId"].string_value();
         string gameCode = Game::GetInstance().GetGameCode();
 
-        cout << "You are asking " << askName << " for " << card << endl; 
+        cout << "You are asking " << askName << " for " << card << endl;
+        cout << endl;  
 
         Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
         DocumentReference doc_ref = db->Collection("games").Document(gameCode);
