@@ -114,6 +114,9 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 
             cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
 
+            cout << FieldValue::String(hand_string[0]) << endl; 
+            cout << FieldValue::String(hand_string[1]) << endl; 
+
             for(int i=0; i < hand_string.size(); i++)
             {
                 hand.push_back(FieldValue::String(hand_string[i]));
