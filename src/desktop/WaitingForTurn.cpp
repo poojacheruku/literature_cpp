@@ -129,6 +129,9 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
                 cout << hand[i] << endl; 
             }
 
+            Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+            DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+
             playerMap["hand"] = FieldValue::Array(hand);
 
             break; 
