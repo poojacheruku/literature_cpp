@@ -114,13 +114,20 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 
             cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
 
-            for(int i=0; i < hand_string.size(); i++)
+            for(int i = 0; i < hand_string.size(); i++)
             {
                 cout << FieldValue::String(hand_string[i]) << endl; 
                 hand.push_back(FieldValue::String(hand_string[i]));
             }
             
             cout << "HAND SIZE AFTER: " << hand.size() << endl; 
+
+            cout << "hand: " << endl; 
+
+            for(int i = 0; i < hand.size(); i++)
+            {
+                cout << hand[i] << endl; 
+            }
 
             playerMap["hand"] = FieldValue::Array(hand);
 
