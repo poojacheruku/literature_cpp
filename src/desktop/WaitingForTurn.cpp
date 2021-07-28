@@ -65,13 +65,15 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         string playerId = snapshot.Get("turn").string_value();
         string card = snapshot.Get("card").string_value(); 
         string gameCode = Game::GetInstance().GetGameCode(); 
+        int playerIndex = 0;
     
-        for(int i=0; i < playerList.size(); i++)
+        for(playerIndex=0; playerIndex < playerList.size(); playerIndex++)
         {
-            MapFieldValue playerMap = playerList[i].map_value();
+            MapFieldValue playerMap = playerList[playerIndex].map_value();
             if(playerMap["playerId"].string_value() == playerId)
             {
-                cout << playerMap["displayName"].string_value() << " is asking you for " << card << endl; 
+                cout << playerMap["displayName"].string_value() << " is asking you for " << card << endl;
+                break;
             }
         }
         int choice; 
@@ -133,6 +135,12 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
             playerMap["hand"] = FieldValue::Array(hand);
+            playerList[playerIndex] = FieldValue::Map(playerMap);
+
+            doc_ref.Update({
+                {"players",  FieldValue::Array(playerList)},
+                {"changeReason", FieldValue::String("HASCARD")}
+            });
 
             break; 
         }
