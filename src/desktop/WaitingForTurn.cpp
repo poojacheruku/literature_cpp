@@ -93,7 +93,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             for(int i =0; i < playerList.size(); i++)
             {
                 playerMap = playerList[i].map_value();
-                
+
                 if(playerMap["playerId"].string_value() == snapshot.Get("playerBeingAsked").string_value())
                 {
                     hand = playerMap["hand"].array_value(); 
@@ -108,7 +108,11 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
                 hand_string.push_back(card); 
             }
 
+            cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
+
             hand_string.erase(remove(hand_string.begin(), hand_string.end(), card), hand_string.end());
+
+            cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
 
             for(int i=0; i < hand_string.size(); i++)
             {
