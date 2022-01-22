@@ -13,6 +13,8 @@ using ::firebase::firestore::Firestore;
 #include <algorithm>
 #include <vector>
 #include <iostream>
+#include <string> 
+
 using namespace std;
 
 /* constructor */
@@ -62,7 +64,8 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 
     if (changeReason == "ASK" && Player::GetInstance().GetPlayerId() == snapshot.Get("playerBeingAsked").string_value())
     {
-        string playerId = snapshot.Get("turn").string_value();
+        string turnId = snapshot.Get("turn").string_value();
+        string beingAskedId = snapshot.Get("playerBeingAsked").string_value(); 
         string card = snapshot.Get("card").string_value(); 
         string gameCode = Game::GetInstance().GetGameCode(); 
         int playerIndex = 0;
@@ -70,12 +73,24 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         for(playerIndex=0; playerIndex < playerList.size(); playerIndex++)
         {
             MapFieldValue playerMap = playerList[playerIndex].map_value();
-            if(playerMap["playerId"].string_value() == playerId)
+            if(playerMap["playerId"].string_value() == turnId)
             {
                 cout << playerMap["displayName"].string_value() << " is asking you for " << card << endl;
-                break;
+                break; 
             }
         }
+
+        for(playerIndex=0; playerIndex < playerList.size(); playerIndex++)
+        {
+            MapFieldValue playerMap = playerList[playerIndex].map_value();
+            if(playerMap["playerId"].string_value() == beingAskedId)
+            {
+                break; 
+            }
+        }
+
+        cout << playerIndex << endl; 
+
         int choice; 
         cout << "Do you have this card?" << endl;
         cout << "1. Yes" << endl; 
@@ -89,7 +104,8 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         case 1:
         {
             MapFieldValue playerMap; 
-            vector<FieldValue> hand; 
+            vector<FieldValue> hand;
+            vector<FieldValue> newHand;  
             vector<string> hand_string;
 
             for(int i =0; i < playerList.size(); i++)
@@ -119,24 +135,26 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             for(int i = 0; i < hand_string.size(); i++)
             {
                 cout << FieldValue::String(hand_string[i]) << endl; 
-                hand.push_back(FieldValue::String(hand_string[i]));
+                newHand.push_back(FieldValue::String(hand_string[i]));
             }
             
-            cout << "HAND SIZE AFTER: " << hand.size() << endl; 
+            cout << "HAND SIZE AFTER: " << newHand.size() << endl; 
 
             cout << "hand: " << endl; 
 
-            for(int i = 0; i < hand.size(); i++)
-            {
-                cout << hand[i] << endl; 
-            }
+            // for(int i = 0; i < newHand.size(); i++)
+            // {
+            //     cout << newHand[i] << endl; 
+            // }
 
             Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
             DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
-            playerMap["hand"] = FieldValue::Array(hand);
+            cout << "PLAYER INDEX: " << playerIndex << endl; 
+            playerMap["hand"] = FieldValue::Array(newHand);
             playerList[playerIndex] = FieldValue::Map(playerMap);
 
+            
             doc_ref.Update({
                 {"players",  FieldValue::Array(playerList)},
                 {"changeReason", FieldValue::String("HASCARD")}
