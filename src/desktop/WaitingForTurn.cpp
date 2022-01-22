@@ -69,7 +69,10 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         string card = snapshot.Get("card").string_value(); 
         string gameCode = Game::GetInstance().GetGameCode(); 
         int playerIndex = 0;
+        MapFieldValue playerMap; 
+
     
+        // Print the message saying card is being asked for
         for(playerIndex=0; playerIndex < playerList.size(); playerIndex++)
         {
             MapFieldValue playerMap = playerList[playerIndex].map_value();
@@ -80,11 +83,13 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             }
         }
 
+        // Find the index of the player of the player being asked (you)
         for(playerIndex=0; playerIndex < playerList.size(); playerIndex++)
         {
-            MapFieldValue playerMap = playerList[playerIndex].map_value();
+            playerMap = playerList[playerIndex].map_value();
             if(playerMap["playerId"].string_value() == beingAskedId)
             {
+                cout << "Found player index: " << playerIndex << endl;
                 break; 
             }
         }
@@ -103,20 +108,9 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         {
         case 1:
         {
-            MapFieldValue playerMap; 
-            vector<FieldValue> hand;
+            vector<FieldValue> hand = playerMap["hand"].array_value();
             vector<FieldValue> newHand;  
             vector<string> hand_string;
-
-            for(int i =0; i < playerList.size(); i++)
-            {
-                playerMap = playerList[i].map_value();
-
-                if(playerMap["playerId"].string_value() == snapshot.Get("playerBeingAsked").string_value())
-                {
-                    hand = playerMap["hand"].array_value(); 
-                }
-            }
 
             cout << "HAND SIZE BEFORE: " << hand.size() << endl; 
 
@@ -150,7 +144,10 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
             DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
-            cout << "PLAYER INDEX: " << playerIndex << endl; 
+            cout << "PLAYER INDEX: " << playerIndex << endl;
+            cout << "Player name: " << playerMap["displayName"].string_value();
+            cout << "Player Id: " << playerMap["playerId"].string_value();
+            cout << "Player team: " << playerMap["team"].integer_value();
             playerMap["hand"] = FieldValue::Array(newHand);
             playerList[playerIndex] = FieldValue::Map(playerMap);
 
