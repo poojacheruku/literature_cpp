@@ -6,6 +6,7 @@
 #include "Hand.hpp"
 #include "PlayingMyTurn.hpp"
 #include "WaitingForTurn.hpp"
+#include "StoppedPlaying.hpp"
 
 #include "firebase/firestore.h"
 
@@ -41,10 +42,11 @@ void WaitingForPlayers::WaitForPlayers()
 
 void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
 {
-    string changeReason = snapshot.Get("changeReason").string_value(); 
+    string changeReason = snapshot.Get("changeReason").string_value();
+    int gameStatus = snapshot.Get("gameStatus").integer_value();
     int numberOfPlayers = snapshot.Get("numberOfPlayers").integer_value(); 
  
-    if(changeReason == "JOIN")
+    if(gameStatus == Actions::GS_WAITING)
     {
 
         vector<FieldValue> playerList = snapshot.Get("players").array_value();
@@ -82,10 +84,22 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
                 DocumentReference doc_ref = db->Collection("games").Document(gameCode);
                 doc_ref.Update({
                     {"turn", FieldValue::String(playerId)},
-                    {"changeReason", FieldValue::String("TURN")}
+                    {"gameStatus", FieldValue::Integer(Actions::GS_STARTED)},
                 });
 
                 Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
+            }
+            else
+            {
+                string gameCode = Game::GetInstance().GetGameCode(); 
+                
+                Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+                DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+                doc_ref.Update({
+                    {"turn", FieldValue::String(playerId)},
+                    {"gameStatus", FieldValue::Integer(Actions::GS_STARTED)},
+                });
+                Player::GetInstance().SetState(&StoppedPlaying::GetInstance());
             }
         
         }        

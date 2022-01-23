@@ -35,7 +35,8 @@ public:
 	enum gameStatus
 	{
 		GS_WAITING, 
-		GS_IN_PROGRESS
+		GS_STARTED,
+		GS_ENDED
 	};
 };
 

@@ -108,7 +108,7 @@ void Actions::CreateGame(string gameCode, string displayName, string playerId)
   }
   doc_ref.Set({
       {"numberOfPlayers", FieldValue::Integer(numberOfPlayers)}, 
-      {"status", FieldValue::Integer(Actions::GS_WAITING)},
+      {"gameStatus", FieldValue::Integer(Actions::GS_WAITING)},
       {"players", FieldValue::Array({FieldValue::Map(playerMap)})}
   })
 
