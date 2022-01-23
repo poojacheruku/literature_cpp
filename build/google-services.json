@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "714220902287",
+    "firebase_url": "https://literature-316716-default-rtdb.firebaseio.com",
+    "project_id": "literature-316716",
+    "storage_bucket": "literature-316716.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714220902287:android:ad873bc6156d78abbe1dfa",
+        "android_client_info": {
+          "package_name": "com.cheruku.literature"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714220902287-dsnh8p9f38211gvsp2rohhh2bbt6erci.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cheruku.literature",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "714220902287-dajsqsdgrmpapv1le1ts0q55f3sid8ki.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQKkUEYSqCZCvCAmXAHEaduJVU2Cyj50k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714220902287-dajsqsdgrmpapv1le1ts0q55f3sid8ki.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "714220902287-2b0f2cukrqgah6nee3mmf4s6dagq7p3f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cheruku.literature"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
