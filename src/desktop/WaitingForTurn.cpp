@@ -175,7 +175,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             
             doc_ref.Update({
                 {"players",  FieldValue::Array(playerList)},
-                {"changeReason", FieldValue::String("TURN")}
+                {"changeReason", FieldValue::String("HASCARD")}
             });
 
             break; 
@@ -188,7 +188,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             
             doc_ref.Update({
                 {"turn", FieldValue::String(nextTurnPlayerId)},
-                {"changeReason", FieldValue::String("HASCARD")}
+                {"changeReason", FieldValue::String("TURN")}
                 });
 
             cout << "It's your turn to play!" << endl;
