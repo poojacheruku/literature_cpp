@@ -70,11 +70,43 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     int requestStatus = requestMap["status"].integer_value();
     string card = requestMap["card"].string_value();
 
-    if(requestStatus == Actions::ACTION_STATUS_WAITING) {
+    switch (requestStatus)
+    {
+    case Actions::ACTION_STATUS_WAITING:
         if(toId == Player::GetInstance().GetPlayerId()) {
             cout << Player::GetInstance().GetPlayerName(snapshot, fromId) << " is requesting " << card << " from you."<< endl;
             HandleRequest(snapshot, requestMap);
+        } else {
+            cout << Player::GetInstance().GetPlayerName(snapshot, fromId) 
+                 << " is requesting " 
+                 << card 
+                 << " from " 
+                 << Player::GetInstance().GetPlayerName(snapshot, toId) 
+                 << endl;
         }
+        break;
+
+    case Actions::ACTION_STATUS_ACCEPTED:
+        cout << Player::GetInstance().GetPlayerName(snapshot, fromId) 
+                << " received the card " 
+                << card 
+                << " from " 
+                << Player::GetInstance().GetPlayerName(snapshot, toId) 
+                << endl;
+        cout << "It is " << Player::GetInstance().GetPlayerName(snapshot, fromId) << "'s turn" << endl;
+        break;
+
+    case Actions::ACTION_STATUS_REJECTED:
+        cout << Player::GetInstance().GetPlayerName(snapshot, fromId) 
+                << " does not have the card " 
+                << card 
+                << " from " 
+                << Player::GetInstance().GetPlayerName(snapshot, toId) 
+                << endl;
+        cout << "It is " << Player::GetInstance().GetPlayerName(snapshot, toId) << "'s turn" << endl;
+        break;
+    default:
+        break;
     }
 }
 
@@ -82,12 +114,9 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
 {
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     string gameCode = Game::GetInstance().GetGameCode(); 
-    int beingAskedPlayerIndex = 0;
-    int askingPlayerIndex = 0; 
-
+    string card = requestMap["card"].string_value();
     string fromId = requestMap["fromId"].string_value();
     string toId = requestMap["toId"].string_value();
-    string card = requestMap["card"].string_value();
     int fromIndex = Player::GetInstance().GetPlayerIndex(snapshot, fromId);
     int toIndex = Player::GetInstance().GetPlayerIndex(snapshot, toId);
     MapFieldValue fromMap = playerList[fromIndex].map_value();;
@@ -159,6 +188,8 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
             {"request", FieldValue::Map(requestMap)}
         });
 
+        cout << "Card " << card << " transfered to " << Player::GetInstance().GetPlayerName(snapshot, fromId) << endl;
+        cout << "It's " << Player::GetInstance().GetPlayerName(snapshot, fromId) << "'s turn" << endl;
         break; 
     }
     case 2:
