@@ -20,6 +20,7 @@ private:
 public:
 	static void waitForResponse();
 	static void waitForGameUpdates();
+	static void setExitGame(bool exitGame);
 	static void waitForGameExit();
 	static string CreatePlayer(string displayName);
 	static void CreateGame(string gameCode, string displayName, string playerId);
@@ -34,8 +35,23 @@ public:
 
 	enum gameStatus
 	{
-		GS_WAITING, 
-		GS_IN_PROGRESS
+		GAME_STATUS_WAITING, 
+		GAME_STATUS_STARTED,
+		GAME_STATUS_ENDED
+	};
+
+	enum action
+	{
+		ACTION_NONE,
+		ACTION_REQUEST,
+		ACTION_DECLARE
+	};
+
+	enum actionStatus
+	{
+		ACTION_STATUS_WAITING,
+		ACTION_STATUS_ACCEPTED,
+		ACTION_STATUS_REJECTED
 	};
 };
 

@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <random>
+#include <algorithm>
 using namespace std;
 
 #include "firebase/firestore.h"
@@ -39,7 +40,7 @@ void Game::CreateAndShuffleDeck()
     logIt(logINFO) << "Deck size: " << m_cardDeck.size();
     std::random_device rd;
     std::default_random_engine rng(rd());
-    shuffle(m_cardDeck.begin(), m_cardDeck.end(), rng);
+    std::shuffle(m_cardDeck.begin(), m_cardDeck.end(), rng);
 }
 
 void Game::DealCards()

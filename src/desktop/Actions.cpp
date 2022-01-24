@@ -46,6 +46,11 @@ void Actions::waitForGameUpdates()
   }
 } 
 
+void Actions::setExitGame(bool exitGame)
+{
+  Actions::exitGame = exitGame;
+}
+
 void Actions::waitForGameExit()
 {
   exitGame = false;
@@ -108,7 +113,8 @@ void Actions::CreateGame(string gameCode, string displayName, string playerId)
   }
   doc_ref.Set({
       {"numberOfPlayers", FieldValue::Integer(numberOfPlayers)}, 
-      {"status", FieldValue::Integer(Actions::GS_WAITING)},
+      {"gameStatus", FieldValue::Integer(Actions::GAME_STATUS_WAITING)},
+      {"lastAction", FieldValue::Integer(Actions::ACTION_NONE)},
       {"players", FieldValue::Array({FieldValue::Map(playerMap)})}
   })
 
@@ -171,8 +177,7 @@ int Actions::JoinGame(string gameCode, string displayName, string playerId)
         }
 
         doc_ref.Update({
-          {"players", FieldValue::Array(playerList)},
-          {"changeReason", FieldValue::String("JOIN")}})
+          {"players", FieldValue::Array(playerList)}})
           .OnCompletion([](const Future<void>& future) {
             logIt(logINFO) << "Done.";
             logIt(logINFO) << "Updated the players array";
@@ -252,19 +257,6 @@ void Actions::DealCards(vector<Card>& cardDeck)
         }
         // newPlayerList.push_back(FieldValue::Map(playerMap));
     }
-
-    // doc_ref.Update({
-    //   {"players", FieldValue::Array(newPlayerList)},
-    //   {"changeReason", FieldValue::String("DEAL")}})
-    //   .OnCompletion([](const Future<void>& future) {
-    //     logIt(logINFO)  << "Updated the players array";
-    //     Actions::setRequestReturned(true);
-    // }); 
-
-    // for (size_t i = 0; i < cardDeck.size(); ++i) 
-    // { 
-    //     cout << cardDeck[i].GetFaceValue() << endl; 
-    // } 
 }
 
 void Actions::UpdatePlayers(string gameCode, vector<FieldValue>& players, string reason)
@@ -275,8 +267,7 @@ void Actions::UpdatePlayers(string gameCode, vector<FieldValue>& players, string
   DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
   doc_ref.Update({
-    {"players", FieldValue::Array(players)},
-    {"changeReason", FieldValue::String(reason)}})
+    {"players", FieldValue::Array(players)}})
     .OnCompletion([](const Future<void>& future) {
       logIt(logINFO) << "Done.";
       logIt(logINFO) << "Updated the players array";

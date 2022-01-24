@@ -6,6 +6,7 @@
 #include "Hand.hpp"
 #include "PlayingMyTurn.hpp"
 #include "WaitingForTurn.hpp"
+#include "StoppedPlaying.hpp"
 
 #include "firebase/firestore.h"
 
@@ -41,10 +42,12 @@ void WaitingForPlayers::WaitForPlayers()
 
 void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
 {
-    string changeReason = snapshot.Get("changeReason").string_value(); 
+    cout << "WaitingForPlayers::Handle" << endl;
+
+    int gameStatus = snapshot.Get("gameStatus").integer_value();
     int numberOfPlayers = snapshot.Get("numberOfPlayers").integer_value(); 
  
-    if(changeReason == "JOIN")
+    if(gameStatus == Actions::GAME_STATUS_WAITING)
     {
 
         vector<FieldValue> playerList = snapshot.Get("players").array_value();
@@ -82,16 +85,29 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
                 DocumentReference doc_ref = db->Collection("games").Document(gameCode);
                 doc_ref.Update({
                     {"turn", FieldValue::String(playerId)},
-                    {"changeReason", FieldValue::String("TURN")}
+                    {"gameStatus", FieldValue::Integer(Actions::GAME_STATUS_STARTED)},
                 });
 
                 Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
+            }
+            else
+            {
+                cout << "Ending game..." << endl;
+                string gameCode = Game::GetInstance().GetGameCode(); 
+                
+                Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+                DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+                doc_ref.Update({
+                    {"gameStatus", FieldValue::Integer(Actions::GAME_STATUS_ENDED)},
+                });
+                Player::GetInstance().SetState(&StoppedPlaying::GetInstance());
+                Actions::setExitGame(true);
             }
         
         }        
     }
 
-    if(changeReason == "DEAL")
+    if(gameStatus == Actions::GAME_STATUS_STARTED)
     {
         vector<FieldValue> playerList = snapshot.Get("players").array_value();
         vector<string> hand_string;
@@ -129,10 +145,5 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         Hand::GetInstance().Initialize(hand_string);
         Hand::GetInstance().Print();
         Player::GetInstance().SetState(&WaitingForTurn::GetInstance());    
-    }
-
-
-    
-
-    
+    }    
 }

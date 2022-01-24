@@ -13,6 +13,8 @@ private:
     PlayingMyTurn();
     PlayingMyTurn(PlayingMyTurn const&);              // Don't implement
     void operator=(PlayingMyTurn const&);    // Don't implement
+    void HandleRequestAction(const DocumentSnapshot& snapshot);
+    void AskForACard(const DocumentSnapshot& snapshot);
 
 public:
     static PlayingMyTurn& GetInstance();

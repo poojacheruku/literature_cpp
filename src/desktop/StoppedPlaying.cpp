@@ -1,5 +1,6 @@
 #include "StoppedPlaying.hpp"
 #include "WaitingForPlayers.hpp"
+#include "WaitingForTurn.hpp"
 #include "uuid.h"
 #include "utils.h"
 #include "Actions.hpp"
@@ -63,6 +64,8 @@ string getGameCodeFromUser() {
 
 void StoppedPlaying::Start()
 {
+    cout << "StoppedPlaying::Start" << endl;
+    
     logIt(logINFO) << GetName();
     int choice = 0;
     int team = 0;
@@ -82,7 +85,12 @@ void StoppedPlaying::Start()
         Player::GetInstance().SetPlayerType(Player::OWNER);
         gameCode = uuid::generate_game_code();
         Actions::CreateGame(gameCode, displayName, playerId);
+        Player::GetInstance().SetTeam(Game::TEAM_A);
         Game::GetInstance().AddPlayer(displayName, playerId, Game::TEAM_A);
+        Player::GetInstance().AddGame(gameCode);
+        Game::GetInstance().SetGameCode(gameCode);
+        Player::GetInstance().SetState(&WaitingForPlayers::GetInstance()); 
+        Player::GetInstance().WaitForPlayers();
         break;
 
     case 2:
@@ -90,17 +98,17 @@ void StoppedPlaying::Start()
         Player::GetInstance().SetPlayerType(Player::PLAYER);
         gameCode = getGameCodeFromUser();
         team = Actions::JoinGame(gameCode, displayName, playerId);
+        Player::GetInstance().SetTeam(team);
         Game::GetInstance().AddPlayer(displayName, playerId, team);
+        Player::GetInstance().AddGame(gameCode);
+        Game::GetInstance().SetGameCode(gameCode);
+        Player::GetInstance().SetState(&WaitingForTurn::GetInstance()); 
         break; 
    
     default:
         logIt(logERROR) << "Not sure how I came here";
     }
 
-    Player::GetInstance().AddGame(gameCode);
-    Game::GetInstance().SetGameCode(gameCode);
-    Player::GetInstance().SetState(&WaitingForPlayers::GetInstance()); 
-    Player::GetInstance().WaitForPlayers();
 }
 
 void StoppedPlaying::Handle(const DocumentSnapshot& snapshot)

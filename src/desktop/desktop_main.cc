@@ -28,7 +28,7 @@
 using namespace std;
 
 // define and turn off for the rest of the test suite
-loglevel_e loglevel = logINFO;
+loglevel_e loglevel = logERROR;
 
 void my_handler(int s) {
     LiteratureAuth::GetInstance().SignOut();
@@ -54,17 +54,5 @@ int main(int argc, const char* argv[]) {
 
   Actions::waitForGameExit();
 
-  // set<Card> cards;
-  // cards.insert(Card(1, 10));
-  // cards.insert(Card(3, 13));
-  // cards.insert(Card(0, 5));
-  // cards.insert(Card(2, 11));
-  // cards.insert(Card(2, 1));
-  // cards.insert(Card(2, 6));
-
-  // Hand::GetInstance().Initialize(cards);
-  // Hand::GetInstance().AddCard(3, 8);
-  // Hand::GetInstance().PrettyPrint();
-  
   return 1;
 }
