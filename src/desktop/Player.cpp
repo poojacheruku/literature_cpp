@@ -4,6 +4,9 @@
 #include "PlayerSettings.hpp"
 #include "LogIt.hpp"
 
+using ::firebase::firestore::FieldValue;
+using ::firebase::firestore::MapFieldValue;
+
 #include <iostream>
 #include <future>
 #include <thread>
@@ -42,4 +45,23 @@ void Player::Start() {
 void Player::SetState(PlayerState * state)
 {
 	m_pState = state;
+}
+
+string Player::GetPlayerDisplayName(const DocumentSnapshot& snapshot, string playerTurnId)
+{
+    vector<FieldValue> playerList = snapshot.Get("players").array_value();
+    string playerName;
+
+    for(int i=0; i < playerList.size(); i++)
+    {
+        MapFieldValue playerMap = playerList[i].map_value();
+        string playerId = playerMap["playerId"].string_value();
+        if(playerTurnId == playerId)
+        {
+            playerName = playerMap["displayName"].string_value();
+            break;
+        }
+    
+    }
+    return playerName;
 }

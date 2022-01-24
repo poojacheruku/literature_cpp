@@ -8,7 +8,6 @@
 
 #include "auth/LiteratureAuth.hpp"
 
-using ::firebase::firestore::MapFieldValue;
 using ::firebase::firestore::FieldValue;
 using ::firebase::firestore::DocumentReference;
 using ::firebase::firestore::Firestore;
@@ -85,28 +84,19 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 
     if(gameStatus == Actions::GAME_STATUS_STARTED)
     {
+        if(lastAction == Actions::ACTION_REQUEST) {
+            HandleRequestAction(snapshot);
+        }
         if(Player::GetInstance().GetPlayerId() == playerId)
         {
             cout << "It's your turn to play!" << endl; 
             printHand(snapshot);
             PlayTurn(snapshot);
-            // Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
-            // PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         }
         else 
         {
-            for(int i=0; i < playerList.size(); i++)
-            {
-                MapFieldValue playerMap = playerList[i].map_value();
-                string playerId = playerMap["playerId"].string_value();
-                if(Player::GetInstance().GetPlayerId() == playerId)
-                {
-                    cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl;  
-                    break;
-                }
-            
-            }
-            
+            string playerName = Player::GetInstance().GetPlayerDisplayName(snapshot, playerId);
+            cout << "It's " << playerName << "'s turn to play!" << endl;  
         }
     }
 
@@ -422,5 +412,122 @@ void WaitingForTurn::PlayTurn(const DocumentSnapshot& snapshot)
             break;
         }
     }
+}
 
+void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
+{
+    MapFieldValue requestMap = snapshot.Get("request").map_value();
+    string fromId = requestMap["fromId"].string_value();
+    string toId = requestMap["toId"].string_value();
+    int requestStatus = requestMap["status"].integer_value();
+    string card = requestMap["card"].string_value();
+
+    if(requestStatus == Actions::ACTION_STATUS_WAITING) {
+        if(toId == Player::GetInstance().GetPlayerId()) {
+            cout << Player::GetInstance().GetPlayerDisplayName(snapshot, fromId) << " is requesting " << card << " from you."<< endl;
+            HandleRequest(snapshot, requestMap);
+        }
+    }
+}
+
+void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldValue& requestMap)
+{
+    vector<FieldValue> playerList = snapshot.Get("players").array_value();
+    string card = requestMap["card"].string_value();
+    string gameCode = Game::GetInstance().GetGameCode(); 
+    int beingAskedPlayerIndex = 0;
+    int askingPlayerIndex = 0; 
+    MapFieldValue beingAskedPlayerMap;
+    MapFieldValue askingPlayerMap; 
+
+    int choice; 
+    cout << "Do you have this card?" << endl;
+    cout << "1. Yes" << endl; 
+    cout << "2. No" << endl; 
+    cout << "Please select an option (1 or 2): "; 
+    cin >> choice; 
+    cout << endl; 
+
+    switch (choice)
+    {
+    case 1:
+    {
+        vector<FieldValue> beingAskedHand = beingAskedPlayerMap["hand"].array_value();
+        vector<FieldValue> beingAskedNewHand;  
+        vector<string> beingAskedHand_string;
+        vector<FieldValue> askingHand = askingPlayerMap["hand"].array_value(); 
+        vector<FieldValue> askingNewHand;  
+        vector<string> askingHand_string;
+
+        cout << "HAND SIZE BEFORE: " << beingAskedHand.size() << endl; 
+
+        for(int i=0; i < beingAskedHand.size(); i++)
+        {
+            string card = beingAskedHand[i].string_value(); 
+            beingAskedHand_string.push_back(card); 
+        }
+
+        for(int i=0; i < askingHand.size(); i++)
+        {
+            string card = askingHand[i].string_value(); 
+            askingHand_string.push_back(card); 
+        }
+
+        // cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
+
+        beingAskedHand_string.erase(remove(beingAskedHand_string.begin(), beingAskedHand_string.end(), card), beingAskedHand_string.end());
+        
+        askingHand_string.push_back(card); 
+
+        // cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
+
+        for(int i = 0; i < beingAskedHand_string.size(); i++)
+        {
+            cout << FieldValue::String(beingAskedHand_string[i]) << endl; 
+            beingAskedNewHand.push_back(FieldValue::String(beingAskedHand_string[i]));
+        }
+
+        for(int i = 0; i < askingHand_string.size(); i++)
+        {
+            cout << FieldValue::String(askingHand_string[i]) << endl; 
+            askingNewHand.push_back(FieldValue::String(askingHand_string[i]));
+        }
+        
+
+        Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+        DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+
+        beingAskedPlayerMap["hand"] = FieldValue::Array(beingAskedNewHand);
+        playerList[beingAskedPlayerIndex] = FieldValue::Map(beingAskedPlayerMap);
+        askingPlayerMap["hand"] = FieldValue::Array(askingNewHand); 
+        playerList[askingPlayerIndex] = FieldValue::Map(askingPlayerMap);
+        requestMap["status"] = FieldValue::Integer(Actions::ACTION_STATUS_ACCEPTED);
+
+        
+        doc_ref.Update({
+            {"players",  FieldValue::Array(playerList)},
+            {"changeReason", FieldValue::String("HASCARD")},
+            {"request", FieldValue::Map(requestMap)}
+        });
+
+        break; 
+    }
+    case 2:
+    {
+        string nextTurnPlayerId = Player::GetInstance().GetPlayerId();
+        Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+        DocumentReference doc_ref = db->Collection("games").Document(gameCode); 
+        requestMap["status"] = FieldValue::Integer(Actions::ACTION_STATUS_REJECTED);
+        
+        doc_ref.Update({
+            {"turn", FieldValue::String(nextTurnPlayerId)},
+            {"changeReason", FieldValue::String("TURN")},
+            {"request", FieldValue::Map(requestMap)}
+            });
+
+        cout << "It's your turn to play!" << endl;
+        PlayTurn(snapshot);
+        break; 
+    }
+    }
 }

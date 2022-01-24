@@ -40,6 +40,7 @@ public:
 	int GetTeam() { return m_team; }
 	void AddGame(string gameCode) { m_games.push_back(gameCode); }
 	int GetPlayerType() { return m_type; }
+	string GetPlayerDisplayName(const DocumentSnapshot& snapshot, string playerTurnId);
 	
 	enum State
 	{
