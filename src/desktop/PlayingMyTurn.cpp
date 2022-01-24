@@ -173,7 +173,6 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
                 {"playerBeingAsked", FieldValue::String(askPlayerId)},
                 {"card", FieldValue::String(card)},
                 {"lastAction", FieldValue::Integer(Actions::ACTION_REQUEST)},
-                {"changeReason", FieldValue::String("ASK")},
                 {"request", FieldValue::Map(requestMap)}
             });
             break; 

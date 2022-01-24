@@ -24,7 +24,6 @@ void Hooks::listenToGameChanges(DocumentReference doc_ref) {
             logIt(logINFO) << "Game added / updated";
             string source = snapshot.metadata().has_pending_writes() ? "Local" : "Server";
             if (snapshot.exists()) {
-                logIt(logINFO) << source << " data: " << snapshot.Get("changeReason").string_value(); 
                 if(source == "Server") {
                     gameUpdated = true;
                     logIt(logINFO) << "Passing the handle to Player";

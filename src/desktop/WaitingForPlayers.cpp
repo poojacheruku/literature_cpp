@@ -86,7 +86,6 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
                 DocumentReference doc_ref = db->Collection("games").Document(gameCode);
                 doc_ref.Update({
                     {"turn", FieldValue::String(playerId)},
-                    {"changeReason", FieldValue::String("TURN")},
                     {"gameStatus", FieldValue::Integer(Actions::GAME_STATUS_STARTED)},
                 });
 

@@ -235,7 +235,6 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
         
         doc_ref.Update({
             {"players",  FieldValue::Array(playerList)},
-            {"changeReason", FieldValue::String("HASCARD")},
             {"request", FieldValue::Map(requestMap)}
         });
 
@@ -250,7 +249,6 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
         
         doc_ref.Update({
             {"turn", FieldValue::String(nextTurnPlayerId)},
-            {"changeReason", FieldValue::String("TURN")},
             {"request", FieldValue::Map(requestMap)}
             });
 

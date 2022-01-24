@@ -65,7 +65,6 @@ struct PlayerStruct {
 class Game {
   private:
     string m_gameCode;
-    string m_changeReason;
     vector<PlayerStruct> m_players;
     int m_numberOfPlayers;
     vector<Card> m_cardDeck; 
