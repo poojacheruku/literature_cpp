@@ -36,7 +36,6 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
     cout << "WaitingForTurn::Handle" << endl;
 
     logIt(logINFO) << GetName();
-    string changeReason = snapshot.Get("changeReason").string_value(); 
     int gameStatus = snapshot.Get("gameStatus").integer_value();
     int lastAction = snapshot.Get("lastAction").integer_value();
     string playerId = snapshot.Get("turn").string_value();
@@ -60,45 +59,6 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
                 HandleRequestAction(snapshot);
             }
         }
-    }
-
-    if(changeReason == "NOCARD")
-    {
-        string card = snapshot.Get("card").string_value();
-
-        for(int i = 0; i < playerList.size(); i++)
-        {
-            MapFieldValue playerMap = playerList[i].map_value();
-            if(playerMap["playerId"].string_value() == snapshot.Get("turn").string_value())
-            {
-                    cout << playerMap["displayName"].string_value() << " does not have " << card << endl; 
-                    cout << endl; 
-                    cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!"; 
-            }
-        }
-
-    }
-
-    if(changeReason == "HASCARD")
-    {
-        string beingAskedId = snapshot.Get("playerBeingAsked").string_value();
-        string turnId = snapshot.Get("turn").string_value(); 
-        string card = snapshot.Get("card").string_value(); 
-
-        for(int i=0; i < playerList.size(); i++)
-            {
-                MapFieldValue askPlayerMap = playerList[i].map_value();
-                MapFieldValue turnPlayerMap = playerList[i].map_value();
-                if(turnPlayerMap["playerId"].string_value() == turnId && askPlayerMap["playerId"].string_value() == beingAskedId)
-                {
-                    cout << askPlayerMap["displayName"].string_value() << " has " << card << endl; 
-                    cout << endl; 
-                    cout << askPlayerMap["displayName"].string_value() << " is giving " << turnPlayerMap["displayName"].string_value() << card << endl; 
-                    cout << endl; 
-                    cout << "It's " << turnPlayerMap["displayName"].string_value() << "'s turn to play again!" << endl; 
-                }
-            }
-
     }
 }
 

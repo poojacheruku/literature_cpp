@@ -40,49 +40,12 @@ void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
             HandleRequestAction(snapshot);
         }
     }
-    
-    string changeReason = snapshot.Get("changeReason").string_value();
-    if(changeReason == "NOCARD")
-    {
-        vector<FieldValue> playerList = snapshot.Get("players").array_value();
-        string card = snapshot.Get("card").string_value();
-        for(int i = 0; i < playerList.size(); i++)
-        {
-            MapFieldValue playerMap = playerList[i].map_value();
-            if(playerMap["playerId"].string_value() == snapshot.Get("turn").string_value())
-            {
-                    cout << playerMap["displayName"].string_value() << " does not have " << card << endl; 
-                    cout << endl; 
-                    cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl; 
-            }
-        }
-        Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
-    }
-
-    if(changeReason == "HASCARD")
-    {
-        vector<FieldValue> playerList = snapshot.Get("players").array_value();
-        string card = snapshot.Get("card").string_value();
-        for(int i = 0; i < playerList.size(); i++)
-        {
-            MapFieldValue playerMap = playerList[i].map_value();
-            if(playerMap["playerId"].string_value() == snapshot.Get("turn").string_value())
-            {
-                    cout << playerMap["displayName"].string_value() << " has " << card << "!" << endl; 
-                    cout << endl; 
-                    cout << "It's your turn to play again!" << endl; 
-
-                    PlayTurn(snapshot); 
-            }
-        }
-    }
 }
 
 void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 {
     cout << "WaitingForTurn::PlayTurn" << endl;
     
-    string changeReason = snapshot.Get("changeReason").string_value();
     string turnId = snapshot.Get("turn").string_value();
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     int playerIndex = 0;
@@ -170,8 +133,6 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
             Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
             DocumentReference doc_ref = db->Collection("games").Document(gameCode);
             doc_ref.Update({
-                {"playerBeingAsked", FieldValue::String(askPlayerId)},
-                {"card", FieldValue::String(card)},
                 {"lastAction", FieldValue::Integer(Actions::ACTION_REQUEST)},
                 {"request", FieldValue::Map(requestMap)}
             });

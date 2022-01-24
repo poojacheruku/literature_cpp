@@ -44,7 +44,6 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
 {
     cout << "WaitingForPlayers::Handle" << endl;
 
-    string changeReason = snapshot.Get("changeReason").string_value();
     int gameStatus = snapshot.Get("gameStatus").integer_value();
     int numberOfPlayers = snapshot.Get("numberOfPlayers").integer_value(); 
  
