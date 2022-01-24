@@ -3,6 +3,9 @@
 #include "PlayingMyTurn.hpp"
 #include "Player.hpp"
 #include "Game.hpp"
+#include "Actions.hpp"
+#include "Hand.hpp"
+
 #include "auth/LiteratureAuth.hpp"
 
 using ::firebase::firestore::MapFieldValue;
@@ -20,7 +23,7 @@ using namespace std;
 /* constructor */
 WaitingForTurn::WaitingForTurn()
 {
-	m_state = Player::ST_WAITING_FOR_PLAYERS;
+	m_state = Player::ST_WAITING_FOR_TURN;
 }
 
 WaitingForTurn& WaitingForTurn::GetInstance()
@@ -29,21 +32,66 @@ WaitingForTurn& WaitingForTurn::GetInstance()
     return instance;
 }
 
+void printHand(const DocumentSnapshot& snapshot)
+{
+    vector<FieldValue> playerList = snapshot.Get("players").array_value();
+    vector<string> hand_string;
+    vector<FieldValue> hand;  
+    MapFieldValue playerMap;
+    int i = 0;
+
+    for(i=0; i < playerList.size(); i++)
+    {
+        playerMap = playerList[i].map_value();
+        string playerId = playerMap["playerId"].string_value();
+        if(Player::GetInstance().GetPlayerId() == playerId)
+        {
+            break; 
+        }
+    }
+
+    if(i == playerList.size())
+    {
+        logIt(logERROR) << "Error. Unable to print hand."; 
+        return;
+    }
+    else
+    {
+        logIt(logINFO) << "broke out of loop"; 
+        hand = playerMap["hand"].array_value(); 
+    }
+
+    for(int i=0; i < hand.size(); i++)
+    {
+        string card = hand[i].string_value(); 
+        hand_string.push_back(card); 
+    }
+    
+    Hand::GetInstance().Initialize(hand_string);
+    Hand::GetInstance().Print();
+    Player::GetInstance().SetState(&WaitingForTurn::GetInstance());    
+}
+
 void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 {
+    cout << "WaitingForTurn::Handle" << endl;
+
     logIt(logINFO) << GetName();
     string changeReason = snapshot.Get("changeReason").string_value(); 
+    int gameStatus = snapshot.Get("gameStatus").integer_value();
+    int lastAction = snapshot.Get("lastAction").integer_value();
     string playerId = snapshot.Get("turn").string_value();
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
 
-
-    if(changeReason == "TURN")
+    if(gameStatus == Actions::GAME_STATUS_STARTED)
     {
         if(Player::GetInstance().GetPlayerId() == playerId)
         {
             cout << "It's your turn to play!" << endl; 
-            Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
-            PlayingMyTurn::GetInstance().PlayTurn(snapshot);
+            printHand(snapshot);
+            PlayTurn(snapshot);
+            // Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+            // PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         }
         else 
         {
@@ -253,4 +301,126 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             }
 
     }
+}
+
+void WaitingForTurn::PlayTurn(const DocumentSnapshot& snapshot)
+{
+    cout << "WaitingForTurn::PlayTurn" << endl;
+    
+    string changeReason = snapshot.Get("changeReason").string_value();
+    string turnId = snapshot.Get("turn").string_value();
+    vector<FieldValue> playerList = snapshot.Get("players").array_value();
+    int playerIndex = 0;
+    MapFieldValue playerMap;
+
+    // for(playerIndex=0; playerIndex < playerList.size(); playerIndex++)
+    //     {
+    //         playerMap = playerList[playerIndex].map_value();
+    //         if(playerMap["playerId"].string_value() == turnId)
+    //         {
+    //             cout << "Found player index: " << playerIndex << endl;
+    //             break; 
+    //         }
+    //     }
+
+    int choice; 
+    cout << "What do you want to do? Choose an option (1 or 2)" << endl;
+    cout << "1. Ask for a card" << endl;
+    cout << "2. Make a set" << endl;
+    cin >> choice;
+
+    // vector<string> playerNames = Game::GetInstance().GetPlayerNames();
+    // logIt(logINFO) << playerNames.size();
+    switch (choice)
+    {
+        case 1:
+        {
+            cout << "Who do you want to ask?" << endl;  
+
+            for(int i = 0; i < playerList.size(); i++)
+            {
+                MapFieldValue playerMap = playerList[i].map_value();
+                string displayName = playerMap["displayName"].string_value();
+                int team = playerMap["team"].integer_value();
+
+                // if(Player::GetInstance().GetTeam() != team) {
+                    int number = i + 1; 
+                    cout << number << ". " << displayName << endl; 
+                // }
+            }
+            int choice; 
+            cout << "Enter a number: ";
+            cin >> choice; 
+            cout << endl; 
+
+            string input;  
+            cout << "What card do you want to ask for?" << endl; 
+            cout << endl; 
+            cout << "Please enter in this format:" << endl; 
+            cout << "H-K (king of hearts)" << endl; 
+            cout << "D-1 (one of diamonds)" << endl; 
+            cout << endl; 
+            cin >> input; 
+            cout << endl; 
+
+            char suit = input.at(0);
+            char value = input.at(2);   
+
+            string card; 
+            if(suit == 'S')
+            {
+                card = "\u2660"; 
+                card.push_back(value); 
+            }
+            else if(suit == 'C')
+            {
+                card = "\u2664"; 
+                card.push_back(value);
+            }
+            else if(suit == 'H')
+            {
+                card = "\u2665"; 
+                card.push_back(value);
+            }
+            else if(suit == 'D')
+            {
+                card = "\u2666"; 
+                card.push_back(value);
+            }
+
+            int playerNumber = choice - 1; 
+            MapFieldValue playerMap = playerList[playerNumber].map_value();
+            string askName = playerMap["displayName"].string_value(); 
+            string askPlayerId = playerMap["playerId"].string_value();
+            string gameCode = Game::GetInstance().GetGameCode();
+            MapFieldValue requestMap;
+            requestMap["fromId"] = FieldValue::String(Player::GetInstance().GetPlayerId());
+            requestMap["toId"] = FieldValue::String(askPlayerId);
+            requestMap["status"] = FieldValue::Integer(Actions::ACTION_STATUS_WAITING); 
+            requestMap["card"] = FieldValue::String(card);
+
+            cout << "You are asking " << askName << " for " << card << endl;
+            cout << endl;  
+
+            Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+            DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+            doc_ref.Update({
+                {"playerBeingAsked", FieldValue::String(askPlayerId)},
+                {"card", FieldValue::String(card)},
+                {"lastAction", FieldValue::Integer(Actions::ACTION_REQUEST)},
+                {"changeReason", FieldValue::String("ASK")},
+                {"request", FieldValue::Map(requestMap)}
+            });
+            // for(int i = 1; i < playerNames.size(); i++)
+            // {
+            //     cout << i << ". " << playerNames[i] << endl;
+            // }
+            break; 
+        }
+        case 2:
+        {
+            break;
+        }
+    }
+
 }

@@ -18,6 +18,7 @@ private:
 	string m_gameCode;
 	vector<string> m_games;
 	string m_playerId;
+	int m_team;
 
     /* constructor */
     Player();
@@ -35,6 +36,8 @@ public:
 	string GetDisplayName() { return m_displayName; }
 	void SetPlayerId(string playerId) { m_playerId = playerId; }
 	string GetPlayerId() { return m_playerId; }
+	void SetTeam(int team) { m_team = team; }
+	int GetTeam() { return m_team; }
 	void AddGame(string gameCode) { m_games.push_back(gameCode); }
 	int GetPlayerType() { return m_type; }
 	

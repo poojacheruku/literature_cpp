@@ -28,7 +28,7 @@
 using namespace std;
 
 // define and turn off for the rest of the test suite
-loglevel_e loglevel = logINFO;
+loglevel_e loglevel = logERROR;
 
 void my_handler(int s) {
     LiteratureAuth::GetInstance().SignOut();

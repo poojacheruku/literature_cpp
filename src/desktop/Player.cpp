@@ -22,6 +22,7 @@ Player& Player::GetInstance()
 }
 
 void Player::Handle(const DocumentSnapshot& snapshot) {
+    cout << "Player::Handle" << endl;
     logIt(logINFO) << "Passing the handle to State";
 	// m_pState->Handle(snapshot);
     std::thread threadObj(&PlayerState::Handle, m_pState, snapshot);

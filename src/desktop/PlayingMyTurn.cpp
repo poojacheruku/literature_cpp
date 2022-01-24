@@ -25,6 +25,8 @@ PlayingMyTurn& PlayingMyTurn::GetInstance()
 
 void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 {
+    cout << "PlayingMyTurn::Handle" << endl;
+    
     string changeReason = snapshot.Get("changeReason").string_value();
     if(changeReason == "NOCARD")
     {

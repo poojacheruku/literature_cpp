@@ -46,6 +46,11 @@ void Actions::waitForGameUpdates()
   }
 } 
 
+void Actions::setExitGame(bool exitGame)
+{
+  Actions::exitGame = exitGame;
+}
+
 void Actions::waitForGameExit()
 {
   exitGame = false;
@@ -108,7 +113,8 @@ void Actions::CreateGame(string gameCode, string displayName, string playerId)
   }
   doc_ref.Set({
       {"numberOfPlayers", FieldValue::Integer(numberOfPlayers)}, 
-      {"gameStatus", FieldValue::Integer(Actions::GS_WAITING)},
+      {"gameStatus", FieldValue::Integer(Actions::GAME_STATUS_WAITING)},
+      {"lastAction", FieldValue::Integer(Actions::ACTION_NONE)},
       {"players", FieldValue::Array({FieldValue::Map(playerMap)})}
   })
 
