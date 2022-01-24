@@ -29,6 +29,17 @@ PlayingMyTurn& PlayingMyTurn::GetInstance()
 void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 {
     cout << "PlayingMyTurn::Handle" << endl;
+
+    int gameStatus = snapshot.Get("gameStatus").integer_value();
+    int lastAction = snapshot.Get("lastAction").integer_value();
+    string playerId = snapshot.Get("turn").string_value();
+
+    if(gameStatus == Actions::GAME_STATUS_STARTED)
+    {
+        if(lastAction == Actions::ACTION_REQUEST) {
+            HandleRequestAction(snapshot);
+        }
+    }
     
     string changeReason = snapshot.Get("changeReason").string_value();
     if(changeReason == "NOCARD")
@@ -76,16 +87,6 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     int playerIndex = 0;
     MapFieldValue playerMap;
-
-    // for(playerIndex=0; playerIndex < playerList.size(); playerIndex++)
-    //     {
-    //         playerMap = playerList[playerIndex].map_value();
-    //         if(playerMap["playerId"].string_value() == turnId)
-    //         {
-    //             cout << "Found player index: " << playerIndex << endl;
-    //             break; 
-    //         }
-    //     }
 
     int choice; 
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
@@ -181,5 +182,25 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         {
             break;
         }
+    }
+}
+
+void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
+{
+    MapFieldValue requestMap = snapshot.Get("request").map_value();
+    string fromId = requestMap["fromId"].string_value();
+    string toId = requestMap["toId"].string_value();
+    int requestStatus = requestMap["status"].integer_value();
+    string card = requestMap["card"].string_value();
+    string otherPlayer = Player::GetInstance().GetPlayerName(snapshot, toId);
+
+    if(requestStatus == Actions::ACTION_STATUS_ACCEPTED) {
+        cout << "Card " << card << " transfered to you" << endl;
+        PlayTurn(snapshot);
+    }
+    else if(requestStatus == Actions::ACTION_STATUS_REJECTED) {
+        cout << otherPlayer << " does not have the card " << card << endl;
+        cout << "It's " << otherPlayer << "'s turn" << endl;
+        Player::GetInstance().SetState(&WaitingForTurn::GetInstance());    
     }
 }
