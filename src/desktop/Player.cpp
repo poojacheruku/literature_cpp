@@ -47,7 +47,7 @@ void Player::SetState(PlayerState * state)
 	m_pState = state;
 }
 
-string Player::GetPlayerDisplayName(const DocumentSnapshot& snapshot, string playerTurnId)
+string Player::GetPlayerName(const DocumentSnapshot& snapshot, string playerTurnId)
 {
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     string playerName;
@@ -59,6 +59,45 @@ string Player::GetPlayerDisplayName(const DocumentSnapshot& snapshot, string pla
         if(playerTurnId == playerId)
         {
             playerName = playerMap["displayName"].string_value();
+            break;
+        }
+    
+    }
+    return playerName;
+}
+
+int Player::GetPlayerIndex(const DocumentSnapshot& snapshot, string playerTurnId)
+{
+    vector<FieldValue> playerList = snapshot.Get("players").array_value();
+    int playerIndex;
+
+    for(int i=0; i < playerList.size(); i++)
+    {
+        MapFieldValue playerMap = playerList[i].map_value();
+        string playerId = playerMap["playerId"].string_value();
+        if(playerTurnId == playerId)
+        {
+            playerIndex = i;
+            break;
+        }
+    
+    }
+    return playerIndex;
+}
+
+string Player::GetPlayerNameAndIndex(const DocumentSnapshot& snapshot, string playerTurnId, int& playerIndex)
+{
+    vector<FieldValue> playerList = snapshot.Get("players").array_value();
+    string playerName;
+
+    for(int i=0; i < playerList.size(); i++)
+    {
+        MapFieldValue playerMap = playerList[i].map_value();
+        string playerId = playerMap["playerId"].string_value();
+        if(playerTurnId == playerId)
+        {
+            playerName = playerMap["displayName"].string_value();
+            playerIndex = i;
             break;
         }
     

@@ -2,8 +2,11 @@
 #include "WaitingForTurn.hpp"
 #include "LogIt.hpp"
 #include "Game.hpp"
-#include "auth/LiteratureAuth.hpp"
 #include "Card.hpp"
+#include "Actions.hpp"
+
+#include "auth/LiteratureAuth.hpp"
+
 #include <iostream>
 using namespace std;
 
@@ -66,21 +69,23 @@ void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 
 void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 {
+    cout << "WaitingForTurn::PlayTurn" << endl;
+    
     string changeReason = snapshot.Get("changeReason").string_value();
     string turnId = snapshot.Get("turn").string_value();
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     int playerIndex = 0;
     MapFieldValue playerMap;
 
-    for(playerIndex=0; playerIndex < playerList.size(); playerIndex++)
-        {
-            playerMap = playerList[playerIndex].map_value();
-            if(playerMap["playerId"].string_value() == turnId)
-            {
-                cout << "Found player index: " << playerIndex << endl;
-                break; 
-            }
-        }
+    // for(playerIndex=0; playerIndex < playerList.size(); playerIndex++)
+    //     {
+    //         playerMap = playerList[playerIndex].map_value();
+    //         if(playerMap["playerId"].string_value() == turnId)
+    //         {
+    //             cout << "Found player index: " << playerIndex << endl;
+    //             break; 
+    //         }
+    //     }
 
     int choice; 
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
@@ -100,8 +105,12 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
             {
                 MapFieldValue playerMap = playerList[i].map_value();
                 string displayName = playerMap["displayName"].string_value();
-                int number = i + 1; 
-                cout << number << ". " << displayName << endl; 
+                int team = playerMap["team"].integer_value();
+
+                // if(Player::GetInstance().GetTeam() != team) {
+                    int number = i + 1; 
+                    cout << number << ". " << displayName << endl; 
+                // }
             }
             int choice; 
             cout << "Enter a number: ";
@@ -143,11 +152,16 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
                 card.push_back(value);
             }
 
-            int playerNumber = choice -1; 
+            int playerNumber = choice - 1; 
             MapFieldValue playerMap = playerList[playerNumber].map_value();
             string askName = playerMap["displayName"].string_value(); 
             string askPlayerId = playerMap["playerId"].string_value();
             string gameCode = Game::GetInstance().GetGameCode();
+            MapFieldValue requestMap;
+            requestMap["fromId"] = FieldValue::String(Player::GetInstance().GetPlayerId());
+            requestMap["toId"] = FieldValue::String(askPlayerId);
+            requestMap["status"] = FieldValue::Integer(Actions::ACTION_STATUS_WAITING); 
+            requestMap["card"] = FieldValue::String(card);
 
             cout << "You are asking " << askName << " for " << card << endl;
             cout << endl;  
@@ -157,12 +171,10 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
             doc_ref.Update({
                 {"playerBeingAsked", FieldValue::String(askPlayerId)},
                 {"card", FieldValue::String(card)},
+                {"lastAction", FieldValue::Integer(Actions::ACTION_REQUEST)},
                 {"changeReason", FieldValue::String("ASK")},
+                {"request", FieldValue::Map(requestMap)}
             });
-            // for(int i = 1; i < playerNames.size(); i++)
-            // {
-            //     cout << i << ". " << playerNames[i] << endl;
-            // }
             break; 
         }
         case 2:
@@ -170,5 +182,4 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
             break;
         }
     }
-
 }

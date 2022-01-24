@@ -84,173 +84,22 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 
     if(gameStatus == Actions::GAME_STATUS_STARTED)
     {
-        if(lastAction == Actions::ACTION_REQUEST) {
-            HandleRequestAction(snapshot);
-        }
         if(Player::GetInstance().GetPlayerId() == playerId)
         {
             cout << "It's your turn to play!" << endl; 
             printHand(snapshot);
-            PlayTurn(snapshot);
+            Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+            PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         }
         else 
         {
-            string playerName = Player::GetInstance().GetPlayerDisplayName(snapshot, playerId);
+            string playerName = Player::GetInstance().GetPlayerName(snapshot, playerId);
             cout << "It's " << playerName << "'s turn to play!" << endl;  
-        }
-    }
 
-    if (changeReason == "ASK" && Player::GetInstance().GetPlayerId() == snapshot.Get("playerBeingAsked").string_value())
-    {
-        string turnId = snapshot.Get("turn").string_value();
-        string beingAskedId = snapshot.Get("playerBeingAsked").string_value(); 
-        string card = snapshot.Get("card").string_value(); 
-        string gameCode = Game::GetInstance().GetGameCode(); 
-        int beingAskedPlayerIndex = 0;
-        int askingPlayerIndex = 0; 
-        MapFieldValue beingAskedPlayerMap;
-        MapFieldValue askingPlayerMap; 
-
-        // Print the message saying card is being asked for
-        for(askingPlayerIndex=0; askingPlayerIndex < playerList.size(); askingPlayerIndex++)
-        {
-            askingPlayerMap = playerList[askingPlayerIndex].map_value();
-            if(askingPlayerMap["playerId"].string_value() == turnId)
-            {
-                cout << askingPlayerMap["displayName"].string_value() << " is asking you for " << card << endl;
-                break; 
+            if(lastAction == Actions::ACTION_REQUEST) {
+                HandleRequestAction(snapshot);
             }
         }
-
-        cout << "ASKING INDEX: " << askingPlayerIndex << endl; 
-        // Find the index of the player of the player being asked (you)
-        for(beingAskedPlayerIndex=0; beingAskedPlayerIndex < playerList.size(); beingAskedPlayerIndex++)
-        {
-            beingAskedPlayerMap = playerList[beingAskedPlayerIndex].map_value();
-            if(beingAskedPlayerMap["playerId"].string_value() == beingAskedId)
-            {
-                // cout << "Found player index: " << playerIndex << endl;
-                break; 
-            }
-        }
-
-        cout << "BEING ASKED INDEX: " << beingAskedPlayerIndex << endl; 
-
-        int choice; 
-        cout << "Do you have this card?" << endl;
-        cout << "1. Yes" << endl; 
-        cout << "2. No" << endl; 
-        cout << "Please select an option (1 or 2): "; 
-        cin >> choice; 
-        cout << endl; 
-
-        switch (choice)
-        {
-        case 1:
-        {
-            vector<FieldValue> beingAskedHand = beingAskedPlayerMap["hand"].array_value();
-            vector<FieldValue> beingAskedNewHand;  
-            vector<string> beingAskedHand_string;
-            vector<FieldValue> askingHand = askingPlayerMap["hand"].array_value(); 
-            vector<FieldValue> askingNewHand;  
-            vector<string> askingHand_string;
-
-            cout << "HAND SIZE BEFORE: " << beingAskedHand.size() << endl; 
-
-            for(int i=0; i < beingAskedHand.size(); i++)
-            {
-                string card = beingAskedHand[i].string_value(); 
-                beingAskedHand_string.push_back(card); 
-            }
-
-            for(int i=0; i < askingHand.size(); i++)
-            {
-                string card = askingHand[i].string_value(); 
-                askingHand_string.push_back(card); 
-            }
-
-            // cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
-
-            beingAskedHand_string.erase(remove(beingAskedHand_string.begin(), beingAskedHand_string.end(), card), beingAskedHand_string.end());
-            
-            askingHand_string.push_back(card); 
-
-            // cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
-
-            for(int i = 0; i < beingAskedHand_string.size(); i++)
-            {
-                cout << FieldValue::String(beingAskedHand_string[i]) << endl; 
-                beingAskedNewHand.push_back(FieldValue::String(beingAskedHand_string[i]));
-            }
-
-            for(int i = 0; i < askingHand_string.size(); i++)
-            {
-                cout << FieldValue::String(askingHand_string[i]) << endl; 
-                askingNewHand.push_back(FieldValue::String(askingHand_string[i]));
-            }
-            
-            // cout << "HAND SIZE AFTER: " << newHand.size() << endl; 
-
-            // cout << "hand: " << endl; 
-
-            // for(int i = 0; i < newHand.size(); i++)
-            // {
-            //     cout << newHand[i] << endl; 
-            // }
-
-            Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
-            DocumentReference doc_ref = db->Collection("games").Document(gameCode);
-
-            // cout << "PLAYER INDEX: " << playerIndex << endl;
-            // cout << "Player name: " << playerMap["displayName"].string_value();
-            // cout << "Player Id: " << playerMap["playerId"].string_value();
-            // cout << "Player team: " << playerMap["team"].integer_value();
-            beingAskedPlayerMap["hand"] = FieldValue::Array(beingAskedNewHand);
-            playerList[beingAskedPlayerIndex] = FieldValue::Map(beingAskedPlayerMap);
-            askingPlayerMap["hand"] = FieldValue::Array(askingNewHand); 
-            playerList[askingPlayerIndex] = FieldValue::Map(askingPlayerMap);
-
-            
-            doc_ref.Update({
-                {"players",  FieldValue::Array(playerList)},
-                {"changeReason", FieldValue::String("HASCARD")}
-            });
-
-            break; 
-        }
-        case 2:
-        {
-            string nextTurnPlayerId = Player::GetInstance().GetPlayerId();
-            Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
-            DocumentReference doc_ref = db->Collection("games").Document(gameCode); 
-            
-            doc_ref.Update({
-                {"turn", FieldValue::String(nextTurnPlayerId)},
-                {"changeReason", FieldValue::String("TURN")}
-                });
-
-            cout << "It's your turn to play!" << endl;
-            Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
-            PlayingMyTurn::GetInstance().PlayTurn(snapshot);
-            break; 
-        }
-        }
-    } 
-    else if(changeReason == "ASK")
-    {
-        string beingAskedId = snapshot.Get("playerBeingAsked").string_value();
-        string turnId = snapshot.Get("turn").string_value(); 
-        string card = snapshot.Get("card").string_value(); 
-
-        for(int i=0; i < playerList.size(); i++)
-            {
-                MapFieldValue askPlayerMap = playerList[i].map_value();
-                MapFieldValue turnPlayerMap = playerList[i].map_value();
-                if(turnPlayerMap["playerId"].string_value() == turnId && askPlayerMap["playerId"].string_value() == beingAskedId)
-                {
-                    cout << turnPlayerMap["displayName"].string_value() << " is asking " << askPlayerMap["displayName"].string_value() << " for " << card << endl; 
-                }
-            }
     }
 
     if(changeReason == "NOCARD")
@@ -424,7 +273,7 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
 
     if(requestStatus == Actions::ACTION_STATUS_WAITING) {
         if(toId == Player::GetInstance().GetPlayerId()) {
-            cout << Player::GetInstance().GetPlayerDisplayName(snapshot, fromId) << " is requesting " << card << " from you."<< endl;
+            cout << Player::GetInstance().GetPlayerName(snapshot, fromId) << " is requesting " << card << " from you."<< endl;
             HandleRequest(snapshot, requestMap);
         }
     }
@@ -433,12 +282,17 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
 void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldValue& requestMap)
 {
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
-    string card = requestMap["card"].string_value();
     string gameCode = Game::GetInstance().GetGameCode(); 
     int beingAskedPlayerIndex = 0;
     int askingPlayerIndex = 0; 
-    MapFieldValue beingAskedPlayerMap;
-    MapFieldValue askingPlayerMap; 
+
+    string fromId = requestMap["fromId"].string_value();
+    string toId = requestMap["toId"].string_value();
+    string card = requestMap["card"].string_value();
+    int fromIndex = Player::GetInstance().GetPlayerIndex(snapshot, fromId);
+    int toIndex = Player::GetInstance().GetPlayerIndex(snapshot, toId);
+    MapFieldValue fromMap = playerList[fromIndex].map_value();;
+    MapFieldValue toMap = playerList[toIndex].map_value();;
 
     int choice; 
     cout << "Do you have this card?" << endl;
@@ -452,55 +306,52 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
     {
     case 1:
     {
-        vector<FieldValue> beingAskedHand = beingAskedPlayerMap["hand"].array_value();
-        vector<FieldValue> beingAskedNewHand;  
-        vector<string> beingAskedHand_string;
-        vector<FieldValue> askingHand = askingPlayerMap["hand"].array_value(); 
-        vector<FieldValue> askingNewHand;  
-        vector<string> askingHand_string;
+        vector<FieldValue> fromHand = fromMap["hand"].array_value();
+        vector<FieldValue> toHand = toMap["hand"].array_value();
+        vector<FieldValue> fromHandNew;
+        vector<FieldValue> toHandNew;
+        vector<string> fromHandString;
+        vector<string> toHandString;
 
-        cout << "HAND SIZE BEFORE: " << beingAskedHand.size() << endl; 
 
-        for(int i=0; i < beingAskedHand.size(); i++)
+        cout << "Requestor hand size before: " << fromHand.size() << endl; 
+
+        for(int i=0; i < fromHand.size(); i++)
         {
-            string card = beingAskedHand[i].string_value(); 
-            beingAskedHand_string.push_back(card); 
+            fromHandString.push_back(fromHand[i].string_value()); 
         }
 
-        for(int i=0; i < askingHand.size(); i++)
+        for(int i=0; i < toHand.size(); i++)
         {
-            string card = askingHand[i].string_value(); 
-            askingHand_string.push_back(card); 
+            toHandString.push_back(toHand[i].string_value()); 
         }
 
         // cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
 
-        beingAskedHand_string.erase(remove(beingAskedHand_string.begin(), beingAskedHand_string.end(), card), beingAskedHand_string.end());
+        toHandString.erase(remove(toHandString.begin(), toHandString.end(), card), toHandString.end());
         
-        askingHand_string.push_back(card); 
+        fromHandString.push_back(card); 
 
         // cout << "HAND STRING SIZE: " << hand_string.size() << endl; 
 
-        for(int i = 0; i < beingAskedHand_string.size(); i++)
+        for(int i = 0; i < toHandString.size(); i++)
         {
-            cout << FieldValue::String(beingAskedHand_string[i]) << endl; 
-            beingAskedNewHand.push_back(FieldValue::String(beingAskedHand_string[i]));
+            toHandNew.push_back(FieldValue::String(toHandString[i]));
         }
 
-        for(int i = 0; i < askingHand_string.size(); i++)
+        for(int i = 0; i < fromHandString.size(); i++)
         {
-            cout << FieldValue::String(askingHand_string[i]) << endl; 
-            askingNewHand.push_back(FieldValue::String(askingHand_string[i]));
+            fromHandNew.push_back(FieldValue::String(fromHandString[i]));
         }
         
 
         Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
         DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
-        beingAskedPlayerMap["hand"] = FieldValue::Array(beingAskedNewHand);
-        playerList[beingAskedPlayerIndex] = FieldValue::Map(beingAskedPlayerMap);
-        askingPlayerMap["hand"] = FieldValue::Array(askingNewHand); 
-        playerList[askingPlayerIndex] = FieldValue::Map(askingPlayerMap);
+        toMap["hand"] = FieldValue::Array(toHandNew);
+        playerList[toIndex] = FieldValue::Map(toMap);
+        fromMap["hand"] = FieldValue::Array(fromHandNew); 
+        playerList[fromIndex] = FieldValue::Map(fromMap);
         requestMap["status"] = FieldValue::Integer(Actions::ACTION_STATUS_ACCEPTED);
 
         
