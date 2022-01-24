@@ -190,6 +190,7 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
 
         cout << "Card " << card << " transfered to " << Player::GetInstance().GetPlayerName(snapshot, fromId) << endl;
         cout << "It's " << Player::GetInstance().GetPlayerName(snapshot, fromId) << "'s turn" << endl;
+        Player::GetInstance().PrintHand(snapshot);
         break; 
     }
     case 2:

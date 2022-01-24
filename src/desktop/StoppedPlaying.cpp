@@ -85,6 +85,7 @@ void StoppedPlaying::Start()
         Player::GetInstance().SetPlayerType(Player::OWNER);
         gameCode = uuid::generate_game_code();
         Actions::CreateGame(gameCode, displayName, playerId);
+        Player::GetInstance().SetTeam(Game::TEAM_A);
         Game::GetInstance().AddPlayer(displayName, playerId, Game::TEAM_A);
         Player::GetInstance().AddGame(gameCode);
         Game::GetInstance().SetGameCode(gameCode);

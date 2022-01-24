@@ -44,8 +44,10 @@ void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 
 void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 {
-    cout << "WaitingForTurn::PlayTurn" << endl;
-    
+    cout << "PlayingMyTurn::PlayTurn" << endl;
+
+    Player::GetInstance().PrintHand(snapshot);
+
     int choice; 
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
     cout << "1. Ask for a card" << endl;
@@ -68,7 +70,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 
 void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
 {
-    cout << "WaitingForTurn::HandleRequestAction" << endl;
+    cout << "PlayingMyTurn::HandleRequestAction" << endl;
     
     MapFieldValue requestMap = snapshot.Get("request").map_value();
     string fromId = requestMap["fromId"].string_value();
@@ -92,7 +94,7 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
 
 void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
 {
-    cout << "WaitingForTurn::AskForACard" << endl;
+    cout << "PlayingMyTurn::AskForACard" << endl;
     
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
 
