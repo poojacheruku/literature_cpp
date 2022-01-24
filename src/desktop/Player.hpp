@@ -43,6 +43,7 @@ public:
 	string GetPlayerName(const DocumentSnapshot& snapshot, string playerTurnId);
 	int GetPlayerIndex(const DocumentSnapshot& snapshot, string playerTurnId);
 	string GetPlayerNameAndIndex(const DocumentSnapshot& snapshot, string playerTurnId, int& playerIndex);
+	void PrintHand(const DocumentSnapshot& snapshot);
 	
 	enum State
 	{

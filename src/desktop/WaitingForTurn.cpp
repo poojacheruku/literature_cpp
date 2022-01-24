@@ -31,45 +31,6 @@ WaitingForTurn& WaitingForTurn::GetInstance()
     return instance;
 }
 
-void printHand(const DocumentSnapshot& snapshot)
-{
-    vector<FieldValue> playerList = snapshot.Get("players").array_value();
-    vector<string> hand_string;
-    vector<FieldValue> hand;  
-    MapFieldValue playerMap;
-    int i = 0;
-
-    for(i=0; i < playerList.size(); i++)
-    {
-        playerMap = playerList[i].map_value();
-        string playerId = playerMap["playerId"].string_value();
-        if(Player::GetInstance().GetPlayerId() == playerId)
-        {
-            break; 
-        }
-    }
-
-    if(i == playerList.size())
-    {
-        logIt(logERROR) << "Error. Unable to print hand."; 
-        return;
-    }
-    else
-    {
-        logIt(logINFO) << "broke out of loop"; 
-        hand = playerMap["hand"].array_value(); 
-    }
-
-    for(int i=0; i < hand.size(); i++)
-    {
-        string card = hand[i].string_value(); 
-        hand_string.push_back(card); 
-    }
-    
-    Hand::GetInstance().Initialize(hand_string);
-    Hand::GetInstance().Print();
-}
-
 void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 {
     cout << "WaitingForTurn::Handle" << endl;
@@ -86,7 +47,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         if(Player::GetInstance().GetPlayerId() == playerId)
         {
             cout << "It's your turn to play!" << endl; 
-            printHand(snapshot);
+            Player::GetInstance().PrintHand(snapshot);
             Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
             PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         }
@@ -253,7 +214,7 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
             });
 
         cout << "It's your turn to play!" << endl;
-        printHand(snapshot);
+        Player::GetInstance().PrintHand(snapshot);
         Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
         PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         break; 

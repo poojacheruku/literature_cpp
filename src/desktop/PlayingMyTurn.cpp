@@ -200,6 +200,7 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     else if(requestStatus == Actions::ACTION_STATUS_REJECTED) {
         cout << otherPlayer << " does not have the card " << card << endl;
         cout << "It's " << otherPlayer << "'s turn" << endl;
-        Player::GetInstance().SetState(&WaitingForTurn::GetInstance());    
+        Player::GetInstance().PrintHand(snapshot);
+        Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
     }
 }
