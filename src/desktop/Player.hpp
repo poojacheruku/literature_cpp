@@ -18,6 +18,7 @@ private:
 	string m_gameCode;
 	vector<string> m_games;
 	string m_playerId;
+	int m_playerIndex;
 	int m_team;
 
     /* constructor */
@@ -42,6 +43,8 @@ public:
 	int GetPlayerType() { return m_type; }
 	string GetPlayerName(const DocumentSnapshot& snapshot, string playerTurnId);
 	int GetPlayerIndex(const DocumentSnapshot& snapshot, string playerTurnId);
+	int GetPlayerIndex() { return m_playerIndex; }
+	void SetPlayerIndex(int playerIndex) { m_playerIndex = playerIndex; }
 	string GetPlayerNameAndIndex(const DocumentSnapshot& snapshot, string playerTurnId, int& playerIndex);
 	void PrintHand(const DocumentSnapshot& snapshot);
 	

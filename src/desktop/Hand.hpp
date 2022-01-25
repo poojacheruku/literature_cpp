@@ -4,6 +4,8 @@
 #include "Card.hpp"
 #include "Game.hpp"
 
+using ::firebase::firestore::DocumentSnapshot;
+
 #include <string>
 #include <set>
 #include <vector>
@@ -29,17 +31,23 @@ class Hand {
 
   public:
     static Hand& GetInstance();
+    void Initialize(vector<string> hand);
+    void Initialize(const DocumentSnapshot& snapshot);
+
     void SortCards();
     bool IsCardInHand(int suit, int value);
     Card& GetCard(int suit, int value);
+    void AddCard(string card) { m_hand.push_back(card); }
     void AddCard(int suit, int value);
     void AddCard(Card& card);
     void RemoveCard(int suit, int value);
+    void RemoveCard(vector<string>& hand, string card) {
+        hand.erase(remove(hand.begin(), hand.end(), card), hand.end());
+    }
+    void Print(const DocumentSnapshot& snapshot);
+    void Print(vector<string>& hand);
     void Print();
     void PrettyPrint();
-    void CreateDeck(); 
-    void DealCards();
-    void Initialize(vector<string> hand); 
 };
 
 #endif  // LITERATURE_HAND_H

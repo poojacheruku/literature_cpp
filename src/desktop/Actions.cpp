@@ -170,6 +170,8 @@ int Actions::JoinGame(string gameCode, string displayName, string playerId)
 
       if(players.is_array()) {
         playerList.push_back(FieldValue::Map(playerMap));
+        int playerIndex = playerList.size() - 1;
+        Player::GetInstance().SetPlayerIndex(playerIndex);
 
         for( const std::pair<std::string, FieldValue>& n : playerMap ) {
           logIt(logINFO) << "Key:[" << n.first << "] Value:[" << n.second << "]\n";

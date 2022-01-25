@@ -4,6 +4,7 @@
 #include "Game.hpp"
 #include "Card.hpp"
 #include "Actions.hpp"
+#include "Hand.hpp"
 
 #include "auth/LiteratureAuth.hpp"
 
@@ -30,6 +31,8 @@ void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 {
     cout << "PlayingMyTurn::Handle" << endl;
 
+    Hand::GetInstance().Initialize(snapshot);
+
     int gameStatus = snapshot.Get("gameStatus").integer_value();
     int lastAction = snapshot.Get("lastAction").integer_value();
     string playerId = snapshot.Get("turn").string_value();
@@ -46,7 +49,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 {
     cout << "PlayingMyTurn::PlayTurn" << endl;
 
-    Player::GetInstance().PrintHand(snapshot);
+    Hand::GetInstance().Print();
 
     int choice; 
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
@@ -87,7 +90,7 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     else if(requestStatus == Actions::ACTION_STATUS_REJECTED) {
         cout << otherPlayer << " does not have the card " << card << endl;
         cout << "It's " << otherPlayer << "'s turn" << endl;
-        Player::GetInstance().PrintHand(snapshot);
+        Hand::GetInstance().Print();
         Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
     }
 }

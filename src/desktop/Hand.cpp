@@ -1,5 +1,9 @@
 #include "Hand.hpp"
 #include "Game.hpp"
+#include "Player.hpp"
+
+using ::firebase::firestore::FieldValue;
+
 #include <iostream>
 #include <set>
 #include <stdexcept>
@@ -134,18 +138,43 @@ Hand& Hand::GetInstance()
 
 void Hand::Initialize(vector<string> hand)
 {
-  m_hand = hand;  
+    m_hand = hand;  
 }
 
-void Hand::Print()
+void Hand::Initialize(const DocumentSnapshot& snapshot)
+{
+    int playerIndex = Player::GetInstance().GetPlayerIndex();
+    vector<FieldValue> playerList = snapshot.Get("players").array_value();
+    MapFieldValue playerMap = playerList[playerIndex].map_value();;
+    vector<FieldValue> playerHand = playerMap["hand"].array_value();
+    vector<string> playerHandString;
+
+    for(int i=0; i < playerHand.size(); i++)
+    {
+        playerHandString.push_back(playerHand[i].string_value()); 
+    }
+    Initialize(playerHandString);
+}
+
+void Hand::Print(const DocumentSnapshot& snapshot)
+{
+    Initialize(snapshot);
+    Print();
+}
+
+void Hand::Print(vector<string>& hand)
 {
     cout << "Your hand:" << endl; 
     
-    for(int i=0; i < m_hand.size(); i++)
+    for(int i=0; i < hand.size(); i++)
     {
-        cout << m_hand[i] << " "; 
+        cout << hand[i] << " "; 
     }
     cout << endl; 
 }
 
+void Hand::Print()
+{
+    Print(m_hand);
+}
 
