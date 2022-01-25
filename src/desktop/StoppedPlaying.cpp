@@ -74,9 +74,8 @@ void StoppedPlaying::Start()
     Player::GetInstance().SetDisplayName(displayName);
     string playerId = Actions::CreatePlayer(displayName);
     Player::GetInstance().SetPlayerId(playerId);
-    // do {
-        choice = getChoice();
-    // } while(choice != 1 && choice != 2);
+
+    choice = getChoice();
 
     switch (choice)
     {

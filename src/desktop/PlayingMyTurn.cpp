@@ -4,6 +4,7 @@
 #include "Game.hpp"
 #include "Card.hpp"
 #include "Actions.hpp"
+#include "Hand.hpp"
 
 #include "auth/LiteratureAuth.hpp"
 
@@ -17,7 +18,7 @@ using ::firebase::firestore::Firestore;
 PlayingMyTurn::PlayingMyTurn()
 {
 	m_state = Player::ST_WAITING_FOR_PLAYERS;
-    m_name = "It is your turn";
+    m_name = "It is your turn to play!";
 }
 
 PlayingMyTurn& PlayingMyTurn::GetInstance()
@@ -29,6 +30,8 @@ PlayingMyTurn& PlayingMyTurn::GetInstance()
 void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 {
     cout << "PlayingMyTurn::Handle" << endl;
+
+    Hand::GetInstance().Initialize(snapshot);
 
     int gameStatus = snapshot.Get("gameStatus").integer_value();
     int lastAction = snapshot.Get("lastAction").integer_value();
@@ -46,7 +49,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 {
     cout << "PlayingMyTurn::PlayTurn" << endl;
 
-    Player::GetInstance().PrintHand(snapshot);
+    Hand::GetInstance().PrettyPrint();
 
     int choice; 
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
@@ -81,13 +84,13 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
 
     if(requestStatus == Actions::ACTION_STATUS_ACCEPTED) {
         cout << otherPlayer << " transfered the card " << card << " to you" << endl;
-        cout << "It's your turn" << endl;
+        cout << "It's your turn to play!" << endl;
         PlayTurn(snapshot);
     }
     else if(requestStatus == Actions::ACTION_STATUS_REJECTED) {
         cout << otherPlayer << " does not have the card " << card << endl;
         cout << "It's " << otherPlayer << "'s turn" << endl;
-        Player::GetInstance().PrintHand(snapshot);
+        Hand::GetInstance().PrettyPrint();
         Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
     }
 }
@@ -132,24 +135,22 @@ void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
     string card; 
     if(suit == 'S')
     {
-        card = "\u2660"; 
-        card.push_back(value); 
+        card = "\u2660-"; 
     }
     else if(suit == 'C')
     {
-        card = "\u2664"; 
-        card.push_back(value);
+        card = "\u2664-"; 
     }
     else if(suit == 'H')
     {
-        card = "\u2665"; 
-        card.push_back(value);
+        card = "\u2665-"; 
     }
     else if(suit == 'D')
     {
-        card = "\u2666"; 
-        card.push_back(value);
+        card = "\u2666-"; 
     }
+
+    card.push_back(value);
 
     int playerNumber = choice - 1; 
     MapFieldValue playerMap = playerList[playerNumber].map_value();
