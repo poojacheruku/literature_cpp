@@ -41,10 +41,6 @@ class Hand {
 
     bool IsCardInHand(int suit, int value);
     Card& GetCard(int suit, int value);
-    void RemoveCard(int suit, int value);
-    void RemoveCard(vector<string>& hand, string card) {
-        hand.erase(remove(hand.begin(), hand.end(), card), hand.end());
-    }
     void Print(const DocumentSnapshot& snapshot);
     void Print(vector<string>& hand);
     void Print();

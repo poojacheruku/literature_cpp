@@ -18,7 +18,7 @@ using ::firebase::firestore::Firestore;
 PlayingMyTurn::PlayingMyTurn()
 {
 	m_state = Player::ST_WAITING_FOR_PLAYERS;
-    m_name = "It is your turn";
+    m_name = "It is your turn to play!";
 }
 
 PlayingMyTurn& PlayingMyTurn::GetInstance()
@@ -84,7 +84,7 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
 
     if(requestStatus == Actions::ACTION_STATUS_ACCEPTED) {
         cout << otherPlayer << " transfered the card " << card << " to you" << endl;
-        cout << "It's your turn" << endl;
+        cout << "It's your turn to play!" << endl;
         PlayTurn(snapshot);
     }
     else if(requestStatus == Actions::ACTION_STATUS_REJECTED) {
