@@ -28,18 +28,19 @@ class Hand {
     void PrintBottom(vector<Card> hand);
     void PrettyPrintSuit(vector<Card> suit);
     vector<Card>& GetSuitVector(const Card& card);
+    int GetSuit(string suitIcon);
+    void AddCard(string card);
+    void AddCard(int suit, int value);
+    void AddCard(Card& card);
+    void SortCards();
 
   public:
     static Hand& GetInstance();
     void Initialize(vector<string> hand);
     void Initialize(const DocumentSnapshot& snapshot);
 
-    void SortCards();
     bool IsCardInHand(int suit, int value);
     Card& GetCard(int suit, int value);
-    void AddCard(string card) { m_hand.push_back(card); }
-    void AddCard(int suit, int value);
-    void AddCard(Card& card);
     void RemoveCard(int suit, int value);
     void RemoveCard(vector<string>& hand, string card) {
         hand.erase(remove(hand.begin(), hand.end(), card), hand.end());

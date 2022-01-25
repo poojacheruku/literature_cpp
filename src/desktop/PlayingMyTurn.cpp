@@ -49,7 +49,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 {
     cout << "PlayingMyTurn::PlayTurn" << endl;
 
-    Hand::GetInstance().Print();
+    Hand::GetInstance().PrettyPrint();
 
     int choice; 
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
@@ -90,7 +90,7 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     else if(requestStatus == Actions::ACTION_STATUS_REJECTED) {
         cout << otherPlayer << " does not have the card " << card << endl;
         cout << "It's " << otherPlayer << "'s turn" << endl;
-        Hand::GetInstance().Print();
+        Hand::GetInstance().PrettyPrint();
         Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
     }
 }
@@ -135,24 +135,22 @@ void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
     string card; 
     if(suit == 'S')
     {
-        card = "\u2660"; 
-        card.push_back(value); 
+        card = "\u2660-"; 
     }
     else if(suit == 'C')
     {
-        card = "\u2664"; 
-        card.push_back(value);
+        card = "\u2664-"; 
     }
     else if(suit == 'H')
     {
-        card = "\u2665"; 
-        card.push_back(value);
+        card = "\u2665-"; 
     }
     else if(suit == 'D')
     {
-        card = "\u2666"; 
-        card.push_back(value);
+        card = "\u2666-"; 
     }
+
+    card.push_back(value);
 
     int playerNumber = choice - 1; 
     MapFieldValue playerMap = playerList[playerNumber].map_value();

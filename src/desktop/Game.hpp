@@ -30,7 +30,7 @@ struct PlayerStruct {
     {}
 
     void addCard(Card& card) {
-        string cardFace = card.GetSuitIcon() + card.GetFaceValue();
+        string cardFace = card.GetSuitIcon() + "-" + card.GetFaceValue();
         m_hand.push_back(cardFace);
     }
     

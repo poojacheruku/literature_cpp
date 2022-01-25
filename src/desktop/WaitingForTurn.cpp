@@ -48,7 +48,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         if(Player::GetInstance().GetPlayerId() == playerId)
         {
             cout << "It's your turn to play!" << endl; 
-            Hand::GetInstance().Print();
+            Hand::GetInstance().PrettyPrint();
             Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
             PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         }
@@ -193,7 +193,7 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
         cout << "Card " << card << " transfered to " << Player::GetInstance().GetPlayerName(snapshot, fromId) << endl;
         cout << "It's " << Player::GetInstance().GetPlayerName(snapshot, fromId) << "'s turn" << endl;
         Hand::GetInstance().Initialize(toHandString);
-        Hand::GetInstance().Print();
+        Hand::GetInstance().PrettyPrint();
         break; 
     }
     case 2:
@@ -209,7 +209,7 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
             });
 
         cout << "It's your turn to play!" << endl;
-        Hand::GetInstance().Print();
+        Hand::GetInstance().PrettyPrint();
         Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
         PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         break; 

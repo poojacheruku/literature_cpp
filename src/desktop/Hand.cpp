@@ -9,7 +9,10 @@ using ::firebase::firestore::FieldValue;
 #include <stdexcept>
 #include <random>
 #include <vector>
+#include <boost/tokenizer.hpp>
+
 using namespace std;
+using namespace boost;
 
 #define RED     "\033[31m"
 #define BOLDRED "\033[1m\033[31m"
@@ -35,30 +38,31 @@ Hand& Hand::GetInstance()
     return instance;
 }
 
-// vector<Card>& Hand::GetSuitVector(const Card& card) {
-//     switch (card.GetCardSuit())
-//     {
-//     case CardSuit::SPADES:
-//         return m_spades;
-//         break;
+vector<Card>& Hand::GetSuitVector(const Card& card)
+{
+    switch (card.GetCardSuit())
+    {
+    case CardSuit::SPADES:
+        return m_spades;
+        break;
     
-//     case CardSuit::HEARTS:
-//         return m_hearts;
-//         break;
+    case CardSuit::HEARTS:
+        return m_hearts;
+        break;
     
-//     case CardSuit::DIAMONDS:
-//         return m_diamonds;
-//         break;
+    case CardSuit::DIAMONDS:
+        return m_diamonds;
+        break;
     
-//     case CardSuit::CLUBS:
-//         return m_clubs;
-//         break;
-//     default:
-//         cout << "UKNOWN SUIT FOR CARD!!" << endl;
-//         throw std::invalid_argument( "No suitable suit found in card" );
-//         break;
-//     }
-// }
+    case CardSuit::CLUBS:
+        return m_clubs;
+        break;
+    default:
+        cout << "UKNOWN SUIT FOR CARD!!" << endl;
+        throw std::invalid_argument( "No suitable suit found in card" );
+        break;
+    }
+}
 
 // void Hand::SortCards()
 // {
@@ -67,78 +71,98 @@ Hand& Hand::GetInstance()
 //     }
 // }
 
+void TokenizeCardString(vector<string>& tokens, string card)
+{
+    char_separator<char> sep("-");
+    tokenizer<char_separator<char>> toks(card, sep);
+    for (const auto& t : toks) {
+        tokens.push_back(t);
+    }
+}
 
-// void Hand::AddCard(int suit, int value) {
-//     Card card(suit, value);
-//     AddCard(card);
-// }
+void Hand::AddCard(string text)
+{
+    vector<string> tokens;
+    TokenizeCardString(tokens, text);
+    Card card(tokens[0], tokens[1]);
+    AddCard(card);
+}
 
-// void Hand::AddCard(Card& card) {
-//     GetSuitVector(card).push_back(card);
-//     m_hand.push_back(card);
-// }
+void Hand::AddCard(int suit, int value) {
+    Card card(suit, value);
+    AddCard(card);
+}
 
-// void Hand::PrintTop(vector<Card> suit) {
-//     int size = suit.size();
-//     cout << TOPLEFT;
-//     for (int i = 0; i < size - 1; ++i) {
-//         cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPMIDDLE;
-//     }
-//     cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPRIGHT << endl;
-// }
+void Hand::AddCard(Card& card) {
+    GetSuitVector(card).push_back(card);
+    // m_hand.push_back(card);
+}
 
-// void PrintSuit(const Card& card) {
-//     if(card.GetCardSuit() == CardSuit::HEARTS || card.GetCardSuit() == CardSuit::DIAMONDS) {
-//         cout << " " << BOLDRED << card.GetSuitIcon() << RESET << " " << VERTICAL;
-//     } else {
-//         cout << " " << card.GetSuitIcon() << " " << VERTICAL;
-//     }
-// }
+void Hand::PrintTop(vector<Card> suit) {
+    int size = suit.size();
+    cout << TOPLEFT;
+    for (int i = 0; i < size - 1; ++i) {
+        cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPMIDDLE;
+    }
+    cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << TOPRIGHT << endl;
+}
 
-// void PrintValue(const Card& card) {
-//     cout << " " << card.GetFaceValue() << " " << VERTICAL;
-// }
+void PrintSuit(const Card& card) {
+    if(card.GetCardSuit() == CardSuit::HEARTS || card.GetCardSuit() == CardSuit::DIAMONDS) {
+        cout << " " << BOLDRED << card.GetSuitIcon() << RESET << " " << VERTICAL;
+    } else {
+        cout << " " << card.GetSuitIcon() << " " << VERTICAL;
+    }
+}
 
-// void Hand::PrintBottom(vector<Card> suit) {
-//     int size = suit.size();
-//     cout << BOTTOMLEFT;
-//     for (int i = 0; i < size - 1; ++i) {
-//         cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMMIDDLE;
-//     }
-//     cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMRIGHT << endl;
-// }
+void PrintValue(const Card& card) {
+    cout << " " << card.GetFaceValue() << " " << VERTICAL;
+}
 
-// void Hand::PrettyPrint() {
-//     if(m_hand.size() == 0) {
-//         cout << "You have no cards in hand!" <<endl;
-//         return;
-//     } else {
-//         cout << "Your hand: " <<endl;
-//     }
+void Hand::PrintBottom(vector<Card> suit) {
+    int size = suit.size();
+    cout << BOTTOMLEFT;
+    for (int i = 0; i < size - 1; ++i) {
+        cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMMIDDLE;
+    }
+    cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMRIGHT << endl;
+}
 
-//     PrettyPrintSuit(m_spades);
-//     PrettyPrintSuit(m_hearts);
-//     PrettyPrintSuit(m_clubs);
-//     PrettyPrintSuit(m_diamonds);
-// }
+void Hand::PrettyPrintSuit(vector<Card> suit) {
+    if(suit.size() == 0) {
+        return;
+    }
+    PrintTop(suit);
+    cout << VERTICAL;
+    std::for_each(std::begin(suit), std::end(suit), PrintSuit);
+    cout << "\n" << VERTICAL;
+    std::for_each(std::begin(suit), std::end(suit), PrintValue);
+    cout << "\n";
+    PrintBottom(suit);
+}
 
-// void Hand::PrettyPrintSuit(vector<Card> suit) {
-//     if(suit.size() == 0) {
-//         return;
-//     }
-//     PrintTop(suit);
-//     cout << VERTICAL;
-//     std::for_each(std::begin(suit), std::end(suit), PrintSuit);
-//     cout << "\n" << VERTICAL;
-//     std::for_each(std::begin(suit), std::end(suit), PrintValue);
-//     cout << "\n";
-//     PrintBottom(suit);
-// }
+void Hand::PrettyPrint() {
+    if(m_hand.size() == 0) {
+        cout << "You have no cards in hand!" <<endl;
+        return;
+    } else {
+        cout << "Your hand: " <<endl;
+    }
 
+    PrettyPrintSuit(m_spades);
+    PrettyPrintSuit(m_hearts);
+    PrettyPrintSuit(m_clubs);
+    PrettyPrintSuit(m_diamonds);
+}
 
 void Hand::Initialize(vector<string> hand)
 {
-    m_hand = hand;  
+    m_hand = hand;
+    for(int i=0; i < hand.size(); i++)
+    {
+        AddCard(hand[i]); 
+    }
+
 }
 
 void Hand::Initialize(const DocumentSnapshot& snapshot)

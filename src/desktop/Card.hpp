@@ -32,6 +32,25 @@ class Card {
       }
     }
 
+    Card(string suitIcon, string faceValue) {
+      int suit, value;
+      for(suit = 0; suit <= 3; suit++) {
+        if(m_suit_icons[suit] == suitIcon) break;
+      }
+
+      for(value = 0; value <= 12; value++) {
+        if(faceValue == m_face_values[value]) break;
+      }
+      m_suit = suit;
+      m_value = value+1;
+
+      if(value == 1) {
+        m_sort_value = 14;
+      } else {
+        m_sort_value = value;
+      }
+    }
+
     // Copy constructor
     Card(const Card &card): m_suit(card.m_suit), m_value(card.m_value) {
       if(card.m_value == 1) {

@@ -142,5 +142,5 @@ void Player::PrintHand(const DocumentSnapshot& snapshot)
     }
     
     Hand::GetInstance().Initialize(hand_string);
-    Hand::GetInstance().Print();
+    Hand::GetInstance().PrettyPrint();
 }

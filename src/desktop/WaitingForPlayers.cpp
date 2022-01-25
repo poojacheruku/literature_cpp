@@ -72,7 +72,7 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
             if(choice == 1)
             {
                 Game::GetInstance().Initialize(); 
-                Hand::GetInstance().Print();
+                Hand::GetInstance().PrettyPrint();
                 playerMap = playerList[1].map_value();
                 cout << "It's " << playerMap["displayName"].string_value() << "'s turn to play!" << endl;
 
@@ -143,7 +143,7 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         // }
         
         Hand::GetInstance().Initialize(snapshot);
-        Hand::GetInstance().Print();
+        Hand::GetInstance().PrettyPrint();
         Player::GetInstance().SetState(&WaitingForTurn::GetInstance());    
     }    
 }
