@@ -212,19 +212,17 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
     string gameCode = Game::GetInstance().GetGameCode();
     DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
-    set = set + card; 
+    string setCalled = set + card; 
   
     doc_ref.Set({
-        {"setCalled", FieldValue::String(set)},
+        {"setCalled", FieldValue::String(setCalled)},
     }); 
 
     doc_ref.Update({
         {"lastAction", FieldValue::Integer(Actions::ACTION_CALL_SET)},
     });
     
-    cout << "You are calling the " << set <<  " set" << endl; 
-
-    set = set; 
+    cout << "You are calling the " << setCalled <<  " set" << endl; 
 
     string turnID = snapshot.Get("turn").string_value(); 
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
@@ -242,7 +240,8 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
     {
         for(int i = 2; i <= 7; i++)
         {
-            card.push_back(i);
+            char num = i; 
+            card.push_back(num);
             handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
             card.pop_back(); 
         } 
@@ -254,9 +253,11 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
         handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
         card.pop_back();
 
-        card.push_back('10');
+        card.push_back('1');
+        card.push_back('0'); 
         handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
         card.pop_back();
+        card.pop_back(); 
 
         card.push_back('J');
         handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
