@@ -38,7 +38,7 @@ Hand& Hand::GetInstance()
     return instance;
 }
 
-vector<Card>& Hand::GetSuitVector(const Card& card)
+set<Card>& Hand::GetSuitVector(const Card& card)
 {
     switch (card.GetCardSuit())
     {
@@ -94,11 +94,11 @@ void Hand::AddCard(int suit, int value) {
 }
 
 void Hand::AddCard(Card& card) {
-    GetSuitVector(card).push_back(card);
+    GetSuitVector(card).insert(card);
     // m_hand.push_back(card);
 }
 
-void Hand::PrintTop(vector<Card> suit) {
+void Hand::PrintTop(set<Card> suit) {
     int size = suit.size();
     cout << TOPLEFT;
     for (int i = 0; i < size - 1; ++i) {
@@ -119,7 +119,7 @@ void PrintValue(const Card& card) {
     cout << " " << card.GetFaceValue() << " " << VERTICAL;
 }
 
-void Hand::PrintBottom(vector<Card> suit) {
+void Hand::PrintBottom(set<Card> suit) {
     int size = suit.size();
     cout << BOTTOMLEFT;
     for (int i = 0; i < size - 1; ++i) {
@@ -128,7 +128,7 @@ void Hand::PrintBottom(vector<Card> suit) {
     cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMRIGHT << endl;
 }
 
-void Hand::PrettyPrintSuit(vector<Card> suit) {
+void Hand::PrettyPrintSuit(set<Card> suit) {
     if(suit.size() == 0) {
         return;
     }

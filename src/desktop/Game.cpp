@@ -32,7 +32,7 @@ void Game::CreateAndShuffleDeck()
 {
     for (int suit = 0; suit <= 3; suit++)
     {
-        for (int value = 1; value <= 13; value++)
+        for (int value = 2; value <= 14; value++)
         {
             m_cardDeck.push_back(Card(suit, value)); 
         }

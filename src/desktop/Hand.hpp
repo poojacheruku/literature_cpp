@@ -13,10 +13,10 @@ using namespace std;
 
 class Hand {
   private:
-    vector<Card> m_spades;
-    vector<Card> m_hearts;
-    vector<Card> m_diamonds;
-    vector<Card> m_clubs;
+    set<Card> m_spades;
+    set<Card> m_hearts;
+    set<Card> m_diamonds;
+    set<Card> m_clubs;
     vector<string> m_hand; 
 
     /* constructor */
@@ -24,10 +24,10 @@ class Hand {
     Hand(Hand const&);              // Don't implement
     void operator=(Hand const&);    // Don't implement
 
-    void PrintTop(vector<Card> hand);
-    void PrintBottom(vector<Card> hand);
-    void PrettyPrintSuit(vector<Card> suit);
-    vector<Card>& GetSuitVector(const Card& card);
+    void PrintTop(set<Card> hand);
+    void PrintBottom(set<Card> hand);
+    void PrettyPrintSuit(set<Card> suit);
+    set<Card>& GetSuitVector(const Card& card);
     int GetSuit(string suitIcon);
     void AddCard(string card);
     void AddCard(int suit, int value);
