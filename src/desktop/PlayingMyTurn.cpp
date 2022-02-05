@@ -218,12 +218,13 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
 
     string setCalled = set + card; 
   
-    doc_ref.Set({
-        {"setCalled", FieldValue::String(setCalled)},
-    }); 
+    // doc_ref.Set({
+    //     {"setCalled", FieldValue::String(setCalled)},
+    // }); 
 
     doc_ref.Update({
         {"lastAction", FieldValue::Integer(Actions::ACTION_CALL_SET)},
+        {"setCalled", FieldValue::String(setCalled)},
     });
     
     cout << "You are calling the " << setCalled <<  " set" << endl; 
