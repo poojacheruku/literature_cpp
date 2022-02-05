@@ -72,8 +72,7 @@ void WaitingForTurn::HandleRequestCallSet(const DocumentSnapshot& snapshot)
     string callingSet = snapshot.Get("callingSet").string_value();
     string playerId = snapshot.Get("turn").string_value();
     string playerName = Player::GetInstance().GetPlayerName(snapshot, playerId);
-
-
+    cout << playerName << " is calling " << callingSet << "set" << endl; 
 }
 
 void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
