@@ -224,6 +224,8 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
     
     cout << "You are calling the " << set <<  " set" << endl; 
 
+    set = set; 
+
     string turnID = snapshot.Get("turn").string_value(); 
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     int index = Player::GetInstance().GetPlayerIndex(snapshot, turnID);
