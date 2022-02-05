@@ -235,6 +235,7 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
     MapFieldValue map = playerList[index].map_value();;
     vector<FieldValue> hand = map["hand"].array_value();
     vector<string> handString;
+    vector<FieldValue> newHand; 
 
     for(int i=0; i < hand.size(); i++)
     {
@@ -280,4 +281,17 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
         handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
         card.pop_back();
     }
+
+    for(int i = 0; i < handString.size(); i++)
+        {
+            newHand.push_back(FieldValue::String(handString[i]));
+        }
+
+    map["hand"] = FieldValue::Array(newHand);
+    playerList[index] = FieldValue::Map(map); 
+
+     doc_ref.Update({
+        {"players", FieldValue::Array(playerList)},
+    });
+
 }
