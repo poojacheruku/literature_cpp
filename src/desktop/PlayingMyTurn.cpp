@@ -66,6 +66,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         }
         case 2:
         {
+            MakeASet(snapshot); 
             break;
         }
     }
@@ -172,4 +173,103 @@ void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
         {"lastAction", FieldValue::Integer(Actions::ACTION_REQUEST)},
         {"request", FieldValue::Map(requestMap)}
     });
+}
+
+void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
+{
+    cout << "PlayingMyTurn::MakeASet" << endl; 
+
+    string suit; 
+    string set; 
+
+    cout << "What set do you want to call?" << endl; 
+    cout << "Please enter the set in this format: " << endl; 
+    cout << "H low  (low hearts set)" << endl; 
+    cout << "D high (high diamonds set)" << endl; 
+
+    cin >> suit; 
+    cin >> set; 
+
+    string card; 
+    if(suit == "S")
+    {
+        card = "\u2660-"; 
+    }
+    else if(suit == "C")
+    {
+        card = "\u2664-"; 
+    }
+    else if(suit == "H")
+    {
+        card = "\u2665-"; 
+    }
+    else if(suit == "D")
+    {
+        card = "\u2666-"; 
+    }
+    
+    Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
+    string gameCode = Game::GetInstance().GetGameCode();
+    DocumentReference doc_ref = db->Collection("games").Document(gameCode);
+
+    set = set + card; 
+  
+    doc_ref.Set({
+        {"setCalled", FieldValue::String(set)},
+    }); 
+
+    doc_ref.Update({
+        {"lastAction", FieldValue::Integer(Actions::ACTION_CALL_SET)},
+    });
+    
+    cout << "You are calling the " << set <<  " set" << endl; 
+
+    string turnID = snapshot.Get("turn").string_value(); 
+    vector<FieldValue> playerList = snapshot.Get("players").array_value();
+    int index = Player::GetInstance().GetPlayerIndex(snapshot, turnID);
+    MapFieldValue map = playerList[index].map_value();;
+    vector<FieldValue> hand = map["hand"].array_value();
+    vector<string> handString;
+
+    for(int i=0; i < hand.size(); i++)
+    {
+        handString.push_back(hand[i].string_value()); 
+    }
+
+    if (set == "low") 
+    {
+        for(int i = 2; i <= 7; i++)
+        {
+            card.push_back(i);
+            handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
+            card.pop_back(); 
+        } 
+
+    } 
+    else if (set == "high")
+    {
+        card.push_back('9');
+        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
+        card.pop_back();
+
+        card.push_back('10');
+        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
+        card.pop_back();
+
+        card.push_back('J');
+        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
+        card.pop_back();
+
+        card.push_back('Q');
+        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
+        card.pop_back();
+
+        card.push_back('K');
+        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
+        card.pop_back();
+
+        card.push_back('A');
+        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
+        card.pop_back();
+    }
 }

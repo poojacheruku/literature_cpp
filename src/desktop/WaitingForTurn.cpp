@@ -59,8 +59,21 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             if(lastAction == Actions::ACTION_REQUEST) {
                 HandleRequestAction(snapshot);
             }
+
+            if(lastAction == Actions::ACTION_CALL_SET) {
+                HandleRequestCallSet(snapshot); 
+            }
         }
     }
+}
+
+void WaitingForTurn::HandleRequestCallSet(const DocumentSnapshot& snapshot)
+{
+    string callingSet = snapshot.Get("callingSet").string_value();
+    string playerId = snapshot.Get("turn").string_value();
+    string playerName = Player::GetInstance().GetPlayerName(snapshot, playerId);
+
+
 }
 
 void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)

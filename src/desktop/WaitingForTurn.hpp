@@ -16,6 +16,7 @@ private:
     WaitingForTurn(WaitingForTurn const&);              // Don't implement
     void operator=(WaitingForTurn const&);    // Don't implement
     void HandleRequestAction(const DocumentSnapshot& snapshot);
+    void HandleRequestCallSet(const DocumentSnapshot& snapshot);
     void HandleRequest(const DocumentSnapshot& snapshot, MapFieldValue& requestMap);
 
 public:
