@@ -244,12 +244,14 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
 
     if (set == "low") 
     {
-        for(int i = 2; i <= 7; i++)
+        for(int i = 2; i <= 8; i++)
         {
-            char num = i; 
-            card.push_back(num);
-            handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
-            card.pop_back(); 
+            string num = std::to_string(i); 
+            string removeCard = card + num; 
+            // cout << removeCard << endl; 
+            handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
+            removeCard = card; 
+            // cout << removeCard << endl; 
         } 
 
     } 
@@ -284,8 +286,10 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
 
     for(int i = 0; i < handString.size(); i++)
         {
+            // cout << FieldValue::String(handString[i]) << endl; 
             newHand.push_back(FieldValue::String(handString[i]));
         }
+
 
     map["hand"] = FieldValue::Array(newHand);
     playerList[index] = FieldValue::Map(map); 
