@@ -142,8 +142,7 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
         //     hand_string.push_back(card); 
         // }
         
-        Hand::GetInstance().Initialize(snapshot);
-        Hand::GetInstance().PrettyPrint();
+        Hand::GetInstance().PrettyPrint(snapshot);
         Player::GetInstance().SetState(&WaitingForTurn::GetInstance());    
     }    
 }

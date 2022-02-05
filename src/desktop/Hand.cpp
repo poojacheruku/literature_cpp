@@ -141,6 +141,16 @@ void Hand::PrettyPrintSuit(vector<Card> suit) {
     PrintBottom(suit);
 }
 
+void Hand::PrettyPrint(vector<string> hand) {
+    Initialize(hand);
+    PrettyPrint();
+}
+
+void Hand::PrettyPrint(const DocumentSnapshot& snapshot) {
+    Initialize(snapshot);
+    PrettyPrint();
+}
+
 void Hand::PrettyPrint() {
     if(m_hand.size() == 0) {
         cout << "You have no cards in hand!" <<endl;
@@ -158,6 +168,10 @@ void Hand::PrettyPrint() {
 void Hand::Initialize(vector<string> hand)
 {
     m_hand = hand;
+    m_spades.clear();
+    m_hearts.clear();
+    m_clubs.clear();
+    m_diamonds.clear();
     for(int i=0; i < hand.size(); i++)
     {
         AddCard(hand[i]); 
@@ -167,6 +181,11 @@ void Hand::Initialize(vector<string> hand)
 
 void Hand::Initialize(const DocumentSnapshot& snapshot)
 {
+    m_spades.clear();
+    m_hearts.clear();
+    m_clubs.clear();
+    m_diamonds.clear();
+
     int playerIndex = Player::GetInstance().GetPlayerIndex();
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     MapFieldValue playerMap = playerList[playerIndex].map_value();;

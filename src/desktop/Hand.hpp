@@ -45,6 +45,8 @@ class Hand {
     void Print(vector<string>& hand);
     void Print();
     void PrettyPrint();
+    void PrettyPrint(vector<string> hand);
+    void PrettyPrint(const DocumentSnapshot& snapshot);
 };
 
 #endif  // LITERATURE_HAND_H
