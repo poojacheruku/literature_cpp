@@ -58,7 +58,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             Hand::GetInstance().PrettyPrint(snapshot);
             cout << "It's " << playerName << "'s turn to play!" << endl;  
 
-            if(lastAction == Actions::ACTION_REQUEST) {
+            if(lastAction == Actions::ACTION_REQUEST || lastAction == Actions::ACTION_DECLARE) {
                 HandleRequestAction(snapshot);
             }
 
