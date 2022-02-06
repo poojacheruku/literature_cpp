@@ -43,7 +43,7 @@ void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 
     if(gameStatus == Actions::GAME_STATUS_STARTED)
     {
-        if(lastAction == Actions::ACTION_REQUEST) {
+        if(lastAction == Actions::ACTION_REQUEST || lastAction == Actions::ACTION_DECLARE) {
             HandleRequestAction(snapshot);
         }
     }
@@ -57,18 +57,24 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
     cout << "1. Ask for a card" << endl;
     cout << "2. Make a set" << endl;
+    cout << "3. Declare a set" << endl;
     cin >> choice;
 
     switch (choice)
     {
         case 1:
         {
-            AskForACard(snapshot);
+            AskForACard(snapshot, false);
             break; 
         }
         case 2:
         {
             MakeASet(snapshot); 
+            break;
+        }
+        case 3:
+        {
+            DeclareASet(snapshot);
             break;
         }
     }
@@ -84,12 +90,18 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     int requestStatus = requestMap["status"].integer_value();
     string card = requestMap["card"].string_value();
     string otherPlayer = Player::GetInstance().GetPlayerName(snapshot, toId);
+    int lastAction = snapshot.Get("lastAction").integer_value();
 
     if(requestStatus == Actions::ACTION_STATUS_ACCEPTED) {
         cout << otherPlayer << " transfered the card " << card << " to you" << endl;
         cout << "It's your turn to play!" << endl;
         Hand::GetInstance().PrettyPrint(snapshot);
-        PlayTurn(snapshot);
+
+        if(lastAction == Actions::ACTION_DECLARE) {
+            DeclareASet(snapshot);
+        } else {
+            PlayTurn(snapshot);
+        }
     }
     else if(requestStatus == Actions::ACTION_STATUS_REJECTED) {
         cout << otherPlayer << " does not have the card " << card << endl;
@@ -99,7 +111,7 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     }
 }
 
-void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
+void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot, bool ownTeam)
 {
     cout << "PlayingMyTurn::AskForACard" << endl;
     
@@ -113,8 +125,14 @@ void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
         string displayName = playerMap["displayName"].string_value();
         int team = playerMap["team"].integer_value();
 
-        if(Player::GetInstance().GetTeam() != team) {
-            cout << (i+1) << ". " << displayName << endl; 
+        if(ownTeam) {
+            if(Player::GetInstance().GetTeam() == team) {
+                cout << (i+1) << ". " << displayName << endl; 
+            }
+        } else {
+            if(Player::GetInstance().GetTeam() != team) {
+                cout << (i+1) << ". " << displayName << endl; 
+            }
         }
     }
 
@@ -176,10 +194,18 @@ void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
 
     Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
     DocumentReference doc_ref = db->Collection("games").Document(gameCode);
-    doc_ref.Update({
-        {"lastAction", FieldValue::Integer(Actions::ACTION_REQUEST)},
-        {"request", FieldValue::Map(requestMap)}
-    });
+
+    if(ownTeam) {
+        doc_ref.Update({
+            {"lastAction", FieldValue::Integer(Actions::ACTION_DECLARE)},
+            {"request", FieldValue::Map(requestMap)}
+        });
+    } else {
+        doc_ref.Update({
+            {"lastAction", FieldValue::Integer(Actions::ACTION_REQUEST)},
+            {"request", FieldValue::Map(requestMap)}
+        });
+    }
 }
 
 void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
@@ -296,4 +322,36 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
     Hand::GetInstance().PrettyPrint(handString);
     PlayTurn(snapshot); 
     cout << "It's your turn to play again!" << endl;
+}
+
+void PlayingMyTurn::DeclareASet(const DocumentSnapshot& snapshot)
+{
+    cout << "PlayingMyTurn::DeclareASet" << endl;
+
+    int lastAction = snapshot.Get("lastAction").integer_value();
+
+    if(lastAction == Actions::ACTION_DECLARE) {
+
+        int choice; 
+        cout << "What do you want to do? Choose an option (1 or 2)" << endl;
+        cout << "1. Ask for another card" << endl;
+        cout << "2. Declare a set" << endl;
+        cin >> choice;
+
+        switch (choice)
+        {
+            case 1:
+            {
+                AskForACard(snapshot, true);
+                break; 
+            }
+            case 2:
+            {
+                MakeASet(snapshot); 
+                break;
+            }
+        }
+    } else {
+        AskForACard(snapshot, true);
+    }
 }
