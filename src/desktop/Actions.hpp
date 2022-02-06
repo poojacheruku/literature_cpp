@@ -44,7 +44,8 @@ public:
 	{
 		ACTION_NONE,
 		ACTION_REQUEST,
-		ACTION_DECLARE
+		ACTION_DECLARE,
+		ACTION_CALL_SET
 	};
 
 	enum actionStatus

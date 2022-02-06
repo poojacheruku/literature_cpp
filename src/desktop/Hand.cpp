@@ -38,7 +38,7 @@ Hand& Hand::GetInstance()
     return instance;
 }
 
-vector<Card>& Hand::GetSuitVector(const Card& card)
+set<Card>& Hand::GetSuitVector(const Card& card)
 {
     switch (card.GetCardSuit())
     {
@@ -71,7 +71,7 @@ vector<Card>& Hand::GetSuitVector(const Card& card)
 //     }
 // }
 
-void TokenizeCardString(vector<string>& tokens, string card)
+void Hand::TokenizeCardString(vector<string>& tokens, string card)
 {
     char_separator<char> sep("-");
     tokenizer<char_separator<char>> toks(card, sep);
@@ -94,11 +94,11 @@ void Hand::AddCard(int suit, int value) {
 }
 
 void Hand::AddCard(Card& card) {
-    GetSuitVector(card).push_back(card);
+    GetSuitVector(card).insert(card);
     // m_hand.push_back(card);
 }
 
-void Hand::PrintTop(vector<Card> suit) {
+void Hand::PrintTop(set<Card> suit) {
     int size = suit.size();
     cout << TOPLEFT;
     for (int i = 0; i < size - 1; ++i) {
@@ -119,7 +119,7 @@ void PrintValue(const Card& card) {
     cout << " " << card.GetFaceValue() << " " << VERTICAL;
 }
 
-void Hand::PrintBottom(vector<Card> suit) {
+void Hand::PrintBottom(set<Card> suit) {
     int size = suit.size();
     cout << BOTTOMLEFT;
     for (int i = 0; i < size - 1; ++i) {
@@ -128,7 +128,7 @@ void Hand::PrintBottom(vector<Card> suit) {
     cout << HORIZONTAL << HORIZONTAL << HORIZONTAL << BOTTOMRIGHT << endl;
 }
 
-void Hand::PrettyPrintSuit(vector<Card> suit) {
+void Hand::PrettyPrintSuit(set<Card> suit) {
     if(suit.size() == 0) {
         return;
     }
@@ -139,6 +139,16 @@ void Hand::PrettyPrintSuit(vector<Card> suit) {
     std::for_each(std::begin(suit), std::end(suit), PrintValue);
     cout << "\n";
     PrintBottom(suit);
+}
+
+void Hand::PrettyPrint(vector<string> hand) {
+    Initialize(hand);
+    PrettyPrint();
+}
+
+void Hand::PrettyPrint(const DocumentSnapshot& snapshot) {
+    Initialize(snapshot);
+    PrettyPrint();
 }
 
 void Hand::PrettyPrint() {
@@ -158,6 +168,10 @@ void Hand::PrettyPrint() {
 void Hand::Initialize(vector<string> hand)
 {
     m_hand = hand;
+    m_spades.clear();
+    m_hearts.clear();
+    m_clubs.clear();
+    m_diamonds.clear();
     for(int i=0; i < hand.size(); i++)
     {
         AddCard(hand[i]); 
@@ -167,6 +181,11 @@ void Hand::Initialize(vector<string> hand)
 
 void Hand::Initialize(const DocumentSnapshot& snapshot)
 {
+    m_spades.clear();
+    m_hearts.clear();
+    m_clubs.clear();
+    m_diamonds.clear();
+
     int playerIndex = Player::GetInstance().GetPlayerIndex();
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     MapFieldValue playerMap = playerList[playerIndex].map_value();;

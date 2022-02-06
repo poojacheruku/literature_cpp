@@ -49,6 +49,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         {
             cout << "It's your turn to play!" << endl; 
             Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+            Hand::GetInstance().PrettyPrint(snapshot);
             PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         }
         else 
@@ -59,8 +60,20 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
             if(lastAction == Actions::ACTION_REQUEST) {
                 HandleRequestAction(snapshot);
             }
+
+            if(lastAction == Actions::ACTION_CALL_SET) {
+                HandleRequestCallSet(snapshot); 
+            }
         }
     }
+}
+
+void WaitingForTurn::HandleRequestCallSet(const DocumentSnapshot& snapshot)
+{
+    string callingSet = snapshot.Get("setCalled").string_value();
+    string playerId = snapshot.Get("turn").string_value();
+    string playerName = Player::GetInstance().GetPlayerName(snapshot, playerId);
+    cout << playerName << " called the set " << callingSet << endl; 
 }
 
 void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
@@ -191,8 +204,7 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
 
         cout << "Card " << card << " transfered to " << Player::GetInstance().GetPlayerName(snapshot, fromId) << endl;
         cout << "It's " << Player::GetInstance().GetPlayerName(snapshot, fromId) << "'s turn" << endl;
-        Hand::GetInstance().Initialize(toHandString);
-        Hand::GetInstance().PrettyPrint();
+        Hand::GetInstance().PrettyPrint(toHandString);
         break; 
     }
     case 2:
@@ -209,6 +221,7 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
 
         cout << "It's your turn to play!" << endl;
         Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+        Hand::GetInstance().PrettyPrint(snapshot);
         PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         break; 
     }

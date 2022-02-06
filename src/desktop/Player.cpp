@@ -141,6 +141,5 @@ void Player::PrintHand(const DocumentSnapshot& snapshot)
         hand_string.push_back(card); 
     }
     
-    Hand::GetInstance().Initialize(hand_string);
-    Hand::GetInstance().PrettyPrint();
+    Hand::GetInstance().PrettyPrint(hand_string);
 }
