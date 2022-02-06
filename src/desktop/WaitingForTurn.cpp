@@ -214,16 +214,34 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
         Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
         DocumentReference doc_ref = db->Collection("games").Document(gameCode); 
         requestMap["status"] = FieldValue::Integer(Actions::ACTION_STATUS_REJECTED);
+        int lastAction = snapshot.Get("lastAction").integer_value();
         
-        doc_ref.Update({
-            {"turn", FieldValue::String(nextTurnPlayerId)},
-            {"request", FieldValue::Map(requestMap)}
+        if(lastAction == Actions::ACTION_REQUEST) {
+            doc_ref.Update({
+                {"turn", FieldValue::String(nextTurnPlayerId)},
+                {"request", FieldValue::Map(requestMap)}
+                });
+            cout << "It's your turn to play!" << endl;
+            Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+            Hand::GetInstance().PrettyPrint(snapshot);
+            PlayingMyTurn::GetInstance().PlayTurn(snapshot);
+        } else {
+            int nextTurnPlayerIndex = (fromIndex+1)%playerList.size();
+            cout << "fromIndex: " << fromIndex << endl;
+            cout << "nextTurnPlayerIndex: " << nextTurnPlayerIndex << endl;
+            MapFieldValue nextPlayerMap = playerList[nextTurnPlayerIndex].map_value();;
+            nextTurnPlayerId = nextPlayerMap["playerId"].string_value();
+            string nextPlayerName = nextPlayerMap["displayName"].string_value();
+            cout << "nextTurnPlayerId: " << nextTurnPlayerId << endl;
+            doc_ref.Update({
+                {"turn", FieldValue::String(nextTurnPlayerId)},
+                {"request", FieldValue::Map(requestMap)}
             });
+            cout << "It's " << nextPlayerName << "'s turn to play!" << endl;
+            Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
+            Hand::GetInstance().PrettyPrint(snapshot);
+        }
 
-        cout << "It's your turn to play!" << endl;
-        Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
-        Hand::GetInstance().PrettyPrint(snapshot);
-        PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         break; 
     }
     }
