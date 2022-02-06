@@ -144,7 +144,7 @@ void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
     }
     else if(suit == 'C')
     {
-        card = "\u2664-"; 
+        card = "\u2663-"; 
     }
     else if(suit == 'H')
     {
