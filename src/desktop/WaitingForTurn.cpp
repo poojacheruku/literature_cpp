@@ -49,6 +49,7 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
         {
             cout << "It's your turn to play!" << endl; 
             Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+            Hand::GetInstance().PrettyPrint(snapshot);
             PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         }
         else 
@@ -220,6 +221,7 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
 
         cout << "It's your turn to play!" << endl;
         Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+        Hand::GetInstance().PrettyPrint(snapshot);
         PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         break; 
     }

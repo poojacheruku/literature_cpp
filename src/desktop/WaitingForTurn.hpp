@@ -22,7 +22,6 @@ private:
 public:
     static WaitingForTurn& GetInstance();
 	void Handle(const DocumentSnapshot& snapshot);
-    void PlayTurn(const DocumentSnapshot& snapshot);
 };
 
 #endif  // LITERATURE_WAITING_FOR_TURN_H  // NOLINT

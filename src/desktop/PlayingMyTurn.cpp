@@ -53,8 +53,6 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 {
     cout << "PlayingMyTurn::PlayTurn" << endl;
 
-    Hand::GetInstance().PrettyPrint();
-
     int choice; 
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
     cout << "1. Ask for a card" << endl;
@@ -90,6 +88,7 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     if(requestStatus == Actions::ACTION_STATUS_ACCEPTED) {
         cout << otherPlayer << " transfered the card " << card << " to you" << endl;
         cout << "It's your turn to play!" << endl;
+        Hand::GetInstance().PrettyPrint(snapshot);
         PlayTurn(snapshot);
     }
     else if(requestStatus == Actions::ACTION_STATUS_REJECTED) {
@@ -134,8 +133,11 @@ void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
     cin >> input; 
     cout << endl; 
 
-    char suit = input.at(0);
-    char value = input.at(2);   
+    vector<string> tokens;
+    Hand::GetInstance().TokenizeCardString(tokens, input);
+
+    char suit = tokens[0].at(0);
+    string value = tokens[1];   
 
     string card; 
     if(suit == 'S')
@@ -155,7 +157,8 @@ void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot)
         card = "\u2666-"; 
     }
 
-    card.push_back(value);
+    if(value == "10") value = "\u2469";
+    card += value;
 
     int playerNumber = choice - 1; 
     MapFieldValue playerMap = playerList[playerNumber].map_value();
@@ -194,14 +197,15 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
     cin >> suit; 
     cin >> set; 
 
-    string card; 
+    string card;
+    string removeCard;
     if(suit == "S")
     {
         card = "\u2660-"; 
     }
     else if(suit == "C")
     {
-        card = "\u2664-"; 
+        card = "\u2663-"; 
     }
     else if(suit == "H")
     {
@@ -257,31 +261,23 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
     } 
     else if (set == "high")
     {
-        card.push_back('9');
-        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
-        card.pop_back();
+        removeCard = card + "9";
+        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
 
-        card.push_back('1');
-        card.push_back('0'); 
-        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
-        card.pop_back();
-        card.pop_back(); 
+        removeCard = card + "\u2469";
+        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
 
-        card.push_back('J');
-        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
-        card.pop_back();
+        removeCard = card + "J";
+        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
 
-        card.push_back('Q');
-        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
-        card.pop_back();
+        removeCard = card + "Q";
+        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
 
-        card.push_back('K');
-        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
-        card.pop_back();
+        removeCard = card + "K";
+        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
 
-        card.push_back('A');
-        handString.erase(remove(handString.begin(), handString.end(), card), handString.end());
-        card.pop_back();
+        removeCard = card + "A";
+        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
     }
 
     for(int i = 0; i < handString.size(); i++)
@@ -297,7 +293,7 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
      doc_ref.Update({
         {"players", FieldValue::Array(playerList)},
     }); 
-    Hand::GetInstance().PrettyPrint();
+    Hand::GetInstance().PrettyPrint(handString);
     PlayTurn(snapshot); 
     cout << "It's your turn to play again!" << endl;
 }

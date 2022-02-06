@@ -71,7 +71,7 @@ set<Card>& Hand::GetSuitVector(const Card& card)
 //     }
 // }
 
-void TokenizeCardString(vector<string>& tokens, string card)
+void Hand::TokenizeCardString(vector<string>& tokens, string card)
 {
     char_separator<char> sep("-");
     tokenizer<char_separator<char>> toks(card, sep);
