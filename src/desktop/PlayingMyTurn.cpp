@@ -43,7 +43,7 @@ void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 
     if(gameStatus == Actions::GAME_STATUS_STARTED)
     {
-        if(lastAction == Actions::ACTION_REQUEST) {
+        if(lastAction == Actions::ACTION_REQUEST || lastAction == Actions::ACTION_DECLARE) {
             HandleRequestAction(snapshot);
         }
     }
