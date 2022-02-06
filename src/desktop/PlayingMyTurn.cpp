@@ -296,7 +296,8 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
 
      doc_ref.Update({
         {"players", FieldValue::Array(playerList)},
-    });
-    cout << "It's your turn to play again! " << endl; 
+    }); 
+    Hand::GetInstance().PrettyPrint();
     PlayTurn(snapshot); 
+    cout << "It's your turn to play again!" << endl;
 }
