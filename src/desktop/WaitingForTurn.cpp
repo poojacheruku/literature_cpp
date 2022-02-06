@@ -71,10 +71,14 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 
 void WaitingForTurn::HandleRequestCallSet(const DocumentSnapshot& snapshot)
 {
+    MapFieldValue requestMap = snapshot.Get("request").map_value();
+    string fromId = requestMap["fromId"].string_value();
     string callingSet = snapshot.Get("setCalled").string_value();
     string playerId = snapshot.Get("turn").string_value();
-    string playerName = Player::GetInstance().GetPlayerName(snapshot, playerId);
+    string playerName = Player::GetInstance().GetPlayerName(snapshot, fromId);
+    string playerTurnName = Player::GetInstance().GetPlayerName(snapshot, playerId);
     cout << playerName << " called the set " << callingSet << endl; 
+    cout << "It's " << playerTurnName << "'s turn" << endl;
 }
 
 void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
@@ -84,6 +88,8 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     string toId = requestMap["toId"].string_value();
     int requestStatus = requestMap["status"].integer_value();
     string card = requestMap["card"].string_value();
+    string playerTurnId = snapshot.Get("turn").string_value();
+    string playerTurnName = Player::GetInstance().GetPlayerName(snapshot, playerTurnId);
 
     switch (requestStatus)
     {
@@ -108,7 +114,7 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
                 << " from " 
                 << Player::GetInstance().GetPlayerName(snapshot, toId) 
                 << endl;
-        cout << "It is " << Player::GetInstance().GetPlayerName(snapshot, fromId) << "'s turn" << endl;
+        cout << "It's " << playerTurnName << "'s turn" << endl;
         break;
 
     case Actions::ACTION_STATUS_REJECTED:
@@ -118,7 +124,7 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
                 << " from " 
                 << Player::GetInstance().GetPlayerName(snapshot, toId) 
                 << endl;
-        cout << "It is " << Player::GetInstance().GetPlayerName(snapshot, toId) << "'s turn" << endl;
+        cout << "It's " << playerTurnName << "'s turn" << endl;
         break;
     default:
         break;
