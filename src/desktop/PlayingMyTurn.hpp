@@ -14,7 +14,7 @@ private:
     PlayingMyTurn(PlayingMyTurn const&);              // Don't implement
     void operator=(PlayingMyTurn const&);    // Don't implement
     void HandleRequestAction(const DocumentSnapshot& snapshot);
-    void AskForACard(const DocumentSnapshot& snapshot);
+    void AskForACard(const DocumentSnapshot& snapshot, bool ownTeam);
     void MakeASet(const DocumentSnapshot& snapshot); 
     void DeclareASet(const DocumentSnapshot& snapshot); 
 
