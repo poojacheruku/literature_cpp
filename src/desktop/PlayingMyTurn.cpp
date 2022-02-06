@@ -227,7 +227,7 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
         {"setCalled", FieldValue::String(setCalled)},
     });
     
-    cout << "You are calling the " << setCalled <<  " set" << endl; 
+    cout << "You called the " << setCalled <<  " set" << endl; 
 
     string turnID = snapshot.Get("turn").string_value(); 
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
@@ -297,5 +297,6 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
      doc_ref.Update({
         {"players", FieldValue::Array(playerList)},
     });
-
+    cout << "It's your turn to play again! " << endl; 
+    PlayTurn(snapshot); 
 }
