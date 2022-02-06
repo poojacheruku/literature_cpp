@@ -16,6 +16,7 @@ private:
     void HandleRequestAction(const DocumentSnapshot& snapshot);
     void AskForACard(const DocumentSnapshot& snapshot);
     void MakeASet(const DocumentSnapshot& snapshot); 
+    void DeclareASet(const DocumentSnapshot& snapshot); 
 
 public:
     static PlayingMyTurn& GetInstance();

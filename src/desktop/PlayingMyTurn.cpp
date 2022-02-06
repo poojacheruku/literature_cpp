@@ -57,6 +57,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
     cout << "1. Ask for a card" << endl;
     cout << "2. Make a set" << endl;
+    cout << "3. Declare a set" << endl;
     cin >> choice;
 
     switch (choice)
@@ -69,6 +70,11 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
         case 2:
         {
             MakeASet(snapshot); 
+            break;
+        }
+        case 3:
+        {
+            DeclareASet(snapshot);
             break;
         }
     }
@@ -296,4 +302,8 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
     Hand::GetInstance().PrettyPrint(handString);
     PlayTurn(snapshot); 
     cout << "It's your turn to play again!" << endl;
+}
+
+void PlayingMyTurn::DeclareASet(const DocumentSnapshot& snapshot)
+{
 }
