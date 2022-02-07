@@ -19,7 +19,7 @@ private:
     void HandleRequestAction(const DocumentSnapshot& snapshot);
     void HandleRequestCallSet(const DocumentSnapshot& snapshot);
     void HandleRequest(const DocumentSnapshot& snapshot, MapFieldValue& requestMap);
-    void ForfeitSuit(vector<FieldValue>& playerList, string setCalled);
+    void ForfeitSuit(vector<FieldValue>& playerList, vector<FieldValue>& newPlayerList, string setCalled);
 
 public:
     static WaitingForTurn& GetInstance();

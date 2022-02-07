@@ -243,11 +243,12 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
             MapFieldValue nextPlayerMap = playerList[nextTurnPlayerIndex].map_value();;
             nextTurnPlayerId = nextPlayerMap["playerId"].string_value();
             string nextPlayerName = nextPlayerMap["displayName"].string_value();
+            vector<FieldValue> newPlayerList;
 
-            ForfeitSuit(playerList, setCalled);
+            ForfeitSuit(playerList, newPlayerList, setCalled);
 
             doc_ref.Update({
-                {"players", FieldValue::Array(playerList)},
+                {"players", FieldValue::Array(newPlayerList)},
                 {"turn", FieldValue::String(nextTurnPlayerId)},
                 {"request", FieldValue::Map(requestMap)}
             });
@@ -263,7 +264,7 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
     }
 }
 
-void WaitingForTurn::ForfeitSuit(vector<FieldValue>& playerList, string setCalled)
+void WaitingForTurn::ForfeitSuit(vector<FieldValue>& playerList, vector<FieldValue>& newPlayerList, string setCalled)
 {
     for(int i = 0; i < playerList.size(); i++) {
         MapFieldValue map = playerList[i].map_value();;
@@ -280,6 +281,6 @@ void WaitingForTurn::ForfeitSuit(vector<FieldValue>& playerList, string setCalle
         Hand::GetInstance().RemoveSuit(handString, newHand, setCalled);
 
         map["hand"] = FieldValue::Array(newHand);
-        playerList[i] = FieldValue::Map(map); 
+        newPlayerList.push_back(FieldValue::Map(map)); 
     }
 }
