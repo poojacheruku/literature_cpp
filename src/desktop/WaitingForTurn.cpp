@@ -8,7 +8,6 @@
 
 #include "auth/LiteratureAuth.hpp"
 
-using ::firebase::firestore::FieldValue;
 using ::firebase::firestore::DocumentReference;
 using ::firebase::firestore::Firestore;
 
@@ -71,10 +70,14 @@ void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 
 void WaitingForTurn::HandleRequestCallSet(const DocumentSnapshot& snapshot)
 {
-    string callingSet = snapshot.Get("setCalled").string_value();
+    MapFieldValue requestMap = snapshot.Get("request").map_value();
+    string fromId = requestMap["fromId"].string_value();
+    string setCalled = snapshot.Get("setCalled").string_value();
     string playerId = snapshot.Get("turn").string_value();
-    string playerName = Player::GetInstance().GetPlayerName(snapshot, playerId);
-    cout << playerName << " called the set " << callingSet << endl; 
+    string playerName = Player::GetInstance().GetPlayerName(snapshot, fromId);
+    string playerTurnName = Player::GetInstance().GetPlayerName(snapshot, playerId);
+    cout << playerName << " called the set " << setCalled << endl; 
+    cout << "It's " << playerTurnName << "'s turn" << endl;
 }
 
 void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
@@ -84,6 +87,10 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     string toId = requestMap["toId"].string_value();
     int requestStatus = requestMap["status"].integer_value();
     string card = requestMap["card"].string_value();
+    string playerTurnId = snapshot.Get("turn").string_value();
+    string playerTurnName = Player::GetInstance().GetPlayerName(snapshot, playerTurnId);
+    int lastAction = snapshot.Get("lastAction").integer_value();
+    string setCalled = snapshot.Get("setCalled").string_value();
 
     switch (requestStatus)
     {
@@ -108,7 +115,7 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
                 << " from " 
                 << Player::GetInstance().GetPlayerName(snapshot, toId) 
                 << endl;
-        cout << "It is " << Player::GetInstance().GetPlayerName(snapshot, fromId) << "'s turn" << endl;
+        cout << "It's " << playerTurnName << "'s turn" << endl;
         break;
 
     case Actions::ACTION_STATUS_REJECTED:
@@ -118,7 +125,10 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
                 << " from " 
                 << Player::GetInstance().GetPlayerName(snapshot, toId) 
                 << endl;
-        cout << "It is " << Player::GetInstance().GetPlayerName(snapshot, toId) << "'s turn" << endl;
+        if(lastAction == Actions::ACTION_DECLARE) {
+            cout << "The set " << setCalled << " is forfeit!!" << endl;
+        }
+        cout << "It's " << playerTurnName << "'s turn" << endl;
         break;
     default:
         break;
@@ -214,17 +224,71 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
         Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
         DocumentReference doc_ref = db->Collection("games").Document(gameCode); 
         requestMap["status"] = FieldValue::Integer(Actions::ACTION_STATUS_REJECTED);
+        int lastAction = snapshot.Get("lastAction").integer_value();
         
-        doc_ref.Update({
-            {"turn", FieldValue::String(nextTurnPlayerId)},
-            {"request", FieldValue::Map(requestMap)}
+        if(lastAction == Actions::ACTION_REQUEST) {
+            doc_ref.Update({
+                {"turn", FieldValue::String(nextTurnPlayerId)},
+                {"request", FieldValue::Map(requestMap)}
+            });
+            cout << "It's your turn to play!" << endl;
+            Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
+            Hand::GetInstance().PrettyPrint(snapshot);
+            PlayingMyTurn::GetInstance().PlayTurn(snapshot);
+        } else { // ACTION_DECLARE
+            int nextTurnPlayerIndex = (fromIndex+1)%playerList.size();
+            MapFieldValue nextPlayerMap = playerList[nextTurnPlayerIndex].map_value();;
+            nextTurnPlayerId = nextPlayerMap["playerId"].string_value();
+            string nextPlayerName = nextPlayerMap["displayName"].string_value();
+            vector<FieldValue> newPlayerList;
+            string requestCard = requestMap["card"].string_value();
+            
+            string setCalled = Hand::GetInstance().GetSetCalled(requestCard);
+
+            ForfeitSuit(playerList, newPlayerList, setCalled);
+
+            doc_ref.Update({
+                {"players", FieldValue::Array(newPlayerList)},
+                {"turn", FieldValue::String(nextTurnPlayerId)},
+                {"request", FieldValue::Map(requestMap)}
             });
 
-        cout << "It's your turn to play!" << endl;
-        Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
-        Hand::GetInstance().PrettyPrint(snapshot);
-        PlayingMyTurn::GetInstance().PlayTurn(snapshot);
+            MapFieldValue newToMap = newPlayerList[toIndex].map_value();
+            vector<FieldValue> newToHand = newToMap["hand"].array_value();
+            vector<string> newToHandString;
+            for(int i=0; i < newToHand.size(); i++)
+            {
+                newToHandString.push_back(newToHand[i].string_value()); 
+            }
+
+            cout << "The set " << setCalled << " is forfeited!!" << endl;
+            Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
+            Hand::GetInstance().PrettyPrint(newToHandString);
+            cout << "It's " << nextPlayerName << "'s turn to play!" << endl;
+        }
+
         break; 
     }
+    }
+}
+
+void WaitingForTurn::ForfeitSuit(vector<FieldValue>& playerList, vector<FieldValue>& newPlayerList, string setCalled)
+{
+    for(int i = 0; i < playerList.size(); i++) {
+        MapFieldValue map = playerList[i].map_value();;
+        vector<FieldValue> hand = map["hand"].array_value();
+        vector<string> handString;
+
+        for(int j = 0; j < hand.size(); j++)
+        {
+            handString.push_back(hand[j].string_value()); 
+        }
+
+        vector<FieldValue> newHand; 
+
+        Hand::GetInstance().RemoveSuit(handString, newHand, setCalled);
+
+        map["hand"] = FieldValue::Array(newHand);
+        newPlayerList.push_back(FieldValue::Map(map)); 
     }
 }

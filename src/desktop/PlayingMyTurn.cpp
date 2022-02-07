@@ -105,9 +105,11 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     }
     else if(requestStatus == Actions::ACTION_STATUS_REJECTED) {
         cout << otherPlayer << " does not have the card " << card << endl;
-        cout << "It's " << otherPlayer << "'s turn" << endl;
+        string otherPlayerId = snapshot.Get("turn").string_value();
+        otherPlayer = Player::GetInstance().GetPlayerName(snapshot, otherPlayerId);
         Hand::GetInstance().PrettyPrint();
         Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
+        cout << "It's " << otherPlayer << "'s turn" << endl;
     }
 }
 
@@ -246,19 +248,8 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
     string gameCode = Game::GetInstance().GetGameCode();
     DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
-    string setCalled = set + card; 
+    string setCalled = card + set; 
   
-    // doc_ref.Set({
-    //     {"setCalled", FieldValue::String(setCalled)},
-    // }); 
-
-    doc_ref.Update({
-        {"lastAction", FieldValue::Integer(Actions::ACTION_CALL_SET)},
-        {"setCalled", FieldValue::String(setCalled)},
-    });
-    
-    cout << "You called the " << setCalled <<  " set" << endl; 
-
     string turnID = snapshot.Get("turn").string_value(); 
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
     int index = Player::GetInstance().GetPlayerIndex(snapshot, turnID);
@@ -272,53 +263,19 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
         handString.push_back(hand[i].string_value()); 
     }
 
-    if (set == "low") 
-    {
-        for(int i = 2; i <= 8; i++)
-        {
-            string num = std::to_string(i); 
-            string removeCard = card + num; 
-            // cout << removeCard << endl; 
-            handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
-            removeCard = card; 
-            // cout << removeCard << endl; 
-        } 
-
-    } 
-    else if (set == "high")
-    {
-        removeCard = card + "9";
-        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
-
-        removeCard = card + "\u2469";
-        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
-
-        removeCard = card + "J";
-        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
-
-        removeCard = card + "Q";
-        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
-
-        removeCard = card + "K";
-        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
-
-        removeCard = card + "A";
-        handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
-    }
-
-    for(int i = 0; i < handString.size(); i++)
-        {
-            // cout << FieldValue::String(handString[i]) << endl; 
-            newHand.push_back(FieldValue::String(handString[i]));
-        }
-
+    Hand::GetInstance().RemoveSuit(handString, newHand, setCalled);
 
     map["hand"] = FieldValue::Array(newHand);
     playerList[index] = FieldValue::Map(map); 
 
-     doc_ref.Update({
+    doc_ref.Update({
+        {"lastAction", FieldValue::Integer(Actions::ACTION_CALL_SET)},
+        {"setCalled", FieldValue::String(setCalled)},
         {"players", FieldValue::Array(playerList)},
     }); 
+
+    cout << "You called the " << setCalled <<  " set" << endl; 
+
     Hand::GetInstance().PrettyPrint(handString);
     PlayTurn(snapshot); 
     cout << "It's your turn to play again!" << endl;
@@ -329,8 +286,10 @@ void PlayingMyTurn::DeclareASet(const DocumentSnapshot& snapshot)
     cout << "PlayingMyTurn::DeclareASet" << endl;
 
     int lastAction = snapshot.Get("lastAction").integer_value();
+    MapFieldValue requestMap = snapshot.Get("request").map_value();
+    int requestStatus = requestMap["status"].integer_value();
 
-    if(lastAction == Actions::ACTION_DECLARE) {
+    if(lastAction == Actions::ACTION_DECLARE && requestStatus != Actions::ACTION_STATUS_REJECTED) {
 
         int choice; 
         cout << "What do you want to do? Choose an option (1 or 2)" << endl;

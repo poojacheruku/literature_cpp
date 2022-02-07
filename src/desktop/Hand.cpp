@@ -207,8 +207,6 @@ void Hand::Print(const DocumentSnapshot& snapshot)
 
 void Hand::Print(vector<string>& hand)
 {
-    cout << "Your hand:" << endl; 
-    
     for(int i=0; i < hand.size(); i++)
     {
         cout << hand[i] << " "; 
@@ -218,6 +216,49 @@ void Hand::Print(vector<string>& hand)
 
 void Hand::Print()
 {
+    cout << "Your hand:" << endl;     
     Print(m_hand);
 }
 
+void Hand::RemoveSuit(vector<string>& handString, vector<FieldValue>& newHand, string setCalled)
+{
+    vector<string> tokens;
+    TokenizeCardString(tokens, setCalled);
+    string removeCard;
+
+    if (tokens[1] == "low") 
+    {
+        for(int i = 2; i <= 8; i++)
+        {
+            string num = std::to_string(i); 
+            removeCard = tokens[0] + "-" + num; 
+            handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
+        } 
+
+    } 
+    else if (tokens[1] == "high")
+    {
+        Card dummyCard(0, 0);
+
+        for(int i = 7; i < 13; i++) {
+            removeCard = tokens[0] + "-" + dummyCard.GetFaceValue(i);
+            handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
+        }
+    }
+
+    for(int i = 0; i < handString.size(); i++)
+    {
+        newHand.push_back(FieldValue::String(handString[i]));
+    }
+
+    return;
+}
+
+string Hand::GetSetCalled(string requestCard)
+{
+    vector<string> tokens;
+    TokenizeCardString(tokens, requestCard);
+    Card card(tokens[0], tokens[1]);
+    string setCalled = tokens[0] + "-" + card.GetHighLow();
+    return setCalled;
+}
