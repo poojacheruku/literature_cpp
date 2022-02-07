@@ -221,3 +221,36 @@ void Hand::Print()
     Print(m_hand);
 }
 
+void Hand::RemoveSuit(vector<string>& handString, vector<FieldValue>& newHand, string setCalled)
+{
+    vector<string> tokens;
+    Hand::GetInstance().TokenizeCardString(tokens, setCalled);
+    string removeCard;
+
+    if (tokens[1] == "low") 
+    {
+        for(int i = 2; i <= 8; i++)
+        {
+            string num = std::to_string(i); 
+            removeCard = tokens[0] + num; 
+            handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
+        } 
+
+    } 
+    else if (tokens[1] == "high")
+    {
+        Card dummyCard(0, 0);
+
+        for(int i = 7; i < 13; i++) {
+            removeCard = tokens[0] + dummyCard.GetFaceValue(i);
+            handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
+        }
+    }
+
+    for(int i = 0; i < handString.size(); i++)
+    {
+        newHand.push_back(FieldValue::String(handString[i]));
+    }
+
+    return;
+}

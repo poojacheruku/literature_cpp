@@ -49,6 +49,7 @@ public:
     void PrettyPrint(vector<string> hand);
     void PrettyPrint(const DocumentSnapshot &snapshot);
     void TokenizeCardString(vector<string> &tokens, string card);
+    void RemoveSuit(vector<string>& handString, vector<FieldValue>& newHand, string setCalled);
 };
 
 #endif // LITERATURE_HAND_H

@@ -8,7 +8,6 @@
 
 #include "auth/LiteratureAuth.hpp"
 
-using ::firebase::firestore::FieldValue;
 using ::firebase::firestore::DocumentReference;
 using ::firebase::firestore::Firestore;
 
@@ -73,11 +72,11 @@ void WaitingForTurn::HandleRequestCallSet(const DocumentSnapshot& snapshot)
 {
     MapFieldValue requestMap = snapshot.Get("request").map_value();
     string fromId = requestMap["fromId"].string_value();
-    string callingSet = snapshot.Get("setCalled").string_value();
+    string setCalled = snapshot.Get("setCalled").string_value();
     string playerId = snapshot.Get("turn").string_value();
     string playerName = Player::GetInstance().GetPlayerName(snapshot, fromId);
     string playerTurnName = Player::GetInstance().GetPlayerName(snapshot, playerId);
-    cout << playerName << " called the set " << callingSet << endl; 
+    cout << playerName << " called the set " << setCalled << endl; 
     cout << "It's " << playerTurnName << "'s turn" << endl;
 }
 
@@ -90,6 +89,8 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
     string card = requestMap["card"].string_value();
     string playerTurnId = snapshot.Get("turn").string_value();
     string playerTurnName = Player::GetInstance().GetPlayerName(snapshot, playerTurnId);
+    int lastAction = snapshot.Get("lastAction").integer_value();
+    string setCalled = snapshot.Get("setCalled").string_value();
 
     switch (requestStatus)
     {
@@ -124,6 +125,9 @@ void WaitingForTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
                 << " from " 
                 << Player::GetInstance().GetPlayerName(snapshot, toId) 
                 << endl;
+        if(lastAction == Actions::ACTION_DECLARE) {
+            cout << "The set " << setCalled << " is forfeit!!" << endl;
+        }
         cout << "It's " << playerTurnName << "'s turn" << endl;
         break;
     default:
@@ -221,34 +225,61 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
         DocumentReference doc_ref = db->Collection("games").Document(gameCode); 
         requestMap["status"] = FieldValue::Integer(Actions::ACTION_STATUS_REJECTED);
         int lastAction = snapshot.Get("lastAction").integer_value();
+        string setCalled = snapshot.Get("setCalled").string_value();
         
         if(lastAction == Actions::ACTION_REQUEST) {
             doc_ref.Update({
                 {"turn", FieldValue::String(nextTurnPlayerId)},
                 {"request", FieldValue::Map(requestMap)}
-                });
+            });
             cout << "It's your turn to play!" << endl;
             Player::GetInstance().SetState(&PlayingMyTurn::GetInstance());
             Hand::GetInstance().PrettyPrint(snapshot);
             PlayingMyTurn::GetInstance().PlayTurn(snapshot);
-        } else {
+        } else { // ACTION_DECLARE
             int nextTurnPlayerIndex = (fromIndex+1)%playerList.size();
             cout << "fromIndex: " << fromIndex << endl;
             cout << "nextTurnPlayerIndex: " << nextTurnPlayerIndex << endl;
             MapFieldValue nextPlayerMap = playerList[nextTurnPlayerIndex].map_value();;
             nextTurnPlayerId = nextPlayerMap["playerId"].string_value();
             string nextPlayerName = nextPlayerMap["displayName"].string_value();
-            cout << "nextTurnPlayerId: " << nextTurnPlayerId << endl;
+
+            ForfeitSuit(playerList, setCalled);
+
             doc_ref.Update({
+                {"players", FieldValue::Array(playerList)},
                 {"turn", FieldValue::String(nextTurnPlayerId)},
                 {"request", FieldValue::Map(requestMap)}
             });
-            cout << "It's " << nextPlayerName << "'s turn to play!" << endl;
+
+            cout << "The set " << setCalled << " is forfeited!!" << endl;
             Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
             Hand::GetInstance().PrettyPrint(snapshot);
+            cout << "It's " << nextPlayerName << "'s turn to play!" << endl;
         }
 
         break; 
     }
+    }
+}
+
+void WaitingForTurn::ForfeitSuit(vector<FieldValue>& playerList, string setCalled)
+{
+    for(int i = 0; i < playerList.size(); i++) {
+        MapFieldValue map = playerList[i].map_value();;
+        vector<FieldValue> hand = map["hand"].array_value();
+        vector<string> handString;
+
+        for(int j = 0; j < hand.size(); j++)
+        {
+            handString.push_back(hand[j].string_value()); 
+        }
+
+        vector<FieldValue> newHand; 
+
+        Hand::GetInstance().RemoveSuit(handString, newHand, setCalled);
+
+        map["hand"] = FieldValue::Array(newHand);
+        playerList[i] = FieldValue::Map(map); 
     }
 }

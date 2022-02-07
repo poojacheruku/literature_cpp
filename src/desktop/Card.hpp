@@ -66,6 +66,7 @@ public:
     }
 
     string GetFaceValue() const { return m_face_values[m_value - 2]; }
+    string GetFaceValue(int index) const { return m_face_values[index]; }
     string GetSuitIcon() const { return m_suit_icons[m_suit]; }
     int GetCardSuit() const { return m_suit; }
     int GetCardValue() const { return m_value; }
