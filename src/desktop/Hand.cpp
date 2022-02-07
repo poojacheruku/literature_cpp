@@ -232,7 +232,7 @@ void Hand::RemoveSuit(vector<string>& handString, vector<FieldValue>& newHand, s
         for(int i = 2; i <= 8; i++)
         {
             string num = std::to_string(i); 
-            removeCard = tokens[0] + num; 
+            removeCard = tokens[0] + "-" + num; 
             handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
         } 
 
@@ -242,7 +242,7 @@ void Hand::RemoveSuit(vector<string>& handString, vector<FieldValue>& newHand, s
         Card dummyCard(0, 0);
 
         for(int i = 7; i < 13; i++) {
-            removeCard = tokens[0] + dummyCard.GetFaceValue(i);
+            removeCard = tokens[0] + "-" + dummyCard.GetFaceValue(i);
             handString.erase(remove(handString.begin(), handString.end(), removeCard), handString.end());
         }
     }
