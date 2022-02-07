@@ -286,8 +286,10 @@ void PlayingMyTurn::DeclareASet(const DocumentSnapshot& snapshot)
     cout << "PlayingMyTurn::DeclareASet" << endl;
 
     int lastAction = snapshot.Get("lastAction").integer_value();
+    MapFieldValue requestMap = snapshot.Get("request").map_value();
+    int requestStatus = requestMap["status"].integer_value();
 
-    if(lastAction == Actions::ACTION_DECLARE) {
+    if(lastAction == Actions::ACTION_DECLARE && requestStatus != Actions::ACTION_STATUS_REJECTED) {
 
         int choice; 
         cout << "What do you want to do? Choose an option (1 or 2)" << endl;

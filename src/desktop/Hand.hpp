@@ -50,6 +50,7 @@ public:
     void PrettyPrint(const DocumentSnapshot &snapshot);
     void TokenizeCardString(vector<string> &tokens, string card);
     void RemoveSuit(vector<string>& handString, vector<FieldValue>& newHand, string setCalled);
+    string GetSetCalled(string requestCard);
 };
 
 #endif // LITERATURE_HAND_H

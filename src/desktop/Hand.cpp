@@ -207,8 +207,6 @@ void Hand::Print(const DocumentSnapshot& snapshot)
 
 void Hand::Print(vector<string>& hand)
 {
-    cout << "Your hand:" << endl; 
-    
     for(int i=0; i < hand.size(); i++)
     {
         cout << hand[i] << " "; 
@@ -218,13 +216,14 @@ void Hand::Print(vector<string>& hand)
 
 void Hand::Print()
 {
+    cout << "Your hand:" << endl;     
     Print(m_hand);
 }
 
 void Hand::RemoveSuit(vector<string>& handString, vector<FieldValue>& newHand, string setCalled)
 {
     vector<string> tokens;
-    Hand::GetInstance().TokenizeCardString(tokens, setCalled);
+    TokenizeCardString(tokens, setCalled);
     string removeCard;
 
     if (tokens[1] == "low") 
@@ -253,4 +252,13 @@ void Hand::RemoveSuit(vector<string>& handString, vector<FieldValue>& newHand, s
     }
 
     return;
+}
+
+string Hand::GetSetCalled(string requestCard)
+{
+    vector<string> tokens;
+    TokenizeCardString(tokens, requestCard);
+    Card card(tokens[0], tokens[1]);
+    string setCalled = tokens[0] + "-" + card.GetHighLow();
+    return setCalled;
 }

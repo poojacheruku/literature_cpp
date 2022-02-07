@@ -225,7 +225,6 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
         DocumentReference doc_ref = db->Collection("games").Document(gameCode); 
         requestMap["status"] = FieldValue::Integer(Actions::ACTION_STATUS_REJECTED);
         int lastAction = snapshot.Get("lastAction").integer_value();
-        string setCalled = snapshot.Get("setCalled").string_value();
         
         if(lastAction == Actions::ACTION_REQUEST) {
             doc_ref.Update({
@@ -238,12 +237,14 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
             PlayingMyTurn::GetInstance().PlayTurn(snapshot);
         } else { // ACTION_DECLARE
             int nextTurnPlayerIndex = (fromIndex+1)%playerList.size();
-            cout << "fromIndex: " << fromIndex << endl;
-            cout << "nextTurnPlayerIndex: " << nextTurnPlayerIndex << endl;
             MapFieldValue nextPlayerMap = playerList[nextTurnPlayerIndex].map_value();;
             nextTurnPlayerId = nextPlayerMap["playerId"].string_value();
             string nextPlayerName = nextPlayerMap["displayName"].string_value();
             vector<FieldValue> newPlayerList;
+            MapFieldValue requestMap = snapshot.Get("request").map_value();
+            string requestCard = requestMap["card"].string_value();
+            
+            string setCalled = Hand::GetInstance().GetSetCalled(requestCard);
 
             ForfeitSuit(playerList, newPlayerList, setCalled);
 
@@ -253,9 +254,17 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
                 {"request", FieldValue::Map(requestMap)}
             });
 
+            MapFieldValue newToMap = newPlayerList[toIndex].map_value();
+            vector<FieldValue> newToHand = newToMap["hand"].array_value();
+            vector<string> newToHandString;
+            for(int i=0; i < newToHand.size(); i++)
+            {
+                newToHandString.push_back(newToHand[i].string_value()); 
+            }
+
             cout << "The set " << setCalled << " is forfeited!!" << endl;
             Player::GetInstance().SetState(&WaitingForTurn::GetInstance());
-            Hand::GetInstance().PrettyPrint(snapshot);
+            Hand::GetInstance().PrettyPrint(newToHandString);
             cout << "It's " << nextPlayerName << "'s turn to play!" << endl;
         }
 
