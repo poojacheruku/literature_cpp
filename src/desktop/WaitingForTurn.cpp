@@ -241,7 +241,6 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
             nextTurnPlayerId = nextPlayerMap["playerId"].string_value();
             string nextPlayerName = nextPlayerMap["displayName"].string_value();
             vector<FieldValue> newPlayerList;
-            MapFieldValue requestMap = snapshot.Get("request").map_value();
             string requestCard = requestMap["card"].string_value();
             
             string setCalled = Hand::GetInstance().GetSetCalled(requestCard);
