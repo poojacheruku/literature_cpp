@@ -20,11 +20,12 @@ Here are the instructions for mac OS (Other systems have similar path):
 - Add a Firestore database and change the Rules to allow read/write:
 
 > 
+    // Allow read/write access on all documents to any user signed in to the application
     rules_version = '2';
     service cloud.firestore {
       match /databases/{database}/documents {
         match /{document=**} {
-          allow read, write: if true;
+          allow read, write: if request.auth != null;
         }
       }
     }
@@ -75,11 +76,12 @@ This builds application `desktop_literature` in the same directory. Run the appl
 - Add a Firestore database and change the Rules to allow read/write:
 
 > 
+    // Allow read/write access on all documents to any user signed in to the application
     rules_version = '2';
     service cloud.firestore {
       match /databases/{database}/documents {
         match /{document=**} {
-          allow read, write: if true;
+          allow read, write: if request.auth != null;
         }
       }
     }
