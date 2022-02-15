@@ -62,7 +62,7 @@ void Actions::waitForGameExit()
 DocumentReference getGameSnapShot(DocumentSnapshot& document)
 {
   string gameCode = Game::GetInstance().GetGameCode();
-  cout << "Game code: " << gameCode << endl;
+  logIt(logINFO) << "Game code: " << gameCode;
   Firestore* db = LiteratureAuth::GetInstance().getFirestoreDb();
   DocumentReference doc_ref = db->Collection("games").Document(gameCode);
 
@@ -84,7 +84,6 @@ DocumentReference getGameSnapShot(DocumentSnapshot& document)
 void Actions::CreateGame(string gameCode, string displayName, string playerId)
 {
   logIt(logINFO) << "Creating game...";
-  cout << endl; 
 
   int numberOfPlayers; 
   cout << "Enter number of players (6 or 8): ";
@@ -244,20 +243,14 @@ void Actions::DealCards(vector<Card>& cardDeck)
     
     vector<MapFieldValue> newPlayerList;
 
-    // for( const std::pair<std::string, FieldValue>& n : playerMap ) {
-    //   logIt(logINFO) << "Key:[" << n.first << "] Value:[" << n.second << "]\n";
-    //   break;
-    // }
-
     for (size_t i = 0; i < playerList.size(); ++i) 
     {
         MapFieldValue playerMap = playerList[i].map_value();
         string playerId = playerMap["playerId"].string_value();
         if(playerId == Player::GetInstance().GetPlayerId()) {
-            cout << "Found player: " << Player::GetInstance().GetPlayerId() << endl;
+            logIt(logINFO) << "Found player: " << Player::GetInstance().GetPlayerId();
             // playerMap["hand"] = FieldValue::Array(hand);
         }
-        // newPlayerList.push_back(FieldValue::Map(playerMap));
     }
 }
 

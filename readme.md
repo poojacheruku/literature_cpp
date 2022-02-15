@@ -4,7 +4,6 @@ This project is to create a command line version of the literature card game pla
 
 In order to play this command line version (for now) each player needs to clone this repo and build it on their machine. I know, it is a pain, but maybe someone can help with cross-compilation for various operating systems.
 
-Here are the 
 Here are the instructions for mac OS (Other systems have similar path):
 
 # MacOS (tested on Big Sur)
@@ -33,10 +32,12 @@ Here are the instructions for mac OS (Other systems have similar path):
 - Add an android app and download the `google-services.json` file.
 - Copy the file `google-services.json` renamed as `google-services-desktop.json` into the root directory of the project.
 
-## Install cmake and g++
+## Install cmake,boost and g++
 
 	brew install cmake
 	brew install gcc
+  brew install boost
+  brew install pkg-config
 
 ## Download firebase sdk
 
@@ -91,6 +92,8 @@ This builds application `desktop_literature` in the same directory. Run the appl
 	sudo apt update
 	sudo apt install gcc
 	sudo apt install g++
+  sudo apt install libboost-all-dev
+  sudo apt install pkg-config
 
 ## Download firebase sdk
 

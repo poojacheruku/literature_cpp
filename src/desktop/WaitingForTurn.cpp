@@ -32,7 +32,7 @@ WaitingForTurn& WaitingForTurn::GetInstance()
 
 void WaitingForTurn::Handle(const DocumentSnapshot& snapshot)
 {
-    cout << "WaitingForTurn::Handle" << endl;
+    logIt(logINFO) << "WaitingForTurn::Handle";
 
     Hand::GetInstance().Initialize(snapshot);
 
@@ -167,7 +167,7 @@ void WaitingForTurn::HandleRequest(const DocumentSnapshot& snapshot, MapFieldVal
         vector<string> toHandString;
 
 
-        cout << "Requestor hand size before: " << fromHand.size() << endl; 
+        logIt(logINFO) << "Requestor hand size before: " << fromHand.size(); 
 
         for(int i=0; i < fromHand.size(); i++)
         {

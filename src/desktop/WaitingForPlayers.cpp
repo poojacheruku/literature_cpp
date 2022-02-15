@@ -42,7 +42,7 @@ void WaitingForPlayers::WaitForPlayers()
 
 void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
 {
-    cout << "WaitingForPlayers::Handle" << endl;
+    logIt(logINFO) << "WaitingForPlayers::Handle";
 
     int gameStatus = snapshot.Get("gameStatus").integer_value();
     int numberOfPlayers = snapshot.Get("numberOfPlayers").integer_value(); 
@@ -109,39 +109,6 @@ void WaitingForPlayers::Handle(const DocumentSnapshot& snapshot)
 
     if(gameStatus == Actions::GAME_STATUS_STARTED)
     {
-        // vector<FieldValue> playerList = snapshot.Get("players").array_value();
-        // vector<string> hand_string;
-        // vector<FieldValue> hand;  
-        // MapFieldValue playerMap;
-        // int i = 0;
-
-        // for(i=0; i < playerList.size(); i++)
-        // {
-        //     playerMap = playerList[i].map_value();
-        //     string playerId = playerMap["playerId"].string_value();
-        //     if(Player::GetInstance().GetPlayerId() == playerId)
-        //     {
-        //         break; 
-        //     }
-        // }
-
-        // if(i == playerList.size())
-        // {
-        //     logIt(logERROR) << "Error. Unable to print hand."; 
-        //     return;
-        // }
-        // else
-        // {
-        //     logIt(logINFO) << "broke out of loop"; 
-        //     hand = playerMap["hand"].array_value(); 
-        // }
-
-        // for(int i=0; i < hand.size(); i++)
-        // {
-        //     string card = hand[i].string_value(); 
-        //     hand_string.push_back(card); 
-        // }
-        
         Hand::GetInstance().PrettyPrint(snapshot);
         Player::GetInstance().SetState(&WaitingForTurn::GetInstance());    
     }    

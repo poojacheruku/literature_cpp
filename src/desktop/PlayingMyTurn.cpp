@@ -33,7 +33,7 @@ PlayingMyTurn& PlayingMyTurn::GetInstance()
 
 void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 {
-    cout << "PlayingMyTurn::Handle" << endl;
+    logIt(logINFO) << "PlayingMyTurn::Handle";
 
     Hand::GetInstance().Initialize(snapshot);
 
@@ -51,7 +51,7 @@ void PlayingMyTurn::Handle(const DocumentSnapshot& snapshot)
 
 void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 {
-    cout << "PlayingMyTurn::PlayTurn" << endl;
+    logIt(logINFO) << "PlayingMyTurn::PlayTurn";
 
     int choice; 
     cout << "What do you want to do? Choose an option (1 or 2)" << endl;
@@ -82,7 +82,7 @@ void PlayingMyTurn::PlayTurn(const DocumentSnapshot& snapshot)
 
 void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
 {
-    cout << "PlayingMyTurn::HandleRequestAction" << endl;
+    logIt(logINFO) << "PlayingMyTurn::HandleRequestAction";
     
     MapFieldValue requestMap = snapshot.Get("request").map_value();
     string fromId = requestMap["fromId"].string_value();
@@ -115,7 +115,7 @@ void PlayingMyTurn::HandleRequestAction(const DocumentSnapshot& snapshot)
 
 void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot, bool ownTeam)
 {
-    cout << "PlayingMyTurn::AskForACard" << endl;
+    logIt(logINFO) << "PlayingMyTurn::AskForACard";
     
     vector<FieldValue> playerList = snapshot.Get("players").array_value();
 
@@ -212,7 +212,7 @@ void PlayingMyTurn::AskForACard(const DocumentSnapshot& snapshot, bool ownTeam)
 
 void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
 {
-    cout << "PlayingMyTurn::MakeASet" << endl; 
+    logIt(logINFO) << "PlayingMyTurn::MakeASet"; 
 
     string suit; 
     string set; 
@@ -283,7 +283,7 @@ void PlayingMyTurn::MakeASet(const DocumentSnapshot& snapshot)
 
 void PlayingMyTurn::DeclareASet(const DocumentSnapshot& snapshot)
 {
-    cout << "PlayingMyTurn::DeclareASet" << endl;
+    logIt(logINFO) << "PlayingMyTurn::DeclareASet";
 
     int lastAction = snapshot.Get("lastAction").integer_value();
     MapFieldValue requestMap = snapshot.Get("request").map_value();

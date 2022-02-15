@@ -64,7 +64,7 @@ string getGameCodeFromUser() {
 
 void StoppedPlaying::Start()
 {
-    cout << "StoppedPlaying::Start" << endl;
+    logIt(logINFO) << "StoppedPlaying::Start";
     
     logIt(logINFO) << GetName();
     int choice = 0;
